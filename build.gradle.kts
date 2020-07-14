@@ -18,7 +18,7 @@ data class Version(
     override fun toString() = name
 }
 
-val libVersion = Version(0, 1, 8)
+val libVersion = Version(0, 1, 9)
 
 group = "nl.marc.tts"
 version = libVersion.name
@@ -96,12 +96,14 @@ kotlin {
 
 android {
     compileSdkVersion(29)
+    buildToolsVersion = "30.0.1"
 
     defaultConfig {
         minSdkVersion(1)
         targetSdkVersion(29)
         versionCode = libVersion.code
         versionName = libVersion.name
+        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
