@@ -59,7 +59,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-common"))
+                api(kotlin("stdlib-common"))
             }
         }
         val commonTest by getting {
@@ -71,8 +71,8 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
-                implementation(kotlin("stdlib"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
+                api(kotlin("stdlib"))
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
             }
         }
         val androidTest by getting {
