@@ -18,7 +18,7 @@ data class Version(
     override fun toString() = name
 }
 
-val libVersion = Version(0, 1, 9)
+val libVersion = Version(0, 2, 0)
 
 group = "nl.marc.tts"
 version = libVersion.name
@@ -43,7 +43,8 @@ repositories {
 
 kotlin {
     android {
-        publishLibraryVariants("release")
+        publishLibraryVariantsGroupedByFlavor = true
+        publishAllLibraryVariants()
     }
 
     js("browser") {
