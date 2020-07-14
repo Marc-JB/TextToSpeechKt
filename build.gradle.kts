@@ -83,7 +83,7 @@ kotlin {
 
         val browserMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-js"))
+                api(kotlin("stdlib-js"))
             }
         }
         val browserTest by getting {
@@ -96,7 +96,6 @@ kotlin {
 
 android {
     compileSdkVersion(29)
-    buildToolsVersion = "30.0.1"
 
     defaultConfig {
         minSdkVersion(1)
