@@ -2,14 +2,15 @@
 
 package nl.marc.tts
 
+import org.w3c.dom.Window
 import kotlin.browser.window
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
 import org.w3c.speech.speechSynthesis
 import kotlin.math.roundToInt
 
-internal class TextToSpeechJS : TextToSpeechInstance {
-    private val speechSynthesis: SpeechSynthesis = window.speechSynthesis
+internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
+    private val speechSynthesis: SpeechSynthesis = context.speechSynthesis
 
     private val speechSynthesisUtterance = SpeechSynthesisUtterance()
 

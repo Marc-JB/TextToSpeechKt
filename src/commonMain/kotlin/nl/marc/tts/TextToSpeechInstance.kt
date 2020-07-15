@@ -5,6 +5,5 @@ expect interface TextToSpeechInstance {
 
     fun say(text: String, clearQueue: Boolean = false)
 
-    @Throws(Exception::class)
     fun close()
 }

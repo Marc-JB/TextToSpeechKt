@@ -6,11 +6,16 @@ import android.annotation.TargetApi
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import java.io.Closeable
 import android.speech.tts.TextToSpeech as AndroidTTS
 
 @TargetApi(VERSION_CODES.DONUT)
-internal class TextToSpeechAndroid(private val tts: AndroidTTS) : TextToSpeechInstance {
+internal class TextToSpeechAndroid(private val tts: AndroidTTS) : TextToSpeechInstance, Closeable {
     override var volume: Int = 100
+        set(value) {
+            if(TextToSpeech.canChangeVolume)
+                field = value
+        }
 
     override fun say(text: String, clearQueue: Boolean) {
         val queueMode = if(clearQueue) AndroidTTS.QUEUE_FLUSH else AndroidTTS.QUEUE_ADD
