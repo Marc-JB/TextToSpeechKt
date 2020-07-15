@@ -13,6 +13,12 @@ expect interface TextToSpeechInstance {
 
     var rate: Float
 
+    /**
+     * Returns a BCP 47 language tag of the selected voice on supported platforms.
+     * May return the language code as ISO 639 on older platforms.
+     */
+    val language: String
+
     fun say(text: String, clearQueue: Boolean = false)
 
     /** Clears the internal queue, but doesn't close used resources. */

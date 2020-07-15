@@ -45,6 +45,13 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
             speechSynthesisUtterance.rate = value
         }
 
+    /**
+     * Returns a BCP 47 language tag of the selected voice on supported platforms.
+     * May return the language code as ISO 639 on older platforms.
+     */
+    override val language: String
+        get() = speechSynthesisUtterance.voice.lang
+
     override fun say(text: String, clearQueue: Boolean) {
         if(clearQueue) speechSynthesis.cancel()
         speechSynthesisUtterance.text = text

@@ -14,6 +14,12 @@ actual interface TextToSpeechInstance {
 
     actual var rate: Float
 
+    /**
+     * Returns a BCP 47 language tag of the selected voice on supported platforms.
+     * May return the language code as ISO 639 on older platforms.
+     */
+    actual val language: String
+
     actual fun say(text: String, clearQueue: Boolean)
 
     /** Clears the internal queue, but doesn't close used resources. */

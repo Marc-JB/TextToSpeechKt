@@ -7,6 +7,7 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import java.io.Closeable
+import java.util.*
 import android.speech.tts.TextToSpeech as AndroidTTS
 
 @TargetApi(VERSION_CODES.DONUT)
@@ -41,6 +42,16 @@ internal class TextToSpeechAndroid(private val tts: AndroidTTS) : TextToSpeechIn
             field = value
             tts.setSpeechRate(value)
         }
+
+    private val voiceLocale: Locale
+        get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) tts.voice.locale else tts.language
+
+    /**
+     * Returns a BCP 47 language tag of the selected voice on supported platforms.
+     * May return the language code as ISO 639 on older platforms.
+     */
+    override val language: String
+        get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) voiceLocale.toLanguageTag() else voiceLocale.language
 
     override fun say(text: String, clearQueue: Boolean) {
         val queueMode = if(clearQueue) AndroidTTS.QUEUE_FLUSH else AndroidTTS.QUEUE_ADD
