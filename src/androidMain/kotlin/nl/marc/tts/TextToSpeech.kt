@@ -7,6 +7,7 @@ import android.os.Build.VERSION_CODES
 import android.speech.tts.TextToSpeech
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.jvm.Throws
 
 actual object TextToSpeech {
     actual val isSupported: Boolean = VERSION.SDK_INT >= VERSION_CODES.DONUT
@@ -50,7 +51,7 @@ actual object TextToSpeech {
      * Will throw an [TextToSpeechNotSupportedException] if TTS is not supported.
      */
     @Throws(TextToSpeechNotSupportedException::class)
-    fun createOrThrow(context: Context, callback: (TextToSpeechInstance) -> Unit) {
+    actual fun createOrThrow(context: Context, callback: (TextToSpeechInstance) -> Unit) {
         if(!isSupported) {
             throw TextToSpeechNotSupportedException()
         } else if (VERSION.SDK_INT >= VERSION_CODES.DONUT) {
@@ -66,7 +67,7 @@ actual object TextToSpeech {
      * Creates a new [TextToSpeech] instance.
      * Will return null if TTS is not supported.
      */
-    fun createOrNull(context: Context, callback: (TextToSpeechInstance?) -> Unit) {
+    actual fun createOrNull(context: Context, callback: (TextToSpeechInstance?) -> Unit) {
         if(!isSupported) {
             callback(null)
         } else if (VERSION.SDK_INT >= VERSION_CODES.DONUT) {
