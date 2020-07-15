@@ -17,6 +17,10 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
     private val internalVolume: Float
         get() = if(!isMuted) volume.toFloat() else 0f
 
+    /**
+     * The output volume, which is 100(%) by default.
+     * Value is minimally 0, maximally 100 (although some platforms may allow higher values).
+     */
     override var volume: Int = 100
         set(value) {
             field = value
@@ -30,14 +34,17 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
         }
 
     override fun say(text: String, clearQueue: Boolean) {
+        if(clearQueue) speechSynthesis.cancel()
         speechSynthesisUtterance.text = text
         speechSynthesis.speak(speechSynthesisUtterance)
     }
 
+    /** Clears the internal queue, but doesn't close used resources. */
     override fun stop() {
         speechSynthesis.cancel()
     }
 
+    /** Clears the internal queue and closes used resources (if possible) */
     override fun close() {
         speechSynthesis.cancel()
     }

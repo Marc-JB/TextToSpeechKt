@@ -14,6 +14,10 @@ internal class TextToSpeechAndroid(private val tts: AndroidTTS) : TextToSpeechIn
     private val internalVolume: Float
         get() = if(!isMuted) volume / 100f else 0f
 
+    /**
+     * The output volume, which is 100(%) by default.
+     * Value is minimally 0, maximally 100 (although some platforms may allow higher values).
+     */
     override var volume: Int = 100
         set(value) {
             if(TextToSpeech.canChangeVolume)
@@ -40,17 +44,19 @@ internal class TextToSpeechAndroid(private val tts: AndroidTTS) : TextToSpeechIn
         }
     }
 
+    /** Clears the internal queue, but doesn't close used resources. */
     override fun stop() {
         tts.stop()
     }
 
+    /** Clears the internal queue and closes used resources (if possible) */
     override fun close() {
         tts.stop()
         tts.shutdown()
     }
 
     companion object {
-        const val KEY_PARAM_VOLUME = "volume"
+        private const val KEY_PARAM_VOLUME = "volume"
     }
 }
 
