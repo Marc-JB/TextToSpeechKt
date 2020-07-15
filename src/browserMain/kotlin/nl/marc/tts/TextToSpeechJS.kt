@@ -33,6 +33,18 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
             speechSynthesisUtterance.volume = internalVolume
         }
 
+    override var pitch: Float
+        get() = speechSynthesisUtterance.pitch
+        set(value) {
+            speechSynthesisUtterance.pitch = value
+        }
+
+    override var rate: Float
+        get() = speechSynthesisUtterance.rate
+        set(value) {
+            speechSynthesisUtterance.rate = value
+        }
+
     override fun say(text: String, clearQueue: Boolean) {
         if(clearQueue) speechSynthesis.cancel()
         speechSynthesisUtterance.text = text

@@ -9,6 +9,10 @@ expect interface TextToSpeechInstance {
 
     var isMuted: Boolean
 
+    var pitch: Float
+
+    var rate: Float
+
     fun say(text: String, clearQueue: Boolean = false)
 
     /** Clears the internal queue, but doesn't close used resources. */

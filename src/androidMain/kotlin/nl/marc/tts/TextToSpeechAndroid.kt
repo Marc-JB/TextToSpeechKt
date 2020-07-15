@@ -30,6 +30,18 @@ internal class TextToSpeechAndroid(private val tts: AndroidTTS) : TextToSpeechIn
                 field = value
         }
 
+    override var pitch: Float = 1f
+        set(value) {
+            field = value
+            tts.setPitch(value)
+        }
+
+    override var rate: Float = 1f
+        set(value) {
+            field = value
+            tts.setSpeechRate(value)
+        }
+
     override fun say(text: String, clearQueue: Boolean) {
         val queueMode = if(clearQueue) AndroidTTS.QUEUE_FLUSH else AndroidTTS.QUEUE_ADD
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {

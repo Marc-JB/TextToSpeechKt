@@ -11,6 +11,10 @@ actual interface TextToSpeechInstance : Closeable {
 
     actual var isMuted: Boolean
 
+    actual var pitch: Float
+
+    actual var rate: Float
+
     actual fun say(text: String, clearQueue: Boolean)
 
     /** Clears the internal queue, but doesn't close used resources. */
