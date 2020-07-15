@@ -10,7 +10,7 @@ import java.io.Closeable
 import android.speech.tts.TextToSpeech as AndroidTTS
 
 @TargetApi(VERSION_CODES.DONUT)
-internal class TextToSpeechAndroid(private val tts: AndroidTTS) : TextToSpeechInstance, Closeable {
+internal class TextToSpeechAndroid(private val tts: AndroidTTS) : TextToSpeechInstance {
     override var volume: Int = 100
         set(value) {
             if(TextToSpeech.canChangeVolume)

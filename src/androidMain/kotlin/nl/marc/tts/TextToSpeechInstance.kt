@@ -7,6 +7,5 @@ actual interface TextToSpeechInstance : Closeable {
 
     actual fun say(text: String, clearQueue: Boolean)
 
-    @Throws(Exception::class)
     actual override fun close()
 }
