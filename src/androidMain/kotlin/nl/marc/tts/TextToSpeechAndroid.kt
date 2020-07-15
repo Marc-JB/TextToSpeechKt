@@ -11,7 +11,16 @@ import android.speech.tts.TextToSpeech as AndroidTTS
 
 @TargetApi(VERSION_CODES.DONUT)
 internal class TextToSpeechAndroid(private val tts: AndroidTTS) : TextToSpeechInstance {
+    private val internalVolume: Float
+        get() = if(!isMuted) volume / 100f else 0f
+
     override var volume: Int = 100
+        set(value) {
+            if(TextToSpeech.canChangeVolume)
+                field = value
+        }
+
+    override var isMuted: Boolean = false
         set(value) {
             if(TextToSpeech.canChangeVolume)
                 field = value
@@ -21,14 +30,18 @@ internal class TextToSpeechAndroid(private val tts: AndroidTTS) : TextToSpeechIn
         val queueMode = if(clearQueue) AndroidTTS.QUEUE_FLUSH else AndroidTTS.QUEUE_ADD
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             val params = Bundle()
-            params.putFloat(KEY_PARAM_VOLUME, volume / 100f)
+            params.putFloat(KEY_PARAM_VOLUME, internalVolume)
             tts.speak(text, queueMode, params, null)
         } else {
             val params = hashMapOf(
-                KEY_PARAM_VOLUME to (volume / 100f).toString()
+                KEY_PARAM_VOLUME to internalVolume.toString()
             )
             tts.speak(text, queueMode, params)
         }
+    }
+
+    override fun stop() {
+        tts.stop()
     }
 
     override fun close() {

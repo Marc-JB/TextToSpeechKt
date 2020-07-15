@@ -14,10 +14,19 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
 
     private val speechSynthesisUtterance = SpeechSynthesisUtterance()
 
-    override var volume: Int
-        get() = (speechSynthesisUtterance.volume * 100).roundToInt()
+    private val internalVolume: Float
+        get() = if(!isMuted) volume.toFloat() else 0f
+
+    override var volume: Int = 100
         set(value) {
-            speechSynthesisUtterance.volume = value / 100f
+            field = value
+            speechSynthesisUtterance.volume = internalVolume
+        }
+
+    override var isMuted = false
+        set(value) {
+            field = value
+            speechSynthesisUtterance.volume = internalVolume
         }
 
     override fun say(text: String, clearQueue: Boolean) {
@@ -25,8 +34,11 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
         speechSynthesis.speak(speechSynthesisUtterance)
     }
 
+    override fun stop() {
+        speechSynthesis.cancel()
+    }
+
     override fun close() {
-        speechSynthesis.pause()
         speechSynthesis.cancel()
     }
 }
