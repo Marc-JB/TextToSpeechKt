@@ -18,7 +18,7 @@ data class Version(
     override fun toString() = name
 }
 
-val libVersion = Version(0, 3, 0)
+val libVersion = Version(0, 3, 1)
 
 group = "nl.marc.tts"
 version = libVersion.name

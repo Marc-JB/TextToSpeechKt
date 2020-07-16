@@ -18,6 +18,7 @@ internal class TextToSpeechAndroid(private val tts: AndroidTTS) : TextToSpeechIn
     /**
      * The output volume, which is 100(%) by default.
      * Value is minimally 0, maximally 100 (although some platforms may allow higher values).
+     * Changes only affect new calls to the [say] method.
      */
     override var volume: Int = 100
         set(value) {
@@ -25,11 +26,12 @@ internal class TextToSpeechAndroid(private val tts: AndroidTTS) : TextToSpeechIn
                 field = value
         }
 
+    /**
+     * Alternative to setting [volume] to zero.
+     * Setting this to true (and back to false) doesn't change the value of [volume].
+     * Changes only affect new calls to the [say] method.
+     */
     override var isMuted: Boolean = false
-        set(value) {
-            if(TextToSpeech.canChangeVolume)
-                field = value
-        }
 
     override var pitch: Float = 1f
         set(value) {
@@ -53,7 +55,21 @@ internal class TextToSpeechAndroid(private val tts: AndroidTTS) : TextToSpeechIn
     override val language: String
         get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) voiceLocale.toLanguageTag() else voiceLocale.language
 
+    /**
+     * Behaviour of this method:
+     *
+     * 1A) [clearQueue] is true: Clears the internal queue (like the [stop] method).
+     * 1B) [clearQueue] is false: Retains the internal queue.
+     *
+     * 2A) [isMuted] is true, or [volume] is zero: No text is added to the queue.
+     * 2B) [isMuted] is false and [volume] is above zero: Adds the text with [volume], [rate] and [pitch] to the internal queue.
+     */
     override fun say(text: String, clearQueue: Boolean) {
+        if(isMuted || internalVolume == 0f) {
+            if(clearQueue) stop()
+            return
+        }
+
         val queueMode = if(clearQueue) AndroidTTS.QUEUE_FLUSH else AndroidTTS.QUEUE_ADD
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             val params = Bundle()

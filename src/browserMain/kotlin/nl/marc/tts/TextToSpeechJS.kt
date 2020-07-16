@@ -20,6 +20,7 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
     /**
      * The output volume, which is 100(%) by default.
      * Value is minimally 0, maximally 100 (although some platforms may allow higher values).
+     * Changes only affect new calls to the [say] method.
      */
     override var volume: Int = 100
         set(value) {
@@ -27,6 +28,11 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
             speechSynthesisUtterance.volume = internalVolume
         }
 
+    /**
+     * Alternative to setting [volume] to zero.
+     * Setting this to true (and back to false) doesn't change the value of [volume].
+     * Changes only affect new calls to the [say] method.
+     */
     override var isMuted = false
         set(value) {
             field = value
@@ -52,8 +58,18 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
     override val language: String
         get() = speechSynthesisUtterance.voice.lang
 
+    /**
+     * Behaviour of this method:
+     *
+     * 1A) [clearQueue] is true: Clears the internal queue (like the [stop] method).
+     * 1B) [clearQueue] is false: Retains the internal queue.
+     *
+     * 2A) [isMuted] is true, or [volume] is zero: No text is added to the queue.
+     * 2B) [isMuted] is false and [volume] is above zero: Adds the text with [volume], [rate] and [pitch] to the internal queue.
+     */
     override fun say(text: String, clearQueue: Boolean) {
         if(clearQueue) speechSynthesis.cancel()
+        if(isMuted || internalVolume == 0f) return
         speechSynthesisUtterance.text = text
         speechSynthesis.speak(speechSynthesisUtterance)
     }
