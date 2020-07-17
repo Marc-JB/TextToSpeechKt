@@ -6,7 +6,6 @@ import android.annotation.TargetApi
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
-import java.io.Closeable
 import java.util.*
 import android.speech.tts.TextToSpeech as AndroidTTS
 

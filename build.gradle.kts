@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("multiplatform") version "1.3.72"
     id("com.android.library")
@@ -18,7 +20,7 @@ data class Version(
     override fun toString() = name
 }
 
-val libVersion = Version(0, 3, 1)
+val libVersion = Version(0, 3, 2)
 
 group = "nl.marc.tts"
 version = libVersion.name
@@ -39,6 +41,12 @@ repositories {
     google()
     jcenter()
     mavenCentral()
+}
+
+tasks.withType(KotlinCompile::class.java) {
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_6.toString()
+    }
 }
 
 kotlin {
@@ -97,6 +105,12 @@ kotlin {
 
 android {
     compileSdkVersion(29)
+
+    sourceSets {
+        val main by getting {
+            manifest.srcFile("./src/androidMain/AndroidManifest.xml")
+        }
+    }
 
     defaultConfig {
         minSdkVersion(1)
