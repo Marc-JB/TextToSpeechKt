@@ -20,18 +20,18 @@ data class Version(
     override fun toString() = name
 }
 
-val libVersion = Version(0, 3, 2)
+val libVersion = Version(0, 4, 0)
 
 group = "nl.marc.tts"
 version = libVersion.name
 
-fun addPom(publ: MavenPublication) {
-    publ.groupId = "nl.marc.tts"
+fun addPom(publication: MavenPublication) {
+    publication.groupId = "nl.marc.tts"
 
-    publ.artifactId = "tts-" + when {
-        publ.artifactId.endsWith("-android") -> "android"
-        publ.artifactId.endsWith("-browser") -> "browser"
-        publ.artifactId.endsWith("-metadata") -> "metadata"
+    publication.artifactId = "tts-" + when {
+        publication.artifactId.endsWith("-android") -> "android"
+        publication.artifactId.endsWith("-browser") -> "browser"
+        publication.artifactId.endsWith("-metadata") -> "metadata"
         else -> "common"
     }
 }
@@ -66,11 +66,13 @@ kotlin {
     }
 
     sourceSets {
+        @Suppress("UNUSED_VARIABLE")
         val commonMain by getting {
             dependencies {
                 api(kotlin("stdlib-common"))
             }
         }
+        @Suppress("UNUSED_VARIABLE")
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
@@ -78,23 +80,27 @@ kotlin {
             }
         }
 
+        @Suppress("UNUSED_VARIABLE")
         val androidMain by getting {
             dependencies {
                 api(kotlin("stdlib"))
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
             }
         }
+        @Suppress("UNUSED_VARIABLE")
         val androidTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
             }
         }
 
+        @Suppress("UNUSED_VARIABLE")
         val browserMain by getting {
             dependencies {
                 api(kotlin("stdlib-js"))
             }
         }
+        @Suppress("UNUSED_VARIABLE")
         val browserTest by getting {
             dependencies {
                 implementation(kotlin("test-js"))
@@ -107,6 +113,7 @@ android {
     compileSdkVersion(29)
 
     sourceSets {
+        @Suppress("UNUSED_VARIABLE")
         val main by getting {
             manifest.srcFile("./src/androidMain/AndroidManifest.xml")
         }

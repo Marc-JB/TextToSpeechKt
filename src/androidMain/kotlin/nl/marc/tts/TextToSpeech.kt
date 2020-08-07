@@ -15,10 +15,21 @@ actual object TextToSpeech {
     actual val canChangeVolume = VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB
 
     @TargetApi(VERSION_CODES.DONUT)
-    private suspend fun createAndroidTTS(context: Context): Pair<TextToSpeech, Int> = suspendCoroutine { cont ->
+    private inline fun createAndroidTTS(context: Context, crossinline callback: (TextToSpeech?, Int) -> Unit) {
         lateinit var obj: TextToSpeech
-        obj = TextToSpeech(context) {
-            cont.resume(obj to it)
+        try {
+            obj = TextToSpeech(context) {
+                callback(obj, it)
+            }
+        } catch (e: SecurityException) {
+            callback(null, TextToSpeech.ERROR)
+        }
+    }
+
+    @TargetApi(VERSION_CODES.DONUT)
+    private suspend inline fun createAndroidTTS(context: Context): Pair<TextToSpeech?, Int> = suspendCoroutine { cont ->
+        createAndroidTTS(context) { tts, code ->
+            cont.resume(tts to code)
         }
     }
 
@@ -55,9 +66,8 @@ actual object TextToSpeech {
         if(!isSupported) {
             throw TextToSpeechNotSupportedException()
         } else if (VERSION.SDK_INT >= VERSION_CODES.DONUT) {
-            lateinit var obj: TextToSpeech
-            obj = TextToSpeech(context) {
-                if(it == TextToSpeech.SUCCESS) callback(TextToSpeechAndroid(obj))
+            createAndroidTTS(context) { tts, code ->
+                if(code == TextToSpeech.SUCCESS) callback(TextToSpeechAndroid(tts))
                 else throw TextToSpeechNotSupportedException()
             }
         }
@@ -71,9 +81,10 @@ actual object TextToSpeech {
         if(!isSupported) {
             callback(null)
         } else if (VERSION.SDK_INT >= VERSION_CODES.DONUT) {
-            lateinit var obj: TextToSpeech
-            obj = TextToSpeech(context) {
-                callback(if(it == TextToSpeech.SUCCESS) TextToSpeechAndroid(obj) else null)
+            createAndroidTTS(context) { tts, code ->
+                callback(if(code == TextToSpeech.SUCCESS) TextToSpeechAndroid(tts) else null)
+                if(code == TextToSpeech.SUCCESS) callback(TextToSpeechAndroid(tts))
+                else throw TextToSpeechNotSupportedException()
             }
         }
     }
