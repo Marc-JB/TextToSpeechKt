@@ -5,6 +5,7 @@ plugins {
     id("com.android.library")
     maven
     `maven-publish`
+    id("org.jetbrains.dokka") version "1.4.0-rc"
 }
 
 data class Version(
@@ -138,6 +139,15 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_6
         targetCompatibility = JavaVersion.VERSION_1_6
+    }
+}
+
+tasks.dokkaHtml {
+    outputDirectory = "$buildDir/dokka"
+    dokkaSourceSets {
+        create("commonMain")
+        create("androidMain")
+        create("browserMain")
     }
 }
 

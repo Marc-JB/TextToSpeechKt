@@ -2,10 +2,10 @@ name: Gradle deployment
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dev ]
 
 jobs:
-  build-and-deploy:
+  deploy-docs:
     runs-on: ubuntu-latest
     steps:
 
@@ -30,13 +30,16 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # Build
-      - name: Build with Gradle
-        run: ./gradlew build
+      # Generate docs
+      - name: Generate docs with Gradle & Dokka
+        run: ./gradlew dokkaHtml
 
-      # Deploy
-      - name: Deploy with Gradle
-        run: ./gradlew publish
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: gh-pages
+          build_dir: ./build/dokka/
         env:
-          USERNAME: github-actions
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
