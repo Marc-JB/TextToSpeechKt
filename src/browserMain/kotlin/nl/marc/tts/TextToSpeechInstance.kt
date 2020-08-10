@@ -1,5 +1,6 @@
 package nl.marc.tts
 
+/** A TTS instance. Should be [close]d when no longer in use. */
 @JsExport
 actual interface TextToSpeechInstance {
     /**

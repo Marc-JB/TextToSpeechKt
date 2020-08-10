@@ -1,3 +1,6 @@
+@file:Suppress("UNUSED_VARIABLE")
+
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -5,6 +8,7 @@ plugins {
     id("com.android.library")
     maven
     `maven-publish`
+    id("org.jetbrains.dokka") version "1.4.0-rc"
 }
 
 data class Version(
@@ -20,7 +24,7 @@ data class Version(
     override fun toString() = name
 }
 
-val libVersion = Version(0, 4, 0)
+val libVersion = Version(0, 4, 1)
 
 group = "nl.marc.tts"
 version = libVersion.name
@@ -66,13 +70,11 @@ kotlin {
     }
 
     sourceSets {
-        @Suppress("UNUSED_VARIABLE")
         val commonMain by getting {
             dependencies {
                 api(kotlin("stdlib-common"))
             }
         }
-        @Suppress("UNUSED_VARIABLE")
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
@@ -80,27 +82,23 @@ kotlin {
             }
         }
 
-        @Suppress("UNUSED_VARIABLE")
         val androidMain by getting {
             dependencies {
                 api(kotlin("stdlib"))
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
             }
         }
-        @Suppress("UNUSED_VARIABLE")
         val androidTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
             }
         }
 
-        @Suppress("UNUSED_VARIABLE")
         val browserMain by getting {
             dependencies {
                 api(kotlin("stdlib-js"))
             }
         }
-        @Suppress("UNUSED_VARIABLE")
         val browserTest by getting {
             dependencies {
                 implementation(kotlin("test-js"))
@@ -113,7 +111,6 @@ android {
     compileSdkVersion(29)
 
     sourceSets {
-        @Suppress("UNUSED_VARIABLE")
         val main by getting {
             manifest.srcFile("./src/androidMain/AndroidManifest.xml")
         }
@@ -138,6 +135,46 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_6
         targetCompatibility = JavaVersion.VERSION_1_6
+    }
+}
+
+tasks.dokkaGfm {
+    outputDirectory = "$buildDir/dokka/gfm"
+}
+
+tasks.dokkaHtml {
+    outputDirectory = "$buildDir/dokka/html"
+}
+
+tasks.dokkaJavadoc {
+    outputDirectory = "$buildDir/dokka/javadoc"
+}
+
+tasks.dokkaJekyll {
+    outputDirectory = "$buildDir/dokka/jekyll"
+}
+
+tasks.withType<DokkaTask>().configureEach {
+    dokkaSourceSets {
+        val commonMain by registering {
+            sourceRoot {
+                path = "src/commonMain/kotlin"
+            }
+        }
+
+        val browserMain by registering {
+            dependsOn(commonMain)
+            sourceRoot {
+                path = "src/browserMain/kotlin"
+            }
+        }
+
+        val androidMain by registering {
+            dependsOn(commonMain)
+            sourceRoot {
+                path = "src/androidMain/kotlin"
+            }
+        }
     }
 }
 

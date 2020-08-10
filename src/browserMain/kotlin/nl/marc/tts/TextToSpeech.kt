@@ -1,5 +1,11 @@
 package nl.marc.tts
 
+import kotlin.browser.window
+
+/**
+ * Functions and properties that can be used to create new TTS instances
+ * and check for compatibility issues.
+ */
 @JsExport
 actual object TextToSpeech {
     actual val isSupported = js("\"speechSynthesis\" in window") as Boolean
@@ -8,11 +14,11 @@ actual object TextToSpeech {
 
     /**
      * Creates a new [TextToSpeech] instance.
-     * Will throw an [TextToSpeechNotSupportedException] if TTS is not supported.
+     * @throws TextToSpeechNotSupportedException when TTS is not supported.
      */
     @Throws(TextToSpeechNotSupportedException::class)
-    fun createOrThrow(): TextToSpeechInstance {
-        if(isSupported) return TextToSpeechJS()
+    fun createOrThrow(context: Context = window): TextToSpeechInstance {
+        if(isSupported) return TextToSpeechJS(context)
         else throw TextToSpeechNotSupportedException()
     }
 
@@ -20,13 +26,13 @@ actual object TextToSpeech {
      * Creates a new [TextToSpeech] instance.
      * Will return null if TTS is not supported.
      */
-    fun createOrNull(): TextToSpeechInstance? {
-        return if(isSupported) TextToSpeechJS() else null
+    fun createOrNull(context: Context = window): TextToSpeechInstance? {
+        return if(isSupported) TextToSpeechJS(context) else null
     }
 
     /**
      * Creates a new [TextToSpeech] instance.
-     * Will throw an [TextToSpeechNotSupportedException] if TTS is not supported.
+     * @throws TextToSpeechNotSupportedException when TTS is not supported.
      */
     @Throws(TextToSpeechNotSupportedException::class)
     actual fun createOrThrow(context: Context, callback: (TextToSpeechInstance) -> Unit) {
@@ -36,9 +42,9 @@ actual object TextToSpeech {
 
     /**
      * Creates a new [TextToSpeech] instance.
-     * Will return null if TTS is not supported.
+     * Will call [callback] with null if TTS is not supported.
      */
     actual fun createOrNull(context: Context, callback: (TextToSpeechInstance?) -> Unit) {
-        callback(if(isSupported) TextToSpeechJS(context) else null)
+        callback(createOrNull(context))
     }
 }

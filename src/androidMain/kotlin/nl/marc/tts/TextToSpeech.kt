@@ -9,6 +9,10 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.jvm.Throws
 
+/**
+ * Functions and properties that can be used to create new TTS instances
+ * and check for compatibility issues.
+ */
 actual object TextToSpeech {
     actual val isSupported: Boolean = VERSION.SDK_INT >= VERSION_CODES.DONUT
 
@@ -35,7 +39,7 @@ actual object TextToSpeech {
 
     /**
      * Creates a new [TextToSpeech] instance.
-     * Will throw an [TextToSpeechNotSupportedException] if TTS is not supported.
+     * @throws TextToSpeechNotSupportedException when TTS is not supported.
      */
     @Throws(TextToSpeechNotSupportedException::class)
     suspend fun createOrThrow(context: Context): TextToSpeechInstance {
@@ -59,7 +63,7 @@ actual object TextToSpeech {
 
     /**
      * Creates a new [TextToSpeech] instance.
-     * Will throw an [TextToSpeechNotSupportedException] if TTS is not supported.
+     * @throws TextToSpeechNotSupportedException when TTS is not supported.
      */
     @Throws(TextToSpeechNotSupportedException::class)
     actual fun createOrThrow(context: Context, callback: (TextToSpeechInstance) -> Unit) {
@@ -75,7 +79,7 @@ actual object TextToSpeech {
 
     /**
      * Creates a new [TextToSpeech] instance.
-     * Will return null if TTS is not supported.
+     * Will call [callback] with null if TTS is not supported.
      */
     actual fun createOrNull(context: Context, callback: (TextToSpeechInstance?) -> Unit) {
         if(!isSupported) {
