@@ -2,6 +2,7 @@ package nl.marc.tts
 
 import java.io.Closeable
 
+/** A TTS instance. Should be [close]d when no longer in use. */
 actual interface TextToSpeechInstance : Closeable {
     /**
      * The output volume, which is 100(%) by default.

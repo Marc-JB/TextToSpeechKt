@@ -9,6 +9,7 @@ import android.os.Bundle
 import java.util.*
 import android.speech.tts.TextToSpeech as AndroidTTS
 
+/** A TTS instance. Should be [close]d when no longer in use. */
 @TargetApi(VERSION_CODES.DONUT)
 internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechInstance {
     private val internalVolume: Float

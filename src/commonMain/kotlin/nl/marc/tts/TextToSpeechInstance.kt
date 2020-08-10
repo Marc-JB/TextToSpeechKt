@@ -1,5 +1,6 @@
 package nl.marc.tts
 
+/** A TTS instance. Should be [close]d when no longer in use. */
 expect interface TextToSpeechInstance {
     /**
      * The output volume, which is 100(%) by default.
