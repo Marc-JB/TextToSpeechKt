@@ -1,5 +1,7 @@
 package nl.marc.tts
 
+import nl.marc.tts.errors.TextToSpeechNotSupportedError
+import nl.marc.tts.errors.Throws
 import kotlin.browser.window
 
 /**
@@ -14,12 +16,12 @@ actual object TextToSpeech {
 
     /**
      * Creates a new [TextToSpeech] instance.
-     * @throws TextToSpeechNotSupportedException when TTS is not supported.
+     * @throws TextToSpeechNotSupportedError when TTS is not supported.
      */
-    @Throws(TextToSpeechNotSupportedException::class)
+    @Throws(TextToSpeechNotSupportedError::class)
     fun createOrThrow(context: Context = window): TextToSpeechInstance {
         if(isSupported) return TextToSpeechJS(context)
-        else throw TextToSpeechNotSupportedException()
+        else throw TextToSpeechNotSupportedError
     }
 
     /**
@@ -32,12 +34,12 @@ actual object TextToSpeech {
 
     /**
      * Creates a new [TextToSpeech] instance.
-     * @throws TextToSpeechNotSupportedException when TTS is not supported.
+     * @throws TextToSpeechNotSupportedError when TTS is not supported.
      */
-    @Throws(TextToSpeechNotSupportedException::class)
+    @Throws(TextToSpeechNotSupportedError::class)
     actual fun createOrThrow(context: Context, callback: (TextToSpeechInstance) -> Unit) {
         if(isSupported) callback(TextToSpeechJS(context))
-        else throw TextToSpeechNotSupportedException()
+        else throw TextToSpeechNotSupportedError
     }
 
     /**
@@ -46,5 +48,11 @@ actual object TextToSpeech {
      */
     actual fun createOrNull(context: Context, callback: (TextToSpeechInstance?) -> Unit) {
         callback(createOrNull(context))
+    }
+
+    /** Creates a new [TextToSpeech] instance. */
+    actual fun create(context: Context, callback: (Result<TextToSpeechInstance>) -> Unit) {
+        if(isSupported) callback(Result.success(TextToSpeechJS(context)))
+        else callback(Result.failure(TextToSpeechNotSupportedError))
     }
 }

@@ -1,4 +1,4 @@
-package nl.marc.tts
+package nl.marc.tts.errors
 
 import kotlin.jvm.Throws
 
