@@ -38,6 +38,9 @@ actual interface TextToSpeechInstance {
      */
     actual fun say(text: String, clearQueue: Boolean)
 
+    /** Adds [text] to the queue. */
+    actual operator fun plusAssign(text: String)
+
     /** Clears the internal queue, but doesn't close used resources. */
     actual fun stop()
 

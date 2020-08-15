@@ -1,9 +1,6 @@
 package nl.marc.tts
 
-import nl.marc.tts.errors.TextToSpeechInitialisationError
-import nl.marc.tts.errors.TextToSpeechNotSupportedError
-import nl.marc.tts.errors.TextToSpeechSecurityError
-import nl.marc.tts.errors.Throws
+import platform.Throws
 
 /**
  * Functions and properties that can be used to create new TTS instances

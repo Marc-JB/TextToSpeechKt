@@ -1,6 +1,6 @@
 import nl.marc.tts.TextToSpeech
 import nl.marc.tts.TextToSpeechInstance
-import nl.marc.tts.errors.TextToSpeechNotSupportedError
+import nl.marc.tts.TextToSpeechNotSupportedError
 
 @JsExport
 val isSupported = TextToSpeech.isSupported

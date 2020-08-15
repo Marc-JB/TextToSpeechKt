@@ -4,10 +4,6 @@ import android.content.Context
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.speech.tts.TextToSpeech
-import nl.marc.tts.errors.TextToSpeechInitialisationError
-import nl.marc.tts.errors.TextToSpeechNotSupportedError
-import nl.marc.tts.errors.TextToSpeechSecurityError
-import nl.marc.tts.errors.UnknownTextToSpeechError
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.jvm.Throws

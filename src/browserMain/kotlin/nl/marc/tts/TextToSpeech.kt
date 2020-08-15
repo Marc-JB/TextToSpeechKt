@@ -1,7 +1,6 @@
 package nl.marc.tts
 
-import nl.marc.tts.errors.TextToSpeechNotSupportedError
-import nl.marc.tts.errors.Throws
+import platform.Throws
 import kotlin.browser.window
 
 /**

@@ -1,4 +1,4 @@
-package nl.marc.tts.errors
+package platform
 
 import kotlin.reflect.KClass
 

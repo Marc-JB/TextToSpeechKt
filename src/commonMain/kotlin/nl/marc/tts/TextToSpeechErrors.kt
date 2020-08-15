@@ -1,4 +1,4 @@
-package nl.marc.tts.errors
+package nl.marc.tts
 
 /** Error that is thrown when an error occurs while creating a [nl.marc.tts.TextToSpeechInstance]. */
 sealed class TextToSpeechInitialisationError(
