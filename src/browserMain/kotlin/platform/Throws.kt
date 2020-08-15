@@ -1,4 +1,4 @@
-package nl.marc.tts
+package platform
 
 import kotlin.reflect.KClass
 

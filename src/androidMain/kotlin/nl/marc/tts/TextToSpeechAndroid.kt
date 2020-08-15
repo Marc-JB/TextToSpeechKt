@@ -83,6 +83,9 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
     }
 
+    /** Adds [text] to the queue. */
+    override fun plusAssign(text: String) = say(text)
+
     /** Clears the internal queue, but doesn't close used resources. */
     override fun stop() {
         tts?.stop()

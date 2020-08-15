@@ -75,6 +75,9 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
         speechSynthesis.speak(speechSynthesisUtterance)
     }
 
+    /** Adds [text] to the queue. */
+    override fun plusAssign(text: String) = say(text)
+
     /** Clears the internal queue, but doesn't close used resources. */
     override fun stop() {
         speechSynthesis.cancel()

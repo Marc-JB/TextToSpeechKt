@@ -37,6 +37,9 @@ expect interface TextToSpeechInstance {
      */
     fun say(text: String, clearQueue: Boolean = false)
 
+    /** Adds [text] to the queue. */
+    operator fun plusAssign(text: String)
+
     /** Clears the internal queue, but doesn't close used resources. */
     fun stop()
 
