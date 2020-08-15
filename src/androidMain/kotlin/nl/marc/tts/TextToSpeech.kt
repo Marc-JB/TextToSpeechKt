@@ -60,6 +60,7 @@ actual object TextToSpeech {
      * Creates a new [TextToSpeech] instance.
      * @throws TextToSpeechInitialisationError
      */
+    @Deprecated("Use TextToSpeech.create(ctx, cb)")
     @Throws(TextToSpeechInitialisationError::class)
     actual fun createOrThrow(context: Context, callback: (TextToSpeechInstance) -> Unit) {
         createAndroidTTS(context) {

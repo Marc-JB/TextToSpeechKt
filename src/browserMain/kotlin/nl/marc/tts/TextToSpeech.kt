@@ -36,6 +36,7 @@ actual object TextToSpeech {
      * Creates a new [TextToSpeech] instance.
      * @throws TextToSpeechNotSupportedError when TTS is not supported.
      */
+    @Deprecated("Use TextToSpeech.create(ctx, cb)")
     @Throws(TextToSpeechNotSupportedError::class)
     actual fun createOrThrow(context: Context, callback: (TextToSpeechInstance) -> Unit) {
         if(isSupported) callback(TextToSpeechJS(context))
