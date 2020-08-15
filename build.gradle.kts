@@ -24,7 +24,7 @@ data class Version(
     override fun toString() = name
 }
 
-val libVersion = Version(0, 5, 0)
+val libVersion = Version(0, 5, 1)
 
 group = "nl.marc.tts"
 version = libVersion.name
@@ -85,7 +85,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 api(kotlin("stdlib"))
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
             }
         }
         val androidTest by getting {
