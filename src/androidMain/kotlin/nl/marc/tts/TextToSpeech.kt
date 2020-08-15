@@ -36,7 +36,7 @@ actual object TextToSpeech {
     }
 
     /**
-     * Creates a new [TextToSpeech] instance.
+     * Creates a new [TextToSpeechInstance].
      * @throws TextToSpeechInitialisationError
      */
     @Throws(TextToSpeechInitialisationError::class)
@@ -47,7 +47,7 @@ actual object TextToSpeech {
     }
 
     /**
-     * Creates a new [TextToSpeech] instance.
+     * Creates a new [TextToSpeechInstance].
      * Will return null if TTS is not supported.
      */
     suspend fun createOrNull(context: Context): TextToSpeechInstance? = suspendCoroutine { cont ->
@@ -57,7 +57,7 @@ actual object TextToSpeech {
     }
 
     /**
-     * Creates a new [TextToSpeech] instance.
+     * Creates a new [TextToSpeechInstance].
      * @throws TextToSpeechInitialisationError
      */
     @Deprecated("Use TextToSpeech.create(ctx, cb)")
@@ -70,7 +70,7 @@ actual object TextToSpeech {
     }
 
     /**
-     * Creates a new [TextToSpeech] instance.
+     * Creates a new [TextToSpeechInstance].
      * Will call [callback] with null if TTS is not supported.
      */
     actual fun createOrNull(context: Context, callback: (TextToSpeechInstance?) -> Unit) {
@@ -79,7 +79,17 @@ actual object TextToSpeech {
         }
     }
 
-    /** Creates a new [TextToSpeech] instance. */
+    /**
+     * Creates a new [TextToSpeechInstance].
+     * Will do nothing and will not execute [callback] when TTS is not supported.
+     */
+    actual fun createOrNothing(context: Context, callback: (TextToSpeechInstance) -> Unit) {
+        createAndroidTTS(context) {
+            if(it.isSuccess) callback(TextToSpeechAndroid(it.getOrNull()))
+        }
+    }
+
+    /** Creates a new [TextToSpeechInstance]. */
     actual fun create(context: Context, callback: (Result<TextToSpeechInstance>) -> Unit) {
         createAndroidTTS(context) {
             if(it.isSuccess) callback(Result.success(TextToSpeechAndroid(it.getOrNull())))
