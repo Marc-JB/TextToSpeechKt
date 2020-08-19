@@ -10,14 +10,15 @@ val canChangeVolume = TextToSpeech.canChangeVolume
 
 /**
  * Creates a new [TextToSpeechInstance].
- * Will throw an [TextToSpeechNotSupportedError] if TTS is not supported.
+ * @throws TextToSpeechNotSupportedError when TTS is not supported.
  */
 @JsExport
-fun createOrThrow() = TextToSpeech.createOrThrow()
+fun createOrThrow() = TextToSpeech.createOrThrowSync()
 
 /**
  * Creates a new [TextToSpeechInstance].
  * Will return null if TTS is not supported.
  */
 @JsExport
-fun createOrNull() = TextToSpeech.createOrNull()
+fun createOrNull() = TextToSpeech.createOrNullSync()
+

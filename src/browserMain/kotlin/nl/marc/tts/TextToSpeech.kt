@@ -1,13 +1,13 @@
 package nl.marc.tts
 
-import platform.Throws
-import kotlin.browser.window
+import kotlinx.browser.window
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * Functions and properties that can be used to create new TTS instances
  * and check for compatibility issues.
  */
-@JsExport
 actual object TextToSpeech {
     actual val isSupported = js("\"speechSynthesis\" in window") as Boolean
 
@@ -17,8 +17,7 @@ actual object TextToSpeech {
      * Creates a new [TextToSpeechInstance].
      * @throws TextToSpeechNotSupportedError when TTS is not supported.
      */
-    @Throws(TextToSpeechNotSupportedError::class)
-    fun createOrThrow(context: Context = window): TextToSpeechInstance {
+    fun createOrThrowSync(context: Context = window): TextToSpeechInstance {
         if(isSupported) return TextToSpeechJS(context)
         else throw TextToSpeechNotSupportedError
     }
@@ -27,19 +26,8 @@ actual object TextToSpeech {
      * Creates a new [TextToSpeechInstance].
      * Will return null if TTS is not supported.
      */
-    fun createOrNull(context: Context = window): TextToSpeechInstance? {
+    fun createOrNullSync(context: Context = window): TextToSpeechInstance? {
         return if(isSupported) TextToSpeechJS(context) else null
-    }
-
-    /**
-     * Creates a new [TextToSpeechInstance].
-     * @throws TextToSpeechNotSupportedError when TTS is not supported.
-     */
-    @Deprecated("Use TextToSpeech.create(ctx, cb)")
-    @Throws(TextToSpeechNotSupportedError::class)
-    actual fun createOrThrow(context: Context, callback: (TextToSpeechInstance) -> Unit) {
-        if(isSupported) callback(TextToSpeechJS(context))
-        else throw TextToSpeechNotSupportedError
     }
 
     /**
@@ -47,7 +35,7 @@ actual object TextToSpeech {
      * Will call [callback] with null if TTS is not supported.
      */
     actual fun createOrNull(context: Context, callback: (TextToSpeechInstance?) -> Unit) {
-        callback(createOrNull(context))
+        callback(createOrNullSync(context))
     }
 
     /**
@@ -62,5 +50,25 @@ actual object TextToSpeech {
     actual fun create(context: Context, callback: (Result<TextToSpeechInstance>) -> Unit) {
         if(isSupported) callback(Result.success(TextToSpeechJS(context)))
         else callback(Result.failure(TextToSpeechNotSupportedError))
+    }
+
+    /**
+     * Creates a new [TextToSpeechInstance].
+     * @throws TextToSpeechNotSupportedError when TTS is not supported.
+     */
+    actual suspend fun createOrThrow(context: Context): TextToSpeechInstance = suspendCoroutine { cont ->
+        create(context) {
+            cont.resumeWith(it)
+        }
+    }
+
+    /**
+     * Creates a new [TextToSpeechInstance].
+     * Will return null if TTS is not supported.
+     */
+    actual suspend fun createOrNull(context: Context): TextToSpeechInstance? = suspendCoroutine { cont ->
+        createOrNull(context) {
+            cont.resume(it)
+        }
     }
 }

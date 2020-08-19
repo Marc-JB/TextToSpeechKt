@@ -1,7 +1,5 @@
 package nl.marc.tts
 
-import platform.Throws
-
 /**
  * Functions and properties that can be used to create new TTS instances
  * and check for compatibility issues.
@@ -10,14 +8,6 @@ expect object TextToSpeech {
     val isSupported: Boolean
 
     val canChangeVolume: Boolean
-
-    /**
-     * Creates a new [TextToSpeechInstance].
-     * @throws TextToSpeechInitialisationError
-     */
-    @Deprecated("Use TextToSpeech.create(ctx, cb)")
-    @Throws(TextToSpeechInitialisationError::class)
-    fun createOrThrow(context: Context, callback: (TextToSpeechInstance) -> Unit)
 
     /**
      * Creates a new [TextToSpeechInstance].
@@ -33,4 +23,17 @@ expect object TextToSpeech {
 
     /** Creates a new [TextToSpeechInstance]. */
     fun create(context: Context, callback: (Result<TextToSpeechInstance>) -> Unit)
+
+    /**
+     * Creates a new [TextToSpeechInstance].
+     * @throws TextToSpeechInitialisationError
+     */
+    @Throws(TextToSpeechInitialisationError::class)
+    suspend fun createOrThrow(context: Context): TextToSpeechInstance
+
+    /**
+     * Creates a new [TextToSpeechInstance].
+     * Will return null if TTS is not supported.
+     */
+    suspend fun createOrNull(context: Context): TextToSpeechInstance?
 }

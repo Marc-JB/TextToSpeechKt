@@ -2,12 +2,11 @@
 
 package nl.marc.tts
 
+import kotlinx.browser.window
 import org.w3c.dom.Window
-import kotlin.browser.window
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
 import org.w3c.speech.speechSynthesis
-import kotlin.math.roundToInt
 
 /** A TTS instance. Should be [close]d when no longer in use. */
 internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {

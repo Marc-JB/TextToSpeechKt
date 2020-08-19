@@ -4,7 +4,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("multiplatform") version "1.3.72"
+    kotlin("multiplatform") version "1.4.0"
     id("com.android.library")
     maven
     `maven-publish`
@@ -24,7 +24,7 @@ data class Version(
     override fun toString() = name
 }
 
-val libVersion = Version(0, 5, 1)
+val libVersion = Version(0, 6, 0)
 
 group = "nl.marc.tts"
 version = libVersion.name
@@ -49,6 +49,7 @@ repositories {
 
 tasks.withType(KotlinCompile::class.java) {
     kotlinOptions {
+        useIR = true
         jvmTarget = JavaVersion.VERSION_1_6.toString()
     }
 }
@@ -59,8 +60,10 @@ kotlin {
         publishAllLibraryVariants()
     }
 
-    js("browser") {
+    js("browser", IR) {
         browser()
+
+        binaries.executable()
     }
 
     targets.forEach {
@@ -73,6 +76,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(kotlin("stdlib-common"))
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
             }
         }
         val commonTest by getting {
@@ -85,7 +89,6 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 api(kotlin("stdlib"))
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
             }
         }
         val androidTest by getting {
