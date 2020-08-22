@@ -1,0 +1,8 @@
+$dokka.format:html
+$dokka.linkExtension:html
+$dokka.location://createOrNull/#/PointingToDeclaration/-text-to-speech-kt/[browser root]/create-or-null.html
+$dokka.location://createOrThrow/#/PointingToDeclaration/-text-to-speech-kt/[browser root]/create-or-throw.html
+[browser root]
+nl.marc.tts
+org.w3c.speech
+
