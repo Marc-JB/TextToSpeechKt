@@ -48,6 +48,7 @@ jobs:
           mkdir out/browser
           cp ./build/distributions/TextToSpeechKt.js ./out/browser/TextToSpeechKt.js
           cp ./build/distributions/TextToSpeechKt.js.map ./out/browser/TextToSpeechKt.js.map
+          cp ./build/js/packages/TextToSpeechKt-browser/kotlin/TextToSpeechKt-browser.d.ts ./out/browser/TextToSpeechKt.d.ts
           mkdir out/android
           cp ./build/outputs/aar/TextToSpeechKt-debug.aar ./out/android/TextToSpeechKt-debug.aar
           cp ./build/outputs/aar/TextToSpeechKt-release.aar ./out/android/TextToSpeechKt-release.aar

@@ -23,7 +23,7 @@ data class Version(
     override fun toString() = name
 }
 
-val libVersion = Version(0, 6, 1)
+val libVersion = Version(0, 6, 0)
 
 group = "nl.marc.tts"
 version = libVersion.name
@@ -107,7 +107,7 @@ kotlin {
         publishAllLibraryVariants()
     }
 
-    js("browser", LEGACY) {
+    js("browser", IR) {
         browser()
 
         binaries.executable()
