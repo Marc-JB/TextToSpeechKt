@@ -41,6 +41,31 @@ jobs:
           USERNAME: github-actions
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Move artifacts
+      - name: Move artifacts
+        run: |
+          mkdir out
+          mkdir out/browser
+          cp ./build/distributions/TextToSpeechKt.js ./out/browser/TextToSpeechKt.js
+          cp ./build/distributions/TextToSpeechKt.js.map ./out/browser/TextToSpeechKt.js.map
+          cp ./build/js/packages/TextToSpeechKt-browser/kotlin/TextToSpeechKt-browser.d.ts ./out/browser/TextToSpeechKt.d.ts
+          mkdir out/android
+          cp ./build/outputs/aar/TextToSpeechKt-debug.aar ./out/android/TextToSpeechKt-debug.aar
+          cp ./build/outputs/aar/TextToSpeechKt-release.aar ./out/android/TextToSpeechKt-release.aar
+
+      # Upload artifacts
+      - uses: actions/upload-artifact@v2
+        with:
+          name: TextToSpeechKt (Browser)
+          path: ./out/browser/TextToSpeechKt.*
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: TextToSpeechKt (Android)
+          path: ./out/android/TextToSpeechKt-*.aar
+          if-no-files-found: error
+
   deploy-docs:
     runs-on: ubuntu-latest
     steps:
