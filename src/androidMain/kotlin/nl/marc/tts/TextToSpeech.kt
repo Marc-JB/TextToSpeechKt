@@ -6,7 +6,6 @@ import android.os.Build.VERSION_CODES
 import android.speech.tts.TextToSpeech
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import kotlin.jvm.Throws
 
 /**
  * Functions and properties that can be used to create new TTS instances
@@ -29,40 +28,6 @@ actual object TextToSpeech {
                 callback(Result.failure(TextToSpeechSecurityError))
             }
         } else callback(Result.failure(TextToSpeechNotSupportedError))
-    }
-
-    /**
-     * Creates a new [TextToSpeechInstance].
-     * @throws TextToSpeechInitialisationError
-     */
-    @Throws(TextToSpeechInitialisationError::class)
-    suspend fun createOrThrow(context: Context): TextToSpeechInstance = suspendCoroutine { cont ->
-        create(context) {
-            cont.resumeWith(it)
-        }
-    }
-
-    /**
-     * Creates a new [TextToSpeechInstance].
-     * Will return null if TTS is not supported.
-     */
-    suspend fun createOrNull(context: Context): TextToSpeechInstance? = suspendCoroutine { cont ->
-        createOrNull(context) {
-            cont.resume(it)
-        }
-    }
-
-    /**
-     * Creates a new [TextToSpeechInstance].
-     * @throws TextToSpeechInitialisationError
-     */
-    @Deprecated("Use TextToSpeech.create(ctx, cb)")
-    @Throws(TextToSpeechInitialisationError::class)
-    actual fun createOrThrow(context: Context, callback: (TextToSpeechInstance) -> Unit) {
-        createAndroidTTS(context) {
-            if(it.isSuccess) callback(TextToSpeechAndroid(it.getOrNull()))
-            else throw it.exceptionOrNull() ?: UnknownTextToSpeechError
-        }
     }
 
     /**
@@ -90,6 +55,27 @@ actual object TextToSpeech {
         createAndroidTTS(context) {
             if(it.isSuccess) callback(Result.success(TextToSpeechAndroid(it.getOrNull())))
             else callback(Result.failure(it.exceptionOrNull() ?: UnknownTextToSpeechError))
+        }
+    }
+
+    /**
+     * Creates a new [TextToSpeechInstance].
+     * @throws TextToSpeechInitialisationError
+     */
+    @Throws(TextToSpeechInitialisationError::class)
+    actual suspend fun createOrThrow(context: Context): TextToSpeechInstance = suspendCoroutine { cont ->
+        create(context) {
+            cont.resumeWith(it)
+        }
+    }
+
+    /**
+     * Creates a new [TextToSpeechInstance].
+     * Will return null if TTS is not supported.
+     */
+    actual suspend fun createOrNull(context: Context): TextToSpeechInstance? = suspendCoroutine { cont ->
+        createOrNull(context) {
+            cont.resume(it)
         }
     }
 }

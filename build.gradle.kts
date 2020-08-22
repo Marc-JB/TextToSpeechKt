@@ -4,9 +4,8 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("multiplatform") version "1.3.72"
+    kotlin("multiplatform") version "1.4.0"
     id("com.android.library")
-    maven
     `maven-publish`
     id("org.jetbrains.dokka") version "1.4.0-rc"
 }
@@ -24,7 +23,7 @@ data class Version(
     override fun toString() = name
 }
 
-val libVersion = Version(0, 5, 1)
+val libVersion = Version(0, 6, 0)
 
 group = "nl.marc.tts"
 version = libVersion.name
@@ -47,9 +46,58 @@ repositories {
     mavenCentral()
 }
 
-tasks.withType(KotlinCompile::class.java) {
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_6.toString()
+tasks {
+    withType(KotlinCompile::class.java).configureEach {
+        kotlinOptions {
+            useIR = true
+            jvmTarget = JavaVersion.VERSION_1_6.toString()
+        }
+    }
+
+    val printVersion by creating {
+        doLast {
+            println(libVersion.name)
+        }
+    }
+
+    dokkaGfm {
+        outputDirectory = "$buildDir/dokka/gfm"
+    }
+
+    dokkaHtml {
+        outputDirectory = "$buildDir/dokka/html"
+    }
+
+    dokkaJavadoc {
+        outputDirectory = "$buildDir/dokka/javadoc"
+    }
+
+    dokkaJekyll {
+        outputDirectory = "$buildDir/dokka/jekyll"
+    }
+
+    withType<DokkaTask>().configureEach {
+        dokkaSourceSets {
+            val commonMain by registering {
+                sourceRoot {
+                    path = "src/commonMain/kotlin"
+                }
+            }
+
+            val browserMain by registering {
+                dependsOn(commonMain)
+                sourceRoot {
+                    path = "src/browserMain/kotlin"
+                }
+            }
+
+            val androidMain by registering {
+                dependsOn(commonMain)
+                sourceRoot {
+                    path = "src/androidMain/kotlin"
+                }
+            }
+        }
     }
 }
 
@@ -59,8 +107,10 @@ kotlin {
         publishAllLibraryVariants()
     }
 
-    js("browser") {
+    js("browser", IR) {
         browser()
+
+        binaries.executable()
     }
 
     targets.forEach {
@@ -73,6 +123,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(kotlin("stdlib-common"))
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
             }
         }
         val commonTest by getting {
@@ -85,7 +136,6 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 api(kotlin("stdlib"))
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
             }
         }
         val androidTest by getting {
@@ -135,46 +185,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_6
         targetCompatibility = JavaVersion.VERSION_1_6
-    }
-}
-
-tasks.dokkaGfm {
-    outputDirectory = "$buildDir/dokka/gfm"
-}
-
-tasks.dokkaHtml {
-    outputDirectory = "$buildDir/dokka/html"
-}
-
-tasks.dokkaJavadoc {
-    outputDirectory = "$buildDir/dokka/javadoc"
-}
-
-tasks.dokkaJekyll {
-    outputDirectory = "$buildDir/dokka/jekyll"
-}
-
-tasks.withType<DokkaTask>().configureEach {
-    dokkaSourceSets {
-        val commonMain by registering {
-            sourceRoot {
-                path = "src/commonMain/kotlin"
-            }
-        }
-
-        val browserMain by registering {
-            dependsOn(commonMain)
-            sourceRoot {
-                path = "src/browserMain/kotlin"
-            }
-        }
-
-        val androidMain by registering {
-            dependsOn(commonMain)
-            sourceRoot {
-                path = "src/androidMain/kotlin"
-            }
-        }
     }
 }
 

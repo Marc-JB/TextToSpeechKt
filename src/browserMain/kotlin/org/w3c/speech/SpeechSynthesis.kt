@@ -1,7 +1,5 @@
 package org.w3c.speech
 
-import org.w3c.dom.events.EventTarget
-
 /**
  * The SpeechSynthesis interface of the Web Speech API is the controller interface for the speech service;
  * this can be used to retrieve information about the synthesis voices available on the device,
