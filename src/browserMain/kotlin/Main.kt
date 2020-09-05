@@ -21,4 +21,3 @@ fun createOrThrow() = TextToSpeech.createOrThrowSync()
  */
 @JsExport
 fun createOrNull() = TextToSpeech.createOrNullSync()
-

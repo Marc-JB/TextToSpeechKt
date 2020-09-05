@@ -28,18 +28,10 @@ actual interface TextToSpeechInstance : Closeable {
      */
     actual val language: String
 
-    /**
-     * Behaviour of this method:
-     *
-     * 1A) [clearQueue] is true: Clears the internal queue (like the [stop] method).
-     * 1B) [clearQueue] is false: Retains the internal queue.
-     *
-     * 2A) [isMuted] is true, or [volume] is zero: No text is added to the queue.
-     * 2B) [isMuted] is false and [volume] is above zero: Adds the text with [volume], [rate] and [pitch] to the internal queue.
-     */
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     actual fun say(text: String, clearQueue: Boolean)
 
-    /** Adds [text] to the queue. */
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     actual operator fun plusAssign(text: String)
 
     /** Clears the internal queue, but doesn't close used resources. */
