@@ -1,13 +1,12 @@
 @file:Suppress("UNUSED_VARIABLE")
 
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("multiplatform") version "1.4.0"
+    kotlin("multiplatform") version "1.4.21"
     id("com.android.library")
     `maven-publish`
-    id("org.jetbrains.dokka") version "1.4.0-rc"
+    id("org.jetbrains.dokka") version "1.4.20"
 }
 
 data class Version(
@@ -23,7 +22,7 @@ data class Version(
     override fun toString() = name
 }
 
-val libVersion = Version(0, 6, 2)
+val libVersion = Version(0, 7, 0, "alpha")
 
 group = "nl.marc.tts"
 version = libVersion.name
@@ -59,46 +58,6 @@ tasks {
             println(libVersion.name)
         }
     }
-
-    dokkaGfm {
-        outputDirectory = "$buildDir/dokka/gfm"
-    }
-
-    dokkaHtml {
-        outputDirectory = "$buildDir/dokka/html"
-    }
-
-    dokkaJavadoc {
-        outputDirectory = "$buildDir/dokka/javadoc"
-    }
-
-    dokkaJekyll {
-        outputDirectory = "$buildDir/dokka/jekyll"
-    }
-
-    withType<DokkaTask>().configureEach {
-        dokkaSourceSets {
-            val commonMain by registering {
-                sourceRoot {
-                    path = "src/commonMain/kotlin"
-                }
-            }
-
-            val browserMain by registering {
-                dependsOn(commonMain)
-                sourceRoot {
-                    path = "src/browserMain/kotlin"
-                }
-            }
-
-            val androidMain by registering {
-                dependsOn(commonMain)
-                sourceRoot {
-                    path = "src/androidMain/kotlin"
-                }
-            }
-        }
-    }
 }
 
 kotlin {
@@ -123,7 +82,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(kotlin("stdlib-common"))
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
             }
         }
         val commonTest by getting {
@@ -158,7 +117,7 @@ kotlin {
 }
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(30)
 
     sourceSets {
         val main by getting {
@@ -168,7 +127,7 @@ android {
 
     defaultConfig {
         minSdkVersion(1)
-        targetSdkVersion(29)
+        targetSdkVersion(30)
         versionCode = libVersion.code
         versionName = libVersion.name
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"

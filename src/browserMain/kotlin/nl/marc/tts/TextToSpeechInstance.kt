@@ -28,7 +28,10 @@ actual interface TextToSpeechInstance {
     actual val language: String
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    actual fun say(text: String, clearQueue: Boolean)
+    actual fun enqueue(text: String, clearQueue: Boolean)
+
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    actual fun say(text: String, clearQueue: Boolean, callback: (Result<Status>) -> Unit)
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     actual operator fun plusAssign(text: String)
@@ -38,4 +41,8 @@ actual interface TextToSpeechInstance {
 
     /** Clears the internal queue and closes used resources (if possible) */
     actual fun close()
+
+    actual enum class Status {
+        STARTED, FINISHED
+    }
 }

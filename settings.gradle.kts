@@ -5,10 +5,11 @@ pluginManagement {
         google()
         jcenter()
     }
+
     resolutionStrategy {
         eachPlugin {
             if (requested.id.namespace == "com.android" || requested.id.name == "kotlin-android-extensions") {
-                useModule("com.android.tools.build:gradle:3.6.3")
+                useModule("com.android.tools.build:gradle:4.1.1")
             }
         }
     }
