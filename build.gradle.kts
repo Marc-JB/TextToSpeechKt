@@ -1,13 +1,24 @@
 @file:Suppress("UNUSED_VARIABLE")
 
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.konan.properties.Properties
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 
 plugins {
-    kotlin("multiplatform") version "1.4.0"
+    kotlin("multiplatform") version "1.5.31"
     id("com.android.library")
     `maven-publish`
-    id("org.jetbrains.dokka") version "1.4.0-rc"
+    id("org.jetbrains.dokka") version "1.5.31"
+}
+
+fun getLocalProperties(): Properties {
+    return Properties().also { properties ->
+        try {
+            file("./local.properties").inputStream().use {
+                properties.load(it)
+            }
+        } catch (ignored: java.io.FileNotFoundException) {}
+    }
 }
 
 data class Version(
@@ -23,7 +34,7 @@ data class Version(
     override fun toString() = name
 }
 
-val libVersion = Version(0, 6, 1)
+val libVersion = Version(0, 7, 0, "alpha")
 
 group = "nl.marc.tts"
 version = libVersion.name
@@ -39,13 +50,6 @@ fun addPom(publication: MavenPublication) {
     }
 }
 
-repositories {
-    gradlePluginPortal()
-    google()
-    jcenter()
-    mavenCentral()
-}
-
 tasks {
     withType(KotlinCompile::class.java).configureEach {
         kotlinOptions {
@@ -59,46 +63,6 @@ tasks {
             println(libVersion.name)
         }
     }
-
-    dokkaGfm {
-        outputDirectory = "$buildDir/dokka/gfm"
-    }
-
-    dokkaHtml {
-        outputDirectory = "$buildDir/dokka/html"
-    }
-
-    dokkaJavadoc {
-        outputDirectory = "$buildDir/dokka/javadoc"
-    }
-
-    dokkaJekyll {
-        outputDirectory = "$buildDir/dokka/jekyll"
-    }
-
-    withType<DokkaTask>().configureEach {
-        dokkaSourceSets {
-            val commonMain by registering {
-                sourceRoot {
-                    path = "src/commonMain/kotlin"
-                }
-            }
-
-            val browserMain by registering {
-                dependsOn(commonMain)
-                sourceRoot {
-                    path = "src/browserMain/kotlin"
-                }
-            }
-
-            val androidMain by registering {
-                dependsOn(commonMain)
-                sourceRoot {
-                    path = "src/androidMain/kotlin"
-                }
-            }
-        }
-    }
 }
 
 kotlin {
@@ -107,7 +71,7 @@ kotlin {
         publishAllLibraryVariants()
     }
 
-    js("browser", LEGACY) {
+    js("browser", IR) {
         browser()
 
         binaries.executable()
@@ -123,7 +87,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(kotlin("stdlib-common"))
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
             }
         }
         val commonTest by getting {
@@ -158,27 +122,28 @@ kotlin {
 }
 
 android {
-    compileSdkVersion(29)
+    compileSdk = 31
+    buildToolsVersion = "31.0.0"
 
     sourceSets {
-        val main by getting {
+        getByName("main") {
             manifest.srcFile("./src/androidMain/AndroidManifest.xml")
         }
     }
 
     defaultConfig {
-        minSdkVersion(1)
-        targetSdkVersion(29)
-        versionCode = libVersion.code
-        versionName = libVersion.name
+        minSdk = 1
+        targetSdk = 31
+
+        // versionCode = libVersion.code
+        // versionName = libVersion.name
+
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            isZipAlignEnabled = true
-            isCrunchPngs = true
         }
     }
 
@@ -189,13 +154,19 @@ android {
 }
 
 publishing {
+    val keys = getLocalProperties()
+
+    fun getProperty(key: String): String? {
+        return keys.getProperty(key) ?: System.getenv(key.toUpperCaseAsciiOnly().replace(".", "_"))
+    }
+
     repositories {
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/Marc-JB/TextToSpeechKt")
             credentials {
-                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
-                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+                username = getProperty("gpr.user")
+                password = getProperty("gpr.key")
             }
         }
     }

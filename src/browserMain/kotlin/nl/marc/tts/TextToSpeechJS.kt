@@ -12,7 +12,7 @@ import org.w3c.speech.speechSynthesis
 internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
     private val speechSynthesis: SpeechSynthesis = context.speechSynthesis
 
-    private val speechSynthesisUtterance = SpeechSynthesisUtterance()
+    private var speechSynthesisUtterance = SpeechSynthesisUtterance()
 
     private val internalVolume: Float
         get() = if(!isMuted) volume.toFloat() else 0f
@@ -58,24 +58,35 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
     override val language: String
         get() = speechSynthesisUtterance.voice.lang
 
-    /**
-     * Behaviour of this method:
-     *
-     * 1A) [clearQueue] is true: Clears the internal queue (like the [stop] method).
-     * 1B) [clearQueue] is false: Retains the internal queue.
-     *
-     * 2A) [isMuted] is true, or [volume] is zero: No text is added to the queue.
-     * 2B) [isMuted] is false and [volume] is above zero: Adds the text with [volume], [rate] and [pitch] to the internal queue.
-     */
-    override fun say(text: String, clearQueue: Boolean) {
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    override fun enqueue(text: String, clearQueue: Boolean) {
         if(clearQueue) speechSynthesis.cancel()
+        plusAssign(text)
+    }
+
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    override fun say(text: String, clearQueue: Boolean, callback: (Result<TextToSpeechInstance.Status>) -> Unit) {
+        if(clearQueue) speechSynthesis.cancel()
+        speechSynthesisUtterance.onstart = {
+            callback(Result.success(TextToSpeechInstance.Status.STARTED))
+        }
+        speechSynthesisUtterance.onend = {
+            callback(Result.success(TextToSpeechInstance.Status.FINISHED))
+        }
+        plusAssign(text)
+    }
+
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    override fun plusAssign(text: String) {
         if(isMuted || internalVolume == 0f) return
         speechSynthesisUtterance.text = text
         speechSynthesis.speak(speechSynthesisUtterance)
+        speechSynthesisUtterance = SpeechSynthesisUtterance().also {
+            it.volume = internalVolume
+            it.pitch = pitch
+            it.rate = rate
+        }
     }
-
-    /** Adds [text] to the queue. */
-    override fun plusAssign(text: String) = say(text)
 
     /** Clears the internal queue, but doesn't close used resources. */
     override fun stop() {

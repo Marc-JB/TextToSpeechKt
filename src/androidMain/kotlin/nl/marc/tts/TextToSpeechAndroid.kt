@@ -6,12 +6,18 @@ import android.annotation.TargetApi
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.speech.tts.UtteranceProgressListener
 import java.util.*
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 import android.speech.tts.TextToSpeech as AndroidTTS
 
 /** A TTS instance. Should be [close]d when no longer in use. */
 @TargetApi(VERSION_CODES.DONUT)
-internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechInstance {
+internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechInstance, UtteranceProgressListener(), AndroidTTS.OnUtteranceCompletedListener {
+    private val callbacks = mutableMapOf<Int, (Result<TextToSpeechInstance.Status>) -> Unit>()
+
     private val internalVolume: Float
         get() = if(!isMuted) volume / 100f else 0f
 
@@ -55,16 +61,12 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     override val language: String
         get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) voiceLocale.toLanguageTag() else voiceLocale.language
 
-    /**
-     * Behaviour of this method:
-     *
-     * 1A) [clearQueue] is true: Clears the internal queue (like the [stop] method).
-     * 1B) [clearQueue] is false: Retains the internal queue.
-     *
-     * 2A) [isMuted] is true, or [volume] is zero: No text is added to the queue.
-     * 2B) [isMuted] is false and [volume] is above zero: Adds the text with [volume], [rate] and [pitch] to the internal queue.
-     */
-    override fun say(text: String, clearQueue: Boolean) {
+    init {
+        tts?.setOnUtteranceProgressListener(this)
+    }
+
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    override fun enqueue(text: String, clearQueue: Boolean) {
         if(isMuted || internalVolume == 0f) {
             if(clearQueue) stop()
             return
@@ -83,8 +85,56 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
     }
 
-    /** Adds [text] to the queue. */
-    override fun plusAssign(text: String) = say(text)
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    override fun say(text: String, clearQueue: Boolean, callback: (Result<TextToSpeechInstance.Status>) -> Unit) {
+        if(isMuted || internalVolume == 0f) {
+            if(clearQueue) stop()
+            return
+        }
+
+        val queueMode = if(clearQueue) AndroidTTS.QUEUE_FLUSH else AndroidTTS.QUEUE_ADD
+        val utteranceId = Objects.hash(System.currentTimeMillis(), text)
+        callbacks += utteranceId to callback
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            val params = Bundle()
+            params.putFloat(KEY_PARAM_VOLUME, internalVolume)
+            params.putInt(KEY_PARAM_UTTERANCE_ID, utteranceId)
+            tts?.speak(text, queueMode, params, utteranceId.toString())
+        } else {
+            val params = hashMapOf(
+                KEY_PARAM_VOLUME to internalVolume.toString(),
+                KEY_PARAM_UTTERANCE_ID to utteranceId.toString()
+            )
+            tts?.speak(text, queueMode, params)
+        }
+    }
+
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    override suspend fun say(text: String, clearQueue: Boolean, resumeOnStatus: TextToSpeechInstance.Status) {
+        suspendCoroutine<Unit> { cont ->
+            say(text, clearQueue) {
+                if (it.isSuccess && it.getOrNull() == resumeOnStatus) cont.resume(Unit)
+                else if (it.isFailure) it.exceptionOrNull()?.let { thr -> cont.resumeWithException(thr) }
+            }
+        }
+    }
+
+    override fun onStart(utteranceId: String?) {
+        callbacks[utteranceId?.toInt() ?: -1]?.invoke(Result.success(TextToSpeechInstance.Status.STARTED))
+    }
+
+    override fun onDone(utteranceId: String?) {
+        callbacks[utteranceId?.toInt() ?: -1]?.invoke(Result.success(TextToSpeechInstance.Status.FINISHED))
+    }
+
+    override fun onUtteranceCompleted(utteranceId: String?) = onDone(utteranceId)
+
+    override fun onError(utteranceId: String?) {
+        callbacks[utteranceId?.toInt() ?: -1]?.invoke(Result.failure(Exception()))
+    }
+
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    override fun plusAssign(text: String) = enqueue(text)
 
     /** Clears the internal queue, but doesn't close used resources. */
     override fun stop() {
@@ -100,6 +150,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
 
     companion object {
         private const val KEY_PARAM_VOLUME = "volume"
+        private const val KEY_PARAM_UTTERANCE_ID = "utteranceId"
     }
 }
 

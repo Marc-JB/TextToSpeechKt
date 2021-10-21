@@ -3,17 +3,25 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
         google()
-        jcenter()
     }
+
     resolutionStrategy {
         eachPlugin {
             if (requested.id.namespace == "com.android" || requested.id.name == "kotlin-android-extensions") {
-                useModule("com.android.tools.build:gradle:3.6.3")
+                useModule("com.android.tools.build:gradle:7.0.3")
             }
         }
     }
 }
 
-rootProject.name = "TextToSpeechKt"
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 
-enableFeaturePreview("GRADLE_METADATA")
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = "TextToSpeechKt"

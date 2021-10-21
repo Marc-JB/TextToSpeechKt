@@ -25,4 +25,8 @@ external class SpeechSynthesisUtterance(text: String = definedExternally) : Even
 
     /** Gets and sets the volume that the utterance will be spoken at. */
     var volume: Float
+
+    var onstart: ((event: dynamic) -> Unit)?
+
+    var onend: ((event: dynamic) -> Unit)?
 }
