@@ -64,8 +64,8 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
         plusAssign(text)
     }
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun say(text: String, clearQueue: Boolean, callback: (Result<TextToSpeechInstance.Status>) -> Unit) {
+    // /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    /*override fun say(text: String, clearQueue: Boolean, callback: (Result<TextToSpeechInstance.Status>) -> Unit) {
         if(clearQueue) speechSynthesis.cancel()
         speechSynthesisUtterance.onstart = {
             callback(Result.success(TextToSpeechInstance.Status.STARTED))
@@ -74,7 +74,7 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
             callback(Result.success(TextToSpeechInstance.Status.FINISHED))
         }
         plusAssign(text)
-    }
+    }*/
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override fun plusAssign(text: String) {
@@ -98,4 +98,3 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
         speechSynthesis.cancel()
     }
 }
-

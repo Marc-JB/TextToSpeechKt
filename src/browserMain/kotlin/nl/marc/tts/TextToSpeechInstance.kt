@@ -1,7 +1,6 @@
 package nl.marc.tts
 
 /** A TTS instance. Should be [close]d when no longer in use. */
-@JsExport
 actual interface TextToSpeechInstance {
     /**
      * The output volume, which is 100(%) by default.
@@ -31,9 +30,6 @@ actual interface TextToSpeechInstance {
     actual fun enqueue(text: String, clearQueue: Boolean)
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    actual fun say(text: String, clearQueue: Boolean, callback: (Result<Status>) -> Unit)
-
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     actual operator fun plusAssign(text: String)
 
     /** Clears the internal queue, but doesn't close used resources. */
@@ -41,8 +37,4 @@ actual interface TextToSpeechInstance {
 
     /** Clears the internal queue and closes used resources (if possible) */
     actual fun close()
-
-    actual enum class Status {
-        STARTED, FINISHED
-    }
 }

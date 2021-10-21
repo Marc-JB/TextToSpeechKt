@@ -132,7 +132,7 @@ android {
     }
 
     defaultConfig {
-        minSdk = 1
+        minSdk = 19
         targetSdk = 31
 
         // versionCode = libVersion.code
