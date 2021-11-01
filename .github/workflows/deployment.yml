@@ -32,11 +32,11 @@ jobs:
 
       # Build
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew :tts:build
 
       # Deploy
       - name: Deploy with Gradle
-        run: ./gradlew publish
+        run: ./gradlew :tts:publish
         env:
           GPR_USER: github-actions
           GPR_KEY: ${{ secrets.GITHUB_TOKEN }}
@@ -46,12 +46,12 @@ jobs:
         run: |
           mkdir out
           mkdir out/browser
-          cp ./build/distributions/TextToSpeechKt.js ./out/browser/TextToSpeechKt.js
-          cp ./build/distributions/TextToSpeechKt.js.map ./out/browser/TextToSpeechKt.js.map
-          cp ./build/js/packages/TextToSpeechKt-browser/kotlin/TextToSpeechKt-browser.d.ts ./out/browser/TextToSpeechKt.d.ts
+          cp ./tts/build/distributions/tts.js ./out/browser/TextToSpeechKt.js
+          cp ./tts/build/distributions/tts.js.map ./out/browser/TextToSpeechKt.js.map
+          cp ./tts/build/compileSync/main/productionExecutable/kotlin/TextToSpeechKt-tts-browser.d.ts ./out/browser/TextToSpeechKt.d.ts
           mkdir out/android
-          cp ./build/outputs/aar/TextToSpeechKt-debug.aar ./out/android/TextToSpeechKt-debug.aar
-          cp ./build/outputs/aar/TextToSpeechKt-release.aar ./out/android/TextToSpeechKt-release.aar
+          cp ./tts/build/outputs/aar/tts-debug.aar ./out/android/TextToSpeechKt-debug.aar
+          cp ./tts/build/outputs/aar/tts-release.aar ./out/android/TextToSpeechKt-release.aar
 
       # Upload artifacts
       - uses: actions/upload-artifact@v2
@@ -93,7 +93,7 @@ jobs:
 
       # Generate docs
       - name: Generate docs with Gradle & Dokka
-        run: ./gradlew dokkaHtml
+        run: ./gradlew :tts:dokkaHtml
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
@@ -101,6 +101,6 @@ jobs:
         uses: crazy-max/ghaction-github-pages@v2
         with:
           target_branch: gh-pages
-          build_dir: ./build/dokka/html/
+          build_dir: ./tts/build/dokka/html/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

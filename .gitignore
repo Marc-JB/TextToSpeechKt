@@ -178,6 +178,7 @@ fabric.properties
 # modules.xml
 # .idea/misc.xml
 # *.ipr
+.idea/artifacts
 
 # Sonarlint plugin
 # https://plugins.jetbrains.com/plugin/7973-sonarlint
