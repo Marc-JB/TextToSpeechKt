@@ -72,7 +72,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 fun configurePublication(publication: MavenPublication) {
-    publication.groupId = "nl.marc-apps.tts"
+    publication.groupId = "nl.marc-apps"
 
     publication.artifactId = "tts" + when {
         publication.artifactId.endsWith("-android") || publication.name == "android" -> "-android"
