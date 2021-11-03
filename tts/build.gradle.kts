@@ -7,11 +7,12 @@ plugins {
     kotlin("multiplatform")
     id("com.android.library")
     `maven-publish`
+    signing
     id("org.jetbrains.dokka") version "1.5.31"
 }
 
 group = "nl.marc-apps"
-version = "0.1.0"
+version = "0.7.2"
 
 fun getLocalProperties(): Properties {
     return Properties().also { properties ->
@@ -71,6 +72,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     }
 }
 
+val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+}
+
 fun configurePublication(publication: MavenPublication) {
     publication.groupId = "nl.marc-apps"
 
@@ -79,16 +84,78 @@ fun configurePublication(publication: MavenPublication) {
         publication.artifactId.endsWith("-browser") -> "-browser"
         else -> ""
     }
+
+    publication.artifact(javadocJar.get())
+
+    publication.pom {
+        name.set("TextToSpeechKt")
+        description.set("Multiplatform Text-to-Speech library for Android and Browser (JS). This library will enable you to use Text-to-Speech in multiplatform Kotlin projects.")
+        url.set("https://github.com/Marc-JB/TextToSpeechKt")
+        inceptionYear.set("2020")
+
+        licenses {
+            license {
+                name.set("MIT")
+                url.set("https://opensource.org/licenses/MIT")
+            }
+        }
+
+        organization {
+            name.set("Marc Apps & Software")
+            url.set("https://marc-apps.nl")
+        }
+
+        developers {
+            developer {
+                id.set("Marc-JB")
+                name.set("Marc")
+                email.set("16156117+Marc-JB@users.noreply.github.com")
+                url.set("https://marc-apps.nl")
+                organization.set("Marc Apps & Software")
+                organizationUrl.set("https://marc-apps.nl")
+            }
+        }
+
+        issueManagement {
+            url.set("https://github.com/Marc-JB/TextToSpeechKt/issues")
+        }
+
+        ciManagement {
+            url.set("https://github.com/Marc-JB/TextToSpeechKt/actions")
+        }
+
+        scm {
+            connection.set("scm:git:git://github.com/Marc-JB/TextToSpeechKt.git")
+            developerConnection.set("scm:git:ssh://github.com/Marc-JB/TextToSpeechKt.git")
+            url.set("https://github.com/Marc-JB/TextToSpeechKt")
+        }
+    }
+}
+
+val keys = getLocalProperties()
+
+fun getProperty(key: String): String? {
+    return keys.getProperty(key) ?: System.getenv(key.toUpperCaseAsciiOnly().replace(".", "_"))
 }
 
 publishing {
-    val keys = getLocalProperties()
-
-    fun getProperty(key: String): String? {
-        return keys.getProperty(key) ?: System.getenv(key.toUpperCaseAsciiOnly().replace(".", "_"))
-    }
-
     repositories {
+        maven {
+            name = "OSSRH"
+            url = uri(
+                if(project.version.toString().endsWith("-SNAPSHOT")) {
+                    "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                } else {
+                    "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                }
+            )
+
+            credentials {
+                username = getProperty("ossrh.username")
+                password = getProperty("ossrh.password")
+            }
+        }
+
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/Marc-JB/TextToSpeechKt")
@@ -104,4 +171,14 @@ publishing {
             configurePublication(this)
         }
     }
+}
+
+signing {
+    isRequired = true
+
+    val signingKey = getProperty("gpg.signing.key")
+    val signingPassword = getProperty("gpg.signing.password")
+    useInMemoryPgpKeys(signingKey, signingPassword)
+
+    sign(publishing.publications)
 }
