@@ -9,7 +9,8 @@ import org.w3c.speech.SpeechSynthesisUtterance
 import org.w3c.speech.speechSynthesis
 
 /** A TTS instance. Should be [close]d when no longer in use. */
-internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
+@JsExport
+class TextToSpeechJS internal constructor(context: Window = window) : TextToSpeechInstance {
     private val speechSynthesis: SpeechSynthesis = context.speechSynthesis
 
     private var speechSynthesisUtterance = SpeechSynthesisUtterance()
