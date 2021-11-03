@@ -1,12 +1,20 @@
+[![Gradle deployment](https://github.com/Marc-JB/TextToSpeechKt/actions/workflows/deployment.yml/badge.svg)](https://github.com/Marc-JB/TextToSpeechKt/actions)
 # TextToSpeechKt (preview)
-Multiplatform text-to-speech library for Android and Browser (JS).
-This library will enable you to use text-to-speech in multiplatform Kotlin projects and is useful when working with [Jetpack Compose on Android](https://developer.android.com/jetpack/compose) & [web (currently in preview)](https://compose-web.ui.pages.jetbrains.team/).
+Multiplatform Text-to-Speech library for Android and Browser (JS).
+This library will enable you to use Text-to-Speech in multiplatform Kotlin projects and is useful when working with [Jetpack Compose on Android](https://developer.android.com/jetpack/compose) & [web (currently in preview)](https://compose-web.ui.pages.jetbrains.team/).
 
 ## Setup
-Configure [the GitHub Packages repository](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#using-a-published-package) ~~or use maven "repositories { mavenCentral() }"~~ *(packages for Maven are not available yet)* and add the library to your dependencies:  
+Configure the maven central repository:
+```Kotlin
+repositories {
+    mavenCentral()
+}
+```
+
+And add the library to your dependencies: 
 ```Kotlin
 dependencies {
-    implementation("nl.marc-apps:tts:0.1.0")
+    implementation("nl.marc-apps:tts:0.7.1")
 }
 ```
 
