@@ -30,6 +30,9 @@ Add the library to your dependencies:
 </dependency>
 ```
 
+### NPM
+NPM distribution is planned, but not available as of now.
+
 ## Usage example
 Note: the examples are not using Jetpack Compose yet. 
 
