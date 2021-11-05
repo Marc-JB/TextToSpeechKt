@@ -5,7 +5,7 @@ plugins {
 
 android {
     compileSdk = 31
-    buildToolsVersion = "30.0.3"
+    buildToolsVersion = "31.0.0"
 
     defaultConfig {
         applicationId = "nl.marc_apps.tts_demo"
@@ -27,11 +27,18 @@ android {
             isMinifyEnabled = false
         }
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
     implementation(project(":tts"))
+
     implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.appcompat:appcompat:1.3.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.1")
+
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
 }

@@ -34,7 +34,8 @@ Add the library to your dependencies:
 Note: the examples are not using Jetpack Compose yet. 
 
 ### Android
-Example is coming soon (will be published in the [/app](/app) directory)
+See the [/app](/app) directory for a working example that you can try out on Android. 
+This example is written using Kotlin/JVM.
 
 ### Browser (Kotlin/JS)
 See the [/browser](/browser) directory for a working example that you can try out in the browser. 
