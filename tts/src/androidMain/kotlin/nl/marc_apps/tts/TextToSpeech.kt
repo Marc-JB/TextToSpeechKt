@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.speech.tts.TextToSpeech
+import androidx.annotation.ChecksSdkIntAtLeast
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -12,8 +13,10 @@ import kotlin.coroutines.suspendCoroutine
  * and check for compatibility issues.
  */
 actual object TextToSpeech {
+    @ChecksSdkIntAtLeast(api = VERSION_CODES.DONUT)
     actual val isSupported: Boolean = VERSION.SDK_INT >= VERSION_CODES.DONUT
 
+    @ChecksSdkIntAtLeast(api = VERSION_CODES.HONEYCOMB)
     actual val canChangeVolume = VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB
 
     private inline fun createAndroidTTS(context: Context, crossinline callback: (Result<TextToSpeech>) -> Unit) {

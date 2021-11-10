@@ -43,7 +43,11 @@ kotlin {
             }
         }
         val browserMain by getting
-        val androidMain by getting
+        val androidMain by getting {
+            dependencies {
+                implementation("androidx.annotation:annotation:1.3.0")
+            }
+        }
     }
 }
 
