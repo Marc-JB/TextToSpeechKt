@@ -5,8 +5,8 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.speech.tts.TextToSpeech
 import androidx.annotation.ChecksSdkIntAtLeast
-import nl.marc_apps.tts.errors.TextToSpeechNotSupportedError
 import nl.marc_apps.tts.errors.TextToSpeechInitialisationError
+import nl.marc_apps.tts.errors.TextToSpeechNotSupportedError
 import nl.marc_apps.tts.errors.TextToSpeechSecurityError
 import nl.marc_apps.tts.errors.UnknownTextToSpeechError
 import kotlin.coroutines.resume
