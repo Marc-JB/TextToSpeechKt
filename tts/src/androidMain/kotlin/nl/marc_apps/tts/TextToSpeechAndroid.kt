@@ -157,7 +157,8 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
                 if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
                     cont.resume(Unit)
                 } else if (it.isFailure) {
-                    it.exceptionOrNull()?.let { thr -> cont.resumeWithException(thr) }
+                    val error = it.exceptionOrNull() ?: Exception()
+                    cont.resumeWithException(error)
                 }
             }
         }
