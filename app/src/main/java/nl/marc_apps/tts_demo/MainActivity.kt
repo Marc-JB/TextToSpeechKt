@@ -34,6 +34,16 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        binding.inputTtsVolume.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                ttsInstance?.volume = value.toInt()
+            }
+        }
+
+        binding.inputTtsVolume.setLabelFormatter {
+            it.toInt().toString()
+        }
     }
 
     override fun onDestroy() {
