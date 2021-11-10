@@ -8,7 +8,7 @@ plugins {
     id("com.android.library")
     `maven-publish`
     signing
-    id("org.jetbrains.dokka") version "1.5.31"
+    id("org.jetbrains.dokka")
 }
 
 group = "nl.marc-apps"
