@@ -19,7 +19,7 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
     private var speechSynthesisUtterance = SpeechSynthesisUtterance()
 
     private val internalVolume: Float
-        get() = if(!isMuted) volume.toFloat() else 0f
+        get() = if(!isMuted) volume / 100f else 0f
 
     /**
      * The output volume, which is 100(%) by default.
