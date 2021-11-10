@@ -8,7 +8,7 @@ import androidx.annotation.ChecksSdkIntAtLeast
 import nl.marc_apps.tts.errors.TextToSpeechInitialisationError
 import nl.marc_apps.tts.errors.TextToSpeechNotSupportedError
 import nl.marc_apps.tts.errors.TextToSpeechSecurityError
-import nl.marc_apps.tts.errors.UnknownTextToSpeechError
+import nl.marc_apps.tts.errors.UnknownTextToSpeechInitialisationError
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -32,12 +32,12 @@ actual object TextToSpeech {
             try {
                 obj = TextToSpeech(context) {
                     if (it == TextToSpeech.SUCCESS) callback(Result.success(obj))
-                    else callback(Result.failure(UnknownTextToSpeechError))
+                    else callback(Result.failure(UnknownTextToSpeechInitialisationError()))
                 }
             } catch (e: SecurityException) {
-                callback(Result.failure(TextToSpeechSecurityError))
+                callback(Result.failure(TextToSpeechSecurityError(e)))
             }
-        } else callback(Result.failure(TextToSpeechNotSupportedError))
+        } else callback(Result.failure(TextToSpeechNotSupportedError()))
     }
 
     /**
@@ -64,7 +64,7 @@ actual object TextToSpeech {
     actual fun create(context: Context, callback: (Result<TextToSpeechInstance>) -> Unit) {
         createAndroidTTS(context) {
             if (it.isSuccess) callback(Result.success(TextToSpeechAndroid(it.getOrNull())))
-            else callback(Result.failure(it.exceptionOrNull() ?: UnknownTextToSpeechError))
+            else callback(Result.failure(it.exceptionOrNull() ?: UnknownTextToSpeechInitialisationError()))
         }
     }
 

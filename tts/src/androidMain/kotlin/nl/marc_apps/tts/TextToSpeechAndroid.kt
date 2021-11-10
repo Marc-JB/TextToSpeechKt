@@ -8,6 +8,8 @@ import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.speech.tts.UtteranceProgressListener
 import androidx.annotation.IntRange
+import androidx.annotation.RequiresApi
+import nl.marc_apps.tts.errors.*
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -69,31 +71,53 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
 
     init {
         if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-            tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-                override fun onStart(utteranceId: String?) {
-                    onTtsStatusUpdate(utteranceId?.toInt() ?: -1, TextToSpeechInstance.Status.STARTED)
-                }
-
-                override fun onDone(utteranceId: String?) {
-                    onTtsStatusUpdate(utteranceId?.toInt() ?: -1, TextToSpeechInstance.Status.FINISHED)
-                }
-
-                override fun onError(utteranceId: String?) {
-                    onTtsStatusUpdate(utteranceId?.toInt() ?: -1, Exception())
-                }
-
-                override fun onError(utteranceId: String?, errorCode: Int) {
-                    onTtsStatusUpdate(utteranceId?.toInt() ?: -1, Exception())
-                }
-
-                override fun onStop(utteranceId: String?, interrupted: Boolean) {
-                    onTtsStatusUpdate(utteranceId?.toInt() ?: -1, Exception())
-                }
-            })
+            setProgressListeners()
         } else {
-            tts?.setOnUtteranceCompletedListener {
-                onTtsStatusUpdate(it?.toInt() ?: -1, TextToSpeechInstance.Status.FINISHED)
+            setProgressListenersLegacy()
+        }
+    }
+
+    private fun setProgressListenersLegacy() {
+        tts?.setOnUtteranceCompletedListener {
+            onTtsStatusUpdate(it?.toInt() ?: -1, TextToSpeechInstance.Status.FINISHED)
+        }
+    }
+
+    @RequiresApi(VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+    private fun setProgressListeners() {
+        tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+            override fun onStart(utteranceId: String?) {
+                onTtsStatusUpdate(utteranceId?.toInt() ?: -1, TextToSpeechInstance.Status.STARTED)
             }
+
+            override fun onDone(utteranceId: String?) {
+                onTtsStatusUpdate(utteranceId?.toInt() ?: -1, TextToSpeechInstance.Status.FINISHED)
+            }
+
+            override fun onError(utteranceId: String?) {
+                onTtsStatusUpdate(utteranceId?.toInt() ?: -1, UnknownTextToSpeechSynthesisError())
+            }
+
+            override fun onError(utteranceId: String?, errorCode: Int) {
+                onTtsStatusUpdate(utteranceId?.toInt() ?: -1, mapErrorCodeToThrowable(errorCode))
+            }
+
+            override fun onStop(utteranceId: String?, interrupted: Boolean) {
+                onTtsStatusUpdate(utteranceId?.toInt() ?: -1, TextToSpeechSynthesisInterruptedError())
+            }
+        })
+    }
+
+    private fun mapErrorCodeToThrowable(errorCode: Int): TextToSpeechSynthesisError {
+        return when(errorCode) {
+            ERROR_SYNTHESIS -> TextToSpeechFlawedTextInputError()
+            ERROR_SERVICE -> TextToSpeechServiceFailureError()
+            ERROR_OUTPUT -> DeviceAudioOutputError()
+            ERROR_NETWORK -> NetworkConnectivityError()
+            ERROR_NETWORK_TIMEOUT -> NetworkTimeoutError()
+            ERROR_INVALID_REQUEST -> TextToSpeechRequestInvalidError()
+            ERROR_NOT_INSTALLED_YET -> TextToSpeechEngineUnavailableError()
+            else -> UnknownTextToSpeechSynthesisError()
         }
     }
 
@@ -195,6 +219,28 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
 
     companion object {
         private const val KEY_PARAM_VOLUME = "volume"
+
         private const val KEY_PARAM_UTTERANCE_ID = "utteranceId"
+
+        /** Denotes a failure of a TTS engine to synthesize the given input. */
+        private const val ERROR_SYNTHESIS = -3
+
+        /** Denotes a failure of a TTS service. */
+        private const val ERROR_SERVICE = -4
+
+        /** Denotes a failure related to the output (audio device or a file). */
+        private const val ERROR_OUTPUT = -5
+
+        /** Denotes a failure caused by a network connectivity problems. */
+        private const val ERROR_NETWORK = -6
+
+        /** Denotes a failure caused by network timeout.*/
+        private const val ERROR_NETWORK_TIMEOUT = -7
+
+        /** Denotes a failure caused by an invalid request. */
+        private const val ERROR_INVALID_REQUEST = -8
+
+        /** Denotes a failure caused by an unfinished download of the voice data. */
+        private const val ERROR_NOT_INSTALLED_YET = -9
     }
 }

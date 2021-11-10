@@ -3,6 +3,7 @@
 package nl.marc_apps.tts
 
 import kotlinx.browser.window
+import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import org.w3c.dom.Window
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
@@ -112,7 +113,7 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
                 if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
                     cont.resume(Unit)
                 } else if (it.isFailure) {
-                    val error = it.exceptionOrNull() ?: Exception()
+                    val error = it.exceptionOrNull() ?: UnknownTextToSpeechSynthesisError()
                     cont.resumeWithException(error)
                 }
             }
@@ -130,7 +131,7 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
                 if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
                     success(Unit)
                 } else if (it.isFailure) {
-                    val error = it.exceptionOrNull() ?: Exception()
+                    val error = it.exceptionOrNull() ?: UnknownTextToSpeechSynthesisError()
                     failure(error)
                 }
             }

@@ -22,7 +22,7 @@ actual object TextToSpeech {
      */
     fun createOrThrowSync(context: Context = window): TextToSpeechInstance {
         if(isSupported) return TextToSpeechJS(context)
-        else throw TextToSpeechNotSupportedError
+        else throw TextToSpeechNotSupportedError()
     }
 
     /**
@@ -51,8 +51,11 @@ actual object TextToSpeech {
 
     /** Creates a new [TextToSpeechInstance]. */
     actual fun create(context: Context, callback: (Result<TextToSpeechInstance>) -> Unit) {
-        if(isSupported) callback(Result.success(TextToSpeechJS(context)))
-        else callback(Result.failure(TextToSpeechNotSupportedError))
+        try {
+            callback(Result.success(createOrThrowSync(context)))
+        } catch (error: Throwable) {
+            callback(Result.failure(error))
+        }
     }
 
     /**
@@ -60,8 +63,11 @@ actual object TextToSpeech {
      * @throws TextToSpeechNotSupportedError when TTS is not supported.
      */
     fun create(context: Context = window): Promise<TextToSpeechInstance> {
-        return if(isSupported) Promise.resolve(TextToSpeechJS(context))
-        else Promise.reject(TextToSpeechNotSupportedError)
+        return try {
+            Promise.resolve(createOrThrowSync(context))
+        } catch (error: Throwable) {
+            Promise.reject(error)
+        }
     }
 
     /**
