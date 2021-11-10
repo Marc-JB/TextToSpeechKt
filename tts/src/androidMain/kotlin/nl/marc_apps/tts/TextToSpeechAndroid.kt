@@ -8,6 +8,8 @@ import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.speech.tts.UtteranceProgressListener
 import androidx.annotation.IntRange
+import androidx.annotation.RequiresApi
+import nl.marc_apps.tts.errors.*
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -23,15 +25,19 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         get() = if(!isMuted) volume / 100f else 0f
 
     /**
-     * The output volume, which is 100(%) by default.
-     * Value is minimally 0, maximally 100 (although some platforms may allow higher values).
+     * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
      * Changes only affect new calls to the [say] method.
      */
-    @IntRange(from = 0, to = 100)
-    override var volume: Int = 100
+    @IntRange(from = TextToSpeechInstance.VOLUME_MIN.toLong(), to = TextToSpeechInstance.VOLUME_MAX.toLong())
+    override var volume: Int = TextToSpeechInstance.VOLUME_DEFAULT
         set(value) {
-            if(TextToSpeech.canChangeVolume)
-                field = value
+            if(TextToSpeech.canChangeVolume) {
+                field = when {
+                    value < TextToSpeechInstance.VOLUME_MIN -> TextToSpeechInstance.VOLUME_MIN
+                    value > TextToSpeechInstance.VOLUME_MAX -> TextToSpeechInstance.VOLUME_MAX
+                    else -> value
+                }
+            }
         }
 
     /**
@@ -41,13 +47,13 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
      */
     override var isMuted: Boolean = false
 
-    override var pitch: Float = 1f
+    override var pitch: Float = TextToSpeechInstance.VOICE_PITCH_DEFAULT
         set(value) {
             field = value
             tts?.setPitch(value)
         }
 
-    override var rate: Float = 1f
+    override var rate: Float = TextToSpeechInstance.VOICE_RATE_DEFAULT
         set(value) {
             field = value
             tts?.setSpeechRate(value)
@@ -65,31 +71,53 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
 
     init {
         if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-            tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-                override fun onStart(utteranceId: String?) {
-                    onTtsStatusUpdate(utteranceId?.toInt() ?: -1, TextToSpeechInstance.Status.STARTED)
-                }
-
-                override fun onDone(utteranceId: String?) {
-                    onTtsStatusUpdate(utteranceId?.toInt() ?: -1, TextToSpeechInstance.Status.FINISHED)
-                }
-
-                override fun onError(utteranceId: String?) {
-                    onTtsStatusUpdate(utteranceId?.toInt() ?: -1, Exception())
-                }
-
-                override fun onError(utteranceId: String?, errorCode: Int) {
-                    onTtsStatusUpdate(utteranceId?.toInt() ?: -1, Exception())
-                }
-
-                override fun onStop(utteranceId: String?, interrupted: Boolean) {
-                    onTtsStatusUpdate(utteranceId?.toInt() ?: -1, Exception())
-                }
-            })
+            setProgressListeners()
         } else {
-            tts?.setOnUtteranceCompletedListener {
-                onTtsStatusUpdate(it?.toInt() ?: -1, TextToSpeechInstance.Status.FINISHED)
+            setProgressListenersLegacy()
+        }
+    }
+
+    private fun setProgressListenersLegacy() {
+        tts?.setOnUtteranceCompletedListener {
+            onTtsStatusUpdate(it?.toInt() ?: -1, TextToSpeechInstance.Status.FINISHED)
+        }
+    }
+
+    @RequiresApi(VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+    private fun setProgressListeners() {
+        tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+            override fun onStart(utteranceId: String?) {
+                onTtsStatusUpdate(utteranceId?.toInt() ?: -1, TextToSpeechInstance.Status.STARTED)
             }
+
+            override fun onDone(utteranceId: String?) {
+                onTtsStatusUpdate(utteranceId?.toInt() ?: -1, TextToSpeechInstance.Status.FINISHED)
+            }
+
+            override fun onError(utteranceId: String?) {
+                onTtsStatusUpdate(utteranceId?.toInt() ?: -1, UnknownTextToSpeechSynthesisError())
+            }
+
+            override fun onError(utteranceId: String?, errorCode: Int) {
+                onTtsStatusUpdate(utteranceId?.toInt() ?: -1, mapErrorCodeToThrowable(errorCode))
+            }
+
+            override fun onStop(utteranceId: String?, interrupted: Boolean) {
+                onTtsStatusUpdate(utteranceId?.toInt() ?: -1, TextToSpeechSynthesisInterruptedError())
+            }
+        })
+    }
+
+    private fun mapErrorCodeToThrowable(errorCode: Int): TextToSpeechSynthesisError {
+        return when(errorCode) {
+            ERROR_SYNTHESIS -> TextToSpeechFlawedTextInputError()
+            ERROR_SERVICE -> TextToSpeechServiceFailureError()
+            ERROR_OUTPUT -> DeviceAudioOutputError()
+            ERROR_NETWORK -> NetworkConnectivityError()
+            ERROR_NETWORK_TIMEOUT -> NetworkTimeoutError()
+            ERROR_INVALID_REQUEST -> TextToSpeechRequestInvalidError()
+            ERROR_NOT_INSTALLED_YET -> TextToSpeechEngineUnavailableError()
+            else -> UnknownTextToSpeechSynthesisError()
         }
     }
 
@@ -123,7 +151,15 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
 
         val queueMode = if(clearQueue) AndroidTTS.QUEUE_FLUSH else AndroidTTS.QUEUE_ADD
         val utteranceId = arrayOf(System.currentTimeMillis(), text).contentHashCode()
-        callbacks += utteranceId to callback
+
+        callbacks += utteranceId to {
+            callback(it)
+
+            if (it.isFailure || it.getOrNull() == TextToSpeechInstance.Status.FINISHED) {
+                callbacks.remove(utteranceId)
+            }
+        }
+
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             val params = Bundle()
             params.putFloat(KEY_PARAM_VOLUME, internalVolume)
@@ -145,7 +181,8 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
                 if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
                     cont.resume(Unit)
                 } else if (it.isFailure) {
-                    it.exceptionOrNull()?.let { thr -> cont.resumeWithException(thr) }
+                    val error = it.exceptionOrNull() ?: Exception()
+                    cont.resumeWithException(error)
                 }
             }
         }
@@ -182,6 +219,28 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
 
     companion object {
         private const val KEY_PARAM_VOLUME = "volume"
+
         private const val KEY_PARAM_UTTERANCE_ID = "utteranceId"
+
+        /** Denotes a failure of a TTS engine to synthesize the given input. */
+        private const val ERROR_SYNTHESIS = -3
+
+        /** Denotes a failure of a TTS service. */
+        private const val ERROR_SERVICE = -4
+
+        /** Denotes a failure related to the output (audio device or a file). */
+        private const val ERROR_OUTPUT = -5
+
+        /** Denotes a failure caused by a network connectivity problems. */
+        private const val ERROR_NETWORK = -6
+
+        /** Denotes a failure caused by network timeout.*/
+        private const val ERROR_NETWORK_TIMEOUT = -7
+
+        /** Denotes a failure caused by an invalid request. */
+        private const val ERROR_INVALID_REQUEST = -8
+
+        /** Denotes a failure caused by an unfinished download of the voice data. */
+        private const val ERROR_NOT_INSTALLED_YET = -9
     }
 }

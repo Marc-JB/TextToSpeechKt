@@ -16,7 +16,7 @@ repositories {
 And add the library to your dependencies:  
 ```Kotlin
 dependencies {
-    implementation("nl.marc-apps:tts:0.7.3")
+    implementation("nl.marc-apps:tts:0.9.0")
 }
 ```  
 
@@ -26,7 +26,7 @@ Add the library to your dependencies:
 <dependency>
     <groupId>nl.marc-apps</groupId>
     <artifactId>tts</artifactId>
-    <version>0.7.3</version>
+    <version>0.9.0</version>
 </dependency>
 ```
 
@@ -53,7 +53,7 @@ Example is coming soon.
 ```Kotlin
 import nl.marc_apps.tts.TextToSpeech
 import nl.marc_apps.tts.TextToSpeechInstance
-import nl.marc_apps.tts.TextToSpeechInitialisationError
+import nl.marc_apps.tts.errors.TextToSpeechInitialisationError
 
 var tts: TextToSpeechInstance? = null
 

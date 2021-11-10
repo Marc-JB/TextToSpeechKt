@@ -3,6 +3,7 @@
 package nl.marc_apps.tts
 
 import kotlinx.browser.window
+import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import org.w3c.dom.Window
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
@@ -10,6 +11,7 @@ import org.w3c.speech.speechSynthesis
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.js.Promise
 
 /** A TTS instance. Should be [close]d when no longer in use. */
 @ExperimentalJsExport
@@ -22,13 +24,16 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
         get() = if(!isMuted) volume / 100f else 0f
 
     /**
-     * The output volume, which is 100(%) by default.
-     * Value is minimally 0, maximally 100 (although some platforms may allow higher values).
+     * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
      * Changes only affect new calls to the [say] method.
      */
-    override var volume: Int = 100
+    override var volume: Int = TextToSpeechInstance.VOLUME_DEFAULT
         set(value) {
-            field = value
+            field = when {
+                value < TextToSpeechInstance.VOLUME_MIN -> TextToSpeechInstance.VOLUME_MIN
+                value > TextToSpeechInstance.VOLUME_MAX -> TextToSpeechInstance.VOLUME_MAX
+                else -> value
+            }
             speechSynthesisUtterance.volume = internalVolume
         }
 
@@ -43,13 +48,13 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
             speechSynthesisUtterance.volume = internalVolume
         }
 
-    override var pitch = 1f
+    override var pitch = TextToSpeechInstance.VOICE_PITCH_DEFAULT
         set(value) {
             field = value
             speechSynthesisUtterance.pitch = value
         }
 
-    override var rate = 1f
+    override var rate = TextToSpeechInstance.VOICE_RATE_DEFAULT
         set(value) {
             field = value
             speechSynthesisUtterance.rate = value
@@ -62,6 +67,14 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
     override val language: String
         get() = speechSynthesisUtterance.voice.lang
 
+    private fun resetCurrentUtterance() {
+        speechSynthesisUtterance = SpeechSynthesisUtterance().also {
+            it.volume = internalVolume
+            it.pitch = pitch
+            it.rate = rate
+        }
+    }
+
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override fun enqueue(text: String, clearQueue: Boolean) {
         if(isMuted || internalVolume == 0f) {
@@ -71,11 +84,8 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
 
         speechSynthesisUtterance.text = text
         speechSynthesis.speak(speechSynthesisUtterance)
-        speechSynthesisUtterance = SpeechSynthesisUtterance().also {
-            it.volume = internalVolume
-            it.pitch = pitch
-            it.rate = rate
-        }
+
+        resetCurrentUtterance()
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
@@ -103,7 +113,26 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
                 if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
                     cont.resume(Unit)
                 } else if (it.isFailure) {
-                    it.exceptionOrNull()?.let { thr -> cont.resumeWithException(thr) }
+                    val error = it.exceptionOrNull() ?: UnknownTextToSpeechSynthesisError()
+                    cont.resumeWithException(error)
+                }
+            }
+        }
+    }
+
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    fun sayJsPromise(
+        text: String,
+        clearQueue: Boolean = false,
+        resumeOnStatus: TextToSpeechInstance.Status = TextToSpeechInstance.Status.FINISHED
+    ): Promise<Unit> {
+        return Promise { success, failure ->
+            say(text, clearQueue) {
+                if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
+                    success(Unit)
+                } else if (it.isFailure) {
+                    val error = it.exceptionOrNull() ?: UnknownTextToSpeechSynthesisError()
+                    failure(error)
                 }
             }
         }

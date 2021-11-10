@@ -11,8 +11,32 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
-group = "nl.marc-apps"
-version = "0.8.0"
+object ProjectInfo {
+    const val GROUP_ID = "nl.marc-apps"
+
+    const val NAME = "TextToSpeechKt"
+
+    const val VERSION = "0.9.0"
+
+    object Developer {
+        const val ORG_NAME = "Marc Apps & Software"
+
+        const val WEBSITE = "https://marc-apps.nl"
+
+        const val NAME = "Marc"
+
+        const val EMAIL = "16156117+Marc-JB@users.noreply.github.com"
+
+        const val GITHUB_NAME = "Marc-JB"
+    }
+
+    const val LOCATION = "github.com/${Developer.GITHUB_NAME}/TextToSpeechKt"
+
+    const val LOCATION_HTTP = "https://$LOCATION"
+}
+
+group = ProjectInfo.GROUP_ID
+version = ProjectInfo.VERSION
 
 fun getLocalProperties(): Properties {
     return Properties().also { properties ->
@@ -62,6 +86,8 @@ android {
         targetSdk = 31
 
         setProperty("archivesBaseName", "tts")
+
+        buildConfigField("String", "LIBRARY_VERSION", "\"${ProjectInfo.VERSION}\"")
     }
 
     compileOptions {
@@ -81,7 +107,7 @@ val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
 }
 
 fun configurePublication(publication: MavenPublication) {
-    publication.groupId = "nl.marc-apps"
+    publication.groupId = ProjectInfo.GROUP_ID
 
     publication.artifactId = "tts" + when {
         publication.artifactId.endsWith("-android") || publication.name == "android" -> "-android"
@@ -92,9 +118,13 @@ fun configurePublication(publication: MavenPublication) {
     publication.artifact(javadocJar.get())
 
     publication.pom {
-        name.set("TextToSpeechKt")
-        description.set("Multiplatform Text-to-Speech library for Android and Browser (JS). This library will enable you to use Text-to-Speech in multiplatform Kotlin projects.")
-        url.set("https://github.com/Marc-JB/TextToSpeechKt")
+
+        name.set(ProjectInfo.NAME)
+        description.set(
+            "Multiplatform Text-to-Speech library for Android and Browser (JS). " +
+                    "This library will enable you to use Text-to-Speech in multiplatform Kotlin projects."
+        )
+        url.set(ProjectInfo.LOCATION_HTTP)
         inceptionYear.set("2020")
 
         licenses {
@@ -105,33 +135,33 @@ fun configurePublication(publication: MavenPublication) {
         }
 
         organization {
-            name.set("Marc Apps & Software")
-            url.set("https://marc-apps.nl")
+            name.set(ProjectInfo.Developer.ORG_NAME)
+            url.set(ProjectInfo.Developer.WEBSITE)
         }
 
         developers {
             developer {
-                id.set("Marc-JB")
-                name.set("Marc")
-                email.set("16156117+Marc-JB@users.noreply.github.com")
-                url.set("https://marc-apps.nl")
-                organization.set("Marc Apps & Software")
-                organizationUrl.set("https://marc-apps.nl")
+                id.set(ProjectInfo.Developer.GITHUB_NAME)
+                name.set(ProjectInfo.Developer.NAME)
+                email.set(ProjectInfo.Developer.EMAIL)
+                url.set(ProjectInfo.Developer.WEBSITE)
+                organization.set(ProjectInfo.Developer.ORG_NAME)
+                organizationUrl.set(ProjectInfo.Developer.WEBSITE)
             }
         }
 
         issueManagement {
-            url.set("https://github.com/Marc-JB/TextToSpeechKt/issues")
+            url.set("${ProjectInfo.LOCATION_HTTP}/issues")
         }
 
         ciManagement {
-            url.set("https://github.com/Marc-JB/TextToSpeechKt/actions")
+            url.set("${ProjectInfo.LOCATION_HTTP}/actions")
         }
 
         scm {
-            connection.set("scm:git:git://github.com/Marc-JB/TextToSpeechKt.git")
-            developerConnection.set("scm:git:ssh://github.com/Marc-JB/TextToSpeechKt.git")
-            url.set("https://github.com/Marc-JB/TextToSpeechKt")
+            connection.set("scm:git:git://${ProjectInfo.LOCATION}.git")
+            developerConnection.set("scm:git:ssh://${ProjectInfo.LOCATION}.git")
+            url.set(ProjectInfo.LOCATION_HTTP)
         }
     }
 }

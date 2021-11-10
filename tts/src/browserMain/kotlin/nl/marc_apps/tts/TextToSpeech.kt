@@ -1,8 +1,10 @@
 package nl.marc_apps.tts
 
 import kotlinx.browser.window
+import nl.marc_apps.tts.errors.TextToSpeechNotSupportedError
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.js.Promise
 
 /**
  * Functions and properties that can be used to create new TTS instances
@@ -20,7 +22,7 @@ actual object TextToSpeech {
      */
     fun createOrThrowSync(context: Context = window): TextToSpeechInstance {
         if(isSupported) return TextToSpeechJS(context)
-        else throw TextToSpeechNotSupportedError
+        else throw TextToSpeechNotSupportedError()
     }
 
     /**
@@ -49,8 +51,23 @@ actual object TextToSpeech {
 
     /** Creates a new [TextToSpeechInstance]. */
     actual fun create(context: Context, callback: (Result<TextToSpeechInstance>) -> Unit) {
-        if(isSupported) callback(Result.success(TextToSpeechJS(context)))
-        else callback(Result.failure(TextToSpeechNotSupportedError))
+        try {
+            callback(Result.success(createOrThrowSync(context)))
+        } catch (error: Throwable) {
+            callback(Result.failure(error))
+        }
+    }
+
+    /**
+     * Creates a new [TextToSpeechInstance].
+     * @throws TextToSpeechNotSupportedError when TTS is not supported.
+     */
+    fun create(context: Context = window): Promise<TextToSpeechInstance> {
+        return try {
+            Promise.resolve(createOrThrowSync(context))
+        } catch (error: Throwable) {
+            Promise.reject(error)
+        }
     }
 
     /**

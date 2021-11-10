@@ -1,5 +1,7 @@
 package nl.marc_apps.tts
 
+import nl.marc_apps.tts.errors.TextToSpeechInitialisationError
+
 /**
  * Functions and properties that can be used to create new TTS instances
  * and check for compatibility issues.
