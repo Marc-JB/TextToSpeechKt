@@ -7,10 +7,13 @@ import org.w3c.dom.Window
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
 import org.w3c.speech.speechSynthesis
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 /** A TTS instance. Should be [close]d when no longer in use. */
-@JsExport
-class TextToSpeechJS internal constructor(context: Window = window) : TextToSpeechInstance {
+@ExperimentalJsExport
+internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS(), TextToSpeechInstance {
     private val speechSynthesis: SpeechSynthesis = context.speechSynthesis
 
     private var speechSynthesisUtterance = SpeechSynthesisUtterance()
@@ -65,8 +68,8 @@ class TextToSpeechJS internal constructor(context: Window = window) : TextToSpee
         plusAssign(text)
     }
 
-    // /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    /*override fun say(text: String, clearQueue: Boolean, callback: (Result<TextToSpeechInstance.Status>) -> Unit) {
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    override fun say(text: String, clearQueue: Boolean, callback: (Result<TextToSpeechInstance.Status>) -> Unit) {
         if(clearQueue) speechSynthesis.cancel()
         speechSynthesisUtterance.onstart = {
             callback(Result.success(TextToSpeechInstance.Status.STARTED))
@@ -75,7 +78,20 @@ class TextToSpeechJS internal constructor(context: Window = window) : TextToSpee
             callback(Result.success(TextToSpeechInstance.Status.FINISHED))
         }
         plusAssign(text)
-    }*/
+    }
+
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    override suspend fun say(text: String, clearQueue: Boolean, resumeOnStatus: TextToSpeechInstance.Status) {
+        suspendCoroutine<Unit> { cont ->
+            say(text, clearQueue) {
+                if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
+                    cont.resume(Unit)
+                } else if (it.isFailure) {
+                    it.exceptionOrNull()?.let { thr -> cont.resumeWithException(thr) }
+                }
+            }
+        }
+    }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override fun plusAssign(text: String) {

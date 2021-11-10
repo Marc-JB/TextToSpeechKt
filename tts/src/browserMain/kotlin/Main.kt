@@ -1,24 +1,40 @@
 import nl.marc_apps.tts.TextToSpeech
 import nl.marc_apps.tts.TextToSpeechInstance
-import nl.marc_apps.tts.TextToSpeechJS
+import nl.marc_apps.tts.TextToSpeechInstanceJS
 import nl.marc_apps.tts.TextToSpeechNotSupportedError
 
+/**
+ * Use from JavaScript/TypeScript code only. Use the [TextToSpeech] object from Kotlin code.
+ */
+@ExperimentalJsExport
 @JsExport
-val isSupported = TextToSpeech.isSupported
-
-@JsExport
-val canChangeVolume = TextToSpeech.canChangeVolume
+val isTtsSupported = TextToSpeech.isSupported
 
 /**
+ * Use from JavaScript/TypeScript code only. Use the [TextToSpeech] object from Kotlin code.
+ */
+@ExperimentalJsExport
+@JsExport
+val canChangeTtsVolume = TextToSpeech.canChangeVolume
+
+/**
+ * Use from JavaScript/TypeScript code only. Use the [TextToSpeech] object from Kotlin code.
  * Creates a new [TextToSpeechInstance].
  * @throws TextToSpeechNotSupportedError when TTS is not supported.
  */
+@ExperimentalJsExport
 @JsExport
-fun createOrThrow() = TextToSpeech.createOrThrowSync() as TextToSpeechJS
+fun createTtsOrThrow(): TextToSpeechInstanceJS {
+    return TextToSpeech.createOrThrowSync() as TextToSpeechInstanceJS
+}
 
 /**
+ * Use from JavaScript/TypeScript code only. Use the [TextToSpeech] object from Kotlin code.
  * Creates a new [TextToSpeechInstance].
  * Will return null if TTS is not supported.
  */
+@ExperimentalJsExport
 @JsExport
-fun createOrNull() = TextToSpeech.createOrNullSync() as? TextToSpeechJS?
+fun createTtsOrNull(): TextToSpeechInstanceJS? {
+    return TextToSpeech.createOrNullSync() as? TextToSpeechInstanceJS?
+}
