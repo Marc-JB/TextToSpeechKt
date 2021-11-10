@@ -10,6 +10,7 @@ import org.w3c.speech.speechSynthesis
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.js.Promise
 
 /** A TTS instance. Should be [close]d when no longer in use. */
 @ExperimentalJsExport
@@ -113,6 +114,24 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
                 } else if (it.isFailure) {
                     val error = it.exceptionOrNull() ?: Exception()
                     cont.resumeWithException(error)
+                }
+            }
+        }
+    }
+
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    fun sayJsPromise(
+        text: String,
+        clearQueue: Boolean = false,
+        resumeOnStatus: TextToSpeechInstance.Status = TextToSpeechInstance.Status.FINISHED
+    ): Promise<Unit> {
+        return Promise { success, failure ->
+            say(text, clearQueue) {
+                if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
+                    success(Unit)
+                } else if (it.isFailure) {
+                    val error = it.exceptionOrNull() ?: Exception()
+                    failure(error)
                 }
             }
         }
