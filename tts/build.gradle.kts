@@ -86,6 +86,8 @@ android {
         targetSdk = 31
 
         setProperty("archivesBaseName", "tts")
+
+        buildConfigField("String", "LIBRARY_VERSION", "\"${ProjectInfo.VERSION}\"")
     }
 
     compileOptions {
