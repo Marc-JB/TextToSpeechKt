@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "nl.marc-apps"
-version = "0.7.3"
+version = "0.8.0"
 
 fun getLocalProperties(): Properties {
     return Properties().also { properties ->
