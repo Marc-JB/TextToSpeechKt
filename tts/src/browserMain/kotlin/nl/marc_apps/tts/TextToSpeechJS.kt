@@ -22,13 +22,16 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
         get() = if(!isMuted) volume / 100f else 0f
 
     /**
-     * The output volume, which is 100(%) by default.
-     * Value is minimally 0, maximally 100 (although some platforms may allow higher values).
+     * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
      * Changes only affect new calls to the [say] method.
      */
     override var volume: Int = TextToSpeechInstance.VOLUME_DEFAULT
         set(value) {
-            field = value
+            field = when {
+                value < TextToSpeechInstance.VOLUME_MIN -> TextToSpeechInstance.VOLUME_MIN
+                value > TextToSpeechInstance.VOLUME_MAX -> TextToSpeechInstance.VOLUME_MAX
+                else -> value
+            }
             speechSynthesisUtterance.volume = internalVolume
         }
 

@@ -8,8 +8,7 @@ package nl.marc_apps.tts
 @JsExport
 open class TextToSpeechInstanceJS internal constructor() {
     /**
-     * The output volume, which is 100(%) by default.
-     * Value is minimally 0, maximally 100 (although some platforms may allow higher values).
+     * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
      * Changes only affect new calls to the [enqueue] method.
      */
     open var volume: Int = 100

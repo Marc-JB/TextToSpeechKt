@@ -23,15 +23,19 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         get() = if(!isMuted) volume / 100f else 0f
 
     /**
-     * The output volume, which is 100(%) by default.
-     * Value is minimally 0, maximally 100 (although some platforms may allow higher values).
+     * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
      * Changes only affect new calls to the [say] method.
      */
     @IntRange(from = TextToSpeechInstance.VOLUME_MIN.toLong(), to = TextToSpeechInstance.VOLUME_MAX.toLong())
     override var volume: Int = TextToSpeechInstance.VOLUME_DEFAULT
         set(value) {
-            if(TextToSpeech.canChangeVolume)
-                field = value
+            if(TextToSpeech.canChangeVolume) {
+                field = when {
+                    value < TextToSpeechInstance.VOLUME_MIN -> TextToSpeechInstance.VOLUME_MIN
+                    value > TextToSpeechInstance.VOLUME_MAX -> TextToSpeechInstance.VOLUME_MAX
+                    else -> value
+                }
+            }
         }
 
     /**
