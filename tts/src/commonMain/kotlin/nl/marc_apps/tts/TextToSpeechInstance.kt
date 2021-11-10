@@ -47,4 +47,16 @@ interface TextToSpeechInstance : Closeable {
     enum class Status {
         STARTED, FINISHED
     }
+
+    companion object {
+        const val VOLUME_MIN = 0
+
+        const val VOLUME_MAX = 100
+
+        const val VOLUME_DEFAULT = VOLUME_MAX
+
+        const val VOICE_PITCH_DEFAULT = 1f
+
+        const val VOICE_RATE_DEFAULT = 1f
+    }
 }

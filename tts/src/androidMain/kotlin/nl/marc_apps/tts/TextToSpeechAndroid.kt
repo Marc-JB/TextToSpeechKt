@@ -27,8 +27,8 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
      * Value is minimally 0, maximally 100 (although some platforms may allow higher values).
      * Changes only affect new calls to the [say] method.
      */
-    @IntRange(from = 0, to = 100)
-    override var volume: Int = 100
+    @IntRange(from = TextToSpeechInstance.VOLUME_MIN.toLong(), to = TextToSpeechInstance.VOLUME_MAX.toLong())
+    override var volume: Int = TextToSpeechInstance.VOLUME_DEFAULT
         set(value) {
             if(TextToSpeech.canChangeVolume)
                 field = value
@@ -41,13 +41,13 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
      */
     override var isMuted: Boolean = false
 
-    override var pitch: Float = 1f
+    override var pitch: Float = TextToSpeechInstance.VOICE_PITCH_DEFAULT
         set(value) {
             field = value
             tts?.setPitch(value)
         }
 
-    override var rate: Float = 1f
+    override var rate: Float = TextToSpeechInstance.VOICE_RATE_DEFAULT
         set(value) {
             field = value
             tts?.setSpeechRate(value)

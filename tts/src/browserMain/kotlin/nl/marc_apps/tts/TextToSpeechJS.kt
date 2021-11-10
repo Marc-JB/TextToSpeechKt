@@ -26,7 +26,7 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
      * Value is minimally 0, maximally 100 (although some platforms may allow higher values).
      * Changes only affect new calls to the [say] method.
      */
-    override var volume: Int = 100
+    override var volume: Int = TextToSpeechInstance.VOLUME_DEFAULT
         set(value) {
             field = value
             speechSynthesisUtterance.volume = internalVolume
@@ -43,13 +43,13 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
             speechSynthesisUtterance.volume = internalVolume
         }
 
-    override var pitch = 1f
+    override var pitch = TextToSpeechInstance.VOICE_PITCH_DEFAULT
         set(value) {
             field = value
             speechSynthesisUtterance.pitch = value
         }
 
-    override var rate = 1f
+    override var rate = TextToSpeechInstance.VOICE_RATE_DEFAULT
         set(value) {
             field = value
             speechSynthesisUtterance.rate = value
@@ -62,6 +62,14 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
     override val language: String
         get() = speechSynthesisUtterance.voice.lang
 
+    private fun resetCurrentUtterance() {
+        speechSynthesisUtterance = SpeechSynthesisUtterance().also {
+            it.volume = internalVolume
+            it.pitch = pitch
+            it.rate = rate
+        }
+    }
+
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override fun enqueue(text: String, clearQueue: Boolean) {
         if(isMuted || internalVolume == 0f) {
@@ -71,11 +79,8 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
 
         speechSynthesisUtterance.text = text
         speechSynthesis.speak(speechSynthesisUtterance)
-        speechSynthesisUtterance = SpeechSynthesisUtterance().also {
-            it.volume = internalVolume
-            it.pitch = pitch
-            it.rate = rate
-        }
+
+        resetCurrentUtterance()
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
