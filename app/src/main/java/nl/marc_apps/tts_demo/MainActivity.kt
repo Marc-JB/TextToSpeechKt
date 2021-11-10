@@ -3,7 +3,6 @@ package nl.marc_apps.tts_demo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import nl.marc_apps.tts.TextToSpeech
 import nl.marc_apps.tts.TextToSpeechInstance
@@ -27,10 +26,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.actionSay.setOnClickListener {
             val text = binding.inputTtsText.editText?.text?.toString()
-            if (!text.isNullOrEmpty()) {
+            if (text?.isNotBlank() == true) {
+                binding.actionSay.isEnabled = false
                 lifecycleScope.launch {
-                    binding.actionSay.isEnabled = false
-                    ttsInstance?.say(text, clearQueue = false, resumeOnStatus = TextToSpeechInstance.Status.FINISHED)
+                    ttsInstance?.say(text)
                     binding.actionSay.isEnabled = true
                 }
             }
