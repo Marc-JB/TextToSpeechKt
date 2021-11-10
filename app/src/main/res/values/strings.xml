@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TTS Demo</string>
+    <string name="say">Say</string>
+    <string name="your_text">Your text</string>
+</resources>

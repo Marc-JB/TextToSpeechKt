@@ -7,16 +7,19 @@ import org.w3c.dom.Window
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
 import org.w3c.speech.speechSynthesis
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 /** A TTS instance. Should be [close]d when no longer in use. */
-@JsExport
-class TextToSpeechJS internal constructor(context: Window = window) : TextToSpeechInstance {
+@ExperimentalJsExport
+internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS(), TextToSpeechInstance {
     private val speechSynthesis: SpeechSynthesis = context.speechSynthesis
 
     private var speechSynthesisUtterance = SpeechSynthesisUtterance()
 
     private val internalVolume: Float
-        get() = if(!isMuted) volume.toFloat() else 0f
+        get() = if(!isMuted) volume / 100f else 0f
 
     /**
      * The output volume, which is 100(%) by default.
@@ -61,25 +64,11 @@ class TextToSpeechJS internal constructor(context: Window = window) : TextToSpee
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override fun enqueue(text: String, clearQueue: Boolean) {
-        if(clearQueue) speechSynthesis.cancel()
-        plusAssign(text)
-    }
-
-    // /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    /*override fun say(text: String, clearQueue: Boolean, callback: (Result<TextToSpeechInstance.Status>) -> Unit) {
-        if(clearQueue) speechSynthesis.cancel()
-        speechSynthesisUtterance.onstart = {
-            callback(Result.success(TextToSpeechInstance.Status.STARTED))
+        if(isMuted || internalVolume == 0f) {
+            if(clearQueue) stop()
+            return
         }
-        speechSynthesisUtterance.onend = {
-            callback(Result.success(TextToSpeechInstance.Status.FINISHED))
-        }
-        plusAssign(text)
-    }*/
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun plusAssign(text: String) {
-        if(isMuted || internalVolume == 0f) return
         speechSynthesisUtterance.text = text
         speechSynthesis.speak(speechSynthesisUtterance)
         speechSynthesisUtterance = SpeechSynthesisUtterance().also {
@@ -87,6 +76,42 @@ class TextToSpeechJS internal constructor(context: Window = window) : TextToSpee
             it.pitch = pitch
             it.rate = rate
         }
+    }
+
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    override fun say(text: String, clearQueue: Boolean, callback: (Result<TextToSpeechInstance.Status>) -> Unit) {
+        if(isMuted || internalVolume == 0f) {
+            if(clearQueue) stop()
+            callback(Result.success(TextToSpeechInstance.Status.FINISHED))
+            return
+        }
+
+        speechSynthesisUtterance.onstart = {
+            callback(Result.success(TextToSpeechInstance.Status.STARTED))
+        }
+        speechSynthesisUtterance.onend = {
+            callback(Result.success(TextToSpeechInstance.Status.FINISHED))
+        }
+
+        enqueue(text, clearQueue)
+    }
+
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    override suspend fun say(text: String, clearQueue: Boolean, resumeOnStatus: TextToSpeechInstance.Status) {
+        suspendCoroutine<Unit> { cont ->
+            say(text, clearQueue) {
+                if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
+                    cont.resume(Unit)
+                } else if (it.isFailure) {
+                    it.exceptionOrNull()?.let { thr -> cont.resumeWithException(thr) }
+                }
+            }
+        }
+    }
+
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    override fun plusAssign(text: String) {
+        enqueue(text, false)
     }
 
     /** Clears the internal queue, but doesn't close used resources. */

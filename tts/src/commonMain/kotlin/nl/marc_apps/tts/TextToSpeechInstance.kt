@@ -1,7 +1,7 @@
 package nl.marc_apps.tts
 
 /** A TTS instance. Should be [close]d when no longer in use. */
-expect interface TextToSpeechInstance {
+interface TextToSpeechInstance : Closeable {
     /**
      * The output volume, which is 100(%) by default.
      * Value is minimally 0, maximally 100 (although some platforms may allow higher values).
@@ -30,11 +30,21 @@ expect interface TextToSpeechInstance {
     fun enqueue(text: String, clearQueue: Boolean = false)
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    fun say(text: String, clearQueue: Boolean = false, callback: (Result<Status>) -> Unit)
+
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    suspend fun say(text: String, clearQueue: Boolean = false, resumeOnStatus: Status = Status.FINISHED)
+
+    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     operator fun plusAssign(text: String)
 
     /** Clears the internal queue, but doesn't close used resources. */
     fun stop()
 
     /** Clears the internal queue and closes used resources (if possible) */
-    fun close()
+    override fun close()
+
+    enum class Status {
+        STARTED, FINISHED
+    }
 }

@@ -8,6 +8,7 @@ import kotlin.coroutines.suspendCoroutine
  * Functions and properties that can be used to create new TTS instances
  * and check for compatibility issues.
  */
+@ExperimentalJsExport
 actual object TextToSpeech {
     actual val isSupported = js("\"speechSynthesis\" in window") as Boolean
 

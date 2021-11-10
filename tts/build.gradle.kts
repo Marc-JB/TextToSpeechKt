@@ -8,11 +8,11 @@ plugins {
     id("com.android.library")
     `maven-publish`
     signing
-    id("org.jetbrains.dokka") version "1.5.31"
+    id("org.jetbrains.dokka")
 }
 
 group = "nl.marc-apps"
-version = "0.7.3"
+version = "0.8.0"
 
 fun getLocalProperties(): Properties {
     return Properties().also { properties ->
@@ -43,18 +43,22 @@ kotlin {
             }
         }
         val browserMain by getting
-        val androidMain by getting
+        val androidMain by getting {
+            dependencies {
+                implementation("androidx.annotation:annotation:1.3.0")
+            }
+        }
     }
 }
 
 android {
     compileSdk = 31
-    buildToolsVersion = "30.0.3"
+    buildToolsVersion = "31.0.0"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 
     defaultConfig {
-        minSdk = 19
+        minSdk = 1
         targetSdk = 31
 
         setProperty("archivesBaseName", "tts")
