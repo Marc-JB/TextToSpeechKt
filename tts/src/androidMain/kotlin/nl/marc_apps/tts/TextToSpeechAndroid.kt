@@ -127,7 +127,15 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
 
         val queueMode = if(clearQueue) AndroidTTS.QUEUE_FLUSH else AndroidTTS.QUEUE_ADD
         val utteranceId = arrayOf(System.currentTimeMillis(), text).contentHashCode()
-        callbacks += utteranceId to callback
+
+        callbacks += utteranceId to {
+            callback(it)
+
+            if (it.isFailure || it.getOrNull() == TextToSpeechInstance.Status.FINISHED) {
+                callbacks.remove(utteranceId)
+            }
+        }
+
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             val params = Bundle()
             params.putFloat(KEY_PARAM_VOLUME, internalVolume)
