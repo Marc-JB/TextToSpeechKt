@@ -7,6 +7,7 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.speech.tts.UtteranceProgressListener
+import androidx.annotation.IntRange
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -26,6 +27,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
      * Value is minimally 0, maximally 100 (although some platforms may allow higher values).
      * Changes only affect new calls to the [say] method.
      */
+    @IntRange(from = 0, to = 100)
     override var volume: Int = 100
         set(value) {
             if(TextToSpeech.canChangeVolume)
@@ -115,6 +117,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     override fun say(text: String, clearQueue: Boolean, callback: (Result<TextToSpeechInstance.Status>) -> Unit) {
         if(isMuted || internalVolume == 0f) {
             if(clearQueue) stop()
+            callback(Result.success(TextToSpeechInstance.Status.FINISHED))
             return
         }
 

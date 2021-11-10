@@ -64,20 +64,36 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override fun enqueue(text: String, clearQueue: Boolean) {
-        if(clearQueue) speechSynthesis.cancel()
-        plusAssign(text)
+        if(isMuted || internalVolume == 0f) {
+            if(clearQueue) stop()
+            return
+        }
+
+        speechSynthesisUtterance.text = text
+        speechSynthesis.speak(speechSynthesisUtterance)
+        speechSynthesisUtterance = SpeechSynthesisUtterance().also {
+            it.volume = internalVolume
+            it.pitch = pitch
+            it.rate = rate
+        }
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override fun say(text: String, clearQueue: Boolean, callback: (Result<TextToSpeechInstance.Status>) -> Unit) {
-        if(clearQueue) speechSynthesis.cancel()
+        if(isMuted || internalVolume == 0f) {
+            if(clearQueue) stop()
+            callback(Result.success(TextToSpeechInstance.Status.FINISHED))
+            return
+        }
+
         speechSynthesisUtterance.onstart = {
             callback(Result.success(TextToSpeechInstance.Status.STARTED))
         }
         speechSynthesisUtterance.onend = {
             callback(Result.success(TextToSpeechInstance.Status.FINISHED))
         }
-        plusAssign(text)
+
+        enqueue(text, clearQueue)
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
@@ -95,14 +111,7 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override fun plusAssign(text: String) {
-        if(isMuted || internalVolume == 0f) return
-        speechSynthesisUtterance.text = text
-        speechSynthesis.speak(speechSynthesisUtterance)
-        speechSynthesisUtterance = SpeechSynthesisUtterance().also {
-            it.volume = internalVolume
-            it.pitch = pitch
-            it.rate = rate
-        }
+        enqueue(text, false)
     }
 
     /** Clears the internal queue, but doesn't close used resources. */
