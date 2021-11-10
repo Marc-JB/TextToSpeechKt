@@ -15,7 +15,7 @@ import android.speech.tts.TextToSpeech as AndroidTTS
 
 /** A TTS instance. Should be [close]d when no longer in use. */
 @TargetApi(VERSION_CODES.DONUT)
-internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechInstance, UtteranceProgressListener(), AndroidTTS.OnUtteranceCompletedListener {
+internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechInstance {
     private val callbacks = mutableMapOf<Int, (Result<TextToSpeechInstance.Status>) -> Unit>()
 
     private val internalVolume: Float
@@ -62,7 +62,33 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) voiceLocale.toLanguageTag() else voiceLocale.language
 
     init {
-        tts?.setOnUtteranceProgressListener(this)
+        if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                override fun onStart(utteranceId: String?) {
+                    onTtsStatusUpdate(utteranceId?.toInt() ?: -1, TextToSpeechInstance.Status.STARTED)
+                }
+
+                override fun onDone(utteranceId: String?) {
+                    onTtsStatusUpdate(utteranceId?.toInt() ?: -1, TextToSpeechInstance.Status.FINISHED)
+                }
+
+                override fun onError(utteranceId: String?) {
+                    onTtsStatusUpdate(utteranceId?.toInt() ?: -1, Exception())
+                }
+
+                override fun onError(utteranceId: String?, errorCode: Int) {
+                    onTtsStatusUpdate(utteranceId?.toInt() ?: -1, Exception())
+                }
+
+                override fun onStop(utteranceId: String?, interrupted: Boolean) {
+                    onTtsStatusUpdate(utteranceId?.toInt() ?: -1, Exception())
+                }
+            })
+        } else {
+            tts?.setOnUtteranceCompletedListener {
+                onTtsStatusUpdate(it?.toInt() ?: -1, TextToSpeechInstance.Status.FINISHED)
+            }
+        }
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
@@ -93,7 +119,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
 
         val queueMode = if(clearQueue) AndroidTTS.QUEUE_FLUSH else AndroidTTS.QUEUE_ADD
-        val utteranceId = Objects.hash(System.currentTimeMillis(), text)
+        val utteranceId = arrayOf(System.currentTimeMillis(), text).contentHashCode()
         callbacks += utteranceId to callback
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             val params = Bundle()
@@ -113,24 +139,21 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     override suspend fun say(text: String, clearQueue: Boolean, resumeOnStatus: TextToSpeechInstance.Status) {
         suspendCoroutine<Unit> { cont ->
             say(text, clearQueue) {
-                if (it.isSuccess && it.getOrNull() == resumeOnStatus) cont.resume(Unit)
-                else if (it.isFailure) it.exceptionOrNull()?.let { thr -> cont.resumeWithException(thr) }
+                if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
+                    cont.resume(Unit)
+                } else if (it.isFailure) {
+                    it.exceptionOrNull()?.let { thr -> cont.resumeWithException(thr) }
+                }
             }
         }
     }
 
-    override fun onStart(utteranceId: String?) {
-        callbacks[utteranceId?.toInt() ?: -1]?.invoke(Result.success(TextToSpeechInstance.Status.STARTED))
+    private fun onTtsStatusUpdate(utteranceId: Int, newStatus: TextToSpeechInstance.Status = TextToSpeechInstance.Status.FINISHED) {
+        callbacks[utteranceId]?.invoke(Result.success(newStatus))
     }
 
-    override fun onDone(utteranceId: String?) {
-        callbacks[utteranceId?.toInt() ?: -1]?.invoke(Result.success(TextToSpeechInstance.Status.FINISHED))
-    }
-
-    override fun onUtteranceCompleted(utteranceId: String?) = onDone(utteranceId)
-
-    override fun onError(utteranceId: String?) {
-        callbacks[utteranceId?.toInt() ?: -1]?.invoke(Result.failure(Exception()))
+    private fun onTtsStatusUpdate(utteranceId: Int, error: Throwable) {
+        callbacks[utteranceId]?.invoke(Result.failure(error))
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
@@ -143,9 +166,15 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
 
     /** Clears the internal queue and closes used resources (if possible) */
     override fun close() {
-        tts?.stop()
+        stop()
+        if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            tts?.setOnUtteranceProgressListener(null)
+        } else {
+            tts?.setOnUtteranceCompletedListener(null)
+        }
         tts?.shutdown()
         tts = null
+        callbacks.clear()
     }
 
     companion object {

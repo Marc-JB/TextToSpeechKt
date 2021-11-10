@@ -54,7 +54,7 @@ android {
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 
     defaultConfig {
-        minSdk = 19
+        minSdk = 1
         targetSdk = 31
 
         setProperty("archivesBaseName", "tts")
