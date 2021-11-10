@@ -1,6 +1,6 @@
-package nl.marc_apps.tts
+package nl.marc_apps.tts.errors
 
-/** Error that is thrown when an error occurs while creating a [TextToSpeechInstance]. */
+/** Error that is thrown when an error occurs while creating a [nl.marc_apps.tts.TextToSpeechInstance]. */
 sealed class TextToSpeechInitialisationError(
     message: String? = "Error while trying to load Text-to-Speech service",
     cause: Throwable? = null
@@ -9,7 +9,7 @@ sealed class TextToSpeechInitialisationError(
 /** Error that is thrown when a platform does not have TTS support */
 object TextToSpeechNotSupportedError : TextToSpeechInitialisationError("Text-to-Speech is not supported on this platform")
 
-/** Error that is thrown when an error occurs while creating a [TextToSpeechInstance]. */
+/** Error that is thrown when an error occurs while creating a [nl.marc_apps.tts.TextToSpeechInstance]. */
 object UnknownTextToSpeechError : TextToSpeechInitialisationError()
 
 /** Error that is thrown on some Samsung devices while creating a TTS instance. */

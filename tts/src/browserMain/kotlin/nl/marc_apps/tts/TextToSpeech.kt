@@ -1,6 +1,7 @@
 package nl.marc_apps.tts
 
 import kotlinx.browser.window
+import nl.marc_apps.tts.errors.TextToSpeechNotSupportedError
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 

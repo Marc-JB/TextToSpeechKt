@@ -1,7 +1,7 @@
 import nl.marc_apps.tts.TextToSpeech
 import nl.marc_apps.tts.TextToSpeechInstance
 import nl.marc_apps.tts.TextToSpeechInstanceJS
-import nl.marc_apps.tts.TextToSpeechNotSupportedError
+import nl.marc_apps.tts.errors.TextToSpeechNotSupportedError
 
 /**
  * Use from JavaScript/TypeScript code only. Use the [TextToSpeech] object from Kotlin code.

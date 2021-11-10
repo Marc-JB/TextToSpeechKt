@@ -5,6 +5,10 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.speech.tts.TextToSpeech
 import androidx.annotation.ChecksSdkIntAtLeast
+import nl.marc_apps.tts.errors.TextToSpeechNotSupportedError
+import nl.marc_apps.tts.errors.TextToSpeechInitialisationError
+import nl.marc_apps.tts.errors.TextToSpeechSecurityError
+import nl.marc_apps.tts.errors.UnknownTextToSpeechError
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -19,7 +23,10 @@ actual object TextToSpeech {
     @ChecksSdkIntAtLeast(api = VERSION_CODES.HONEYCOMB)
     actual val canChangeVolume = VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB
 
-    private inline fun createAndroidTTS(context: Context, crossinline callback: (Result<TextToSpeech>) -> Unit) {
+    private inline fun createAndroidTTS(
+        context: Context,
+        crossinline callback: (Result<TextToSpeech>) -> Unit
+    ) {
         if (VERSION.SDK_INT >= VERSION_CODES.DONUT) {
             lateinit var obj: TextToSpeech
             try {
@@ -39,7 +46,7 @@ actual object TextToSpeech {
      */
     actual fun createOrNull(context: Context, callback: (TextToSpeechInstance?) -> Unit) {
         createAndroidTTS(context) {
-            callback(if(it.isSuccess) TextToSpeechAndroid(it.getOrNull()) else null)
+            callback(if (it.isSuccess) TextToSpeechAndroid(it.getOrNull()) else null)
         }
     }
 
@@ -49,14 +56,14 @@ actual object TextToSpeech {
      */
     actual fun createOrNothing(context: Context, callback: (TextToSpeechInstance) -> Unit) {
         createAndroidTTS(context) {
-            if(it.isSuccess) callback(TextToSpeechAndroid(it.getOrNull()))
+            if (it.isSuccess) callback(TextToSpeechAndroid(it.getOrNull()))
         }
     }
 
     /** Creates a new [TextToSpeechInstance]. */
     actual fun create(context: Context, callback: (Result<TextToSpeechInstance>) -> Unit) {
         createAndroidTTS(context) {
-            if(it.isSuccess) callback(Result.success(TextToSpeechAndroid(it.getOrNull())))
+            if (it.isSuccess) callback(Result.success(TextToSpeechAndroid(it.getOrNull())))
             else callback(Result.failure(it.exceptionOrNull() ?: UnknownTextToSpeechError))
         }
     }
@@ -66,19 +73,21 @@ actual object TextToSpeech {
      * @throws TextToSpeechInitialisationError
      */
     @Throws(TextToSpeechInitialisationError::class)
-    actual suspend fun createOrThrow(context: Context): TextToSpeechInstance = suspendCoroutine { cont ->
-        create(context) {
-            cont.resumeWith(it)
+    actual suspend fun createOrThrow(context: Context): TextToSpeechInstance =
+        suspendCoroutine { cont ->
+            create(context) {
+                cont.resumeWith(it)
+            }
         }
-    }
 
     /**
      * Creates a new [TextToSpeechInstance].
      * Will return null if TTS is not supported.
      */
-    actual suspend fun createOrNull(context: Context): TextToSpeechInstance? = suspendCoroutine { cont ->
-        createOrNull(context) {
-            cont.resume(it)
+    actual suspend fun createOrNull(context: Context): TextToSpeechInstance? =
+        suspendCoroutine { cont ->
+            createOrNull(context) {
+                cont.resume(it)
+            }
         }
-    }
 }

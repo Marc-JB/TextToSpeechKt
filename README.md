@@ -53,7 +53,7 @@ Example is coming soon.
 ```Kotlin
 import nl.marc_apps.tts.TextToSpeech
 import nl.marc_apps.tts.TextToSpeechInstance
-import nl.marc_apps.tts.TextToSpeechInitialisationError
+import nl.marc_apps.tts.errors.TextToSpeechInitialisationError
 
 var tts: TextToSpeechInstance? = null
 
