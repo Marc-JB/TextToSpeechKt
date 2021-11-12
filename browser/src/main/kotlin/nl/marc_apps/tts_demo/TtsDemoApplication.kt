@@ -9,12 +9,14 @@ import kotlinx.html.js.br
 import kotlinx.html.js.onClickFunction
 import nl.marc_apps.tts.TextToSpeech
 import nl.marc_apps.tts.TextToSpeechInstance
+import nl.marc_apps.tts_demo.strings.DefaultStrings
+import nl.marc_apps.tts_demo.strings.Strings
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSpanElement
 import kotlin.properties.Delegates
 
-class TtsDemoApplication : SuspendingApplication() {
+class TtsDemoApplication(val strings: Strings = DefaultStrings) : SuspendingApplication() {
     private var tts: TextToSpeechInstance? = null
 
     private val inputTtsText by lazy {
@@ -41,25 +43,25 @@ class TtsDemoApplication : SuspendingApplication() {
     fun onStart() {
         renderUi {
             h1 {
-                +"Text-to-Speech demo (target: Kotlin/JS)"
+                +strings.pageTitle
             }
 
             br()
 
             div {
                 label {
-                    +"Text: "
+                    +strings.ttsTextLabel
                     htmlFor = INPUT_TTS_TEXT_ID
                 }
                 textInput {
-                    value = "Hello, world!"
+                    value = strings.ttsTextDefaultValue
                     id = INPUT_TTS_TEXT_ID
                     name = INPUT_TTS_TEXT_ID
                 }
                 br()
                 br()
                 label {
-                    +"Volume: "
+                    +strings.ttsVolumeLabel
                     htmlFor = INPUT_TTS_VOLUME_ID
                 }
                 rangeInput {
@@ -70,17 +72,17 @@ class TtsDemoApplication : SuspendingApplication() {
                     name = INPUT_TTS_VOLUME_ID
 
                     onInputFunction = {
-                        labelTtsVolume.textContent = " (${inputTtsVolume.value.toIntOrNull()}%)"
+                        labelTtsVolume.textContent = strings.ttsVolumeLevel(inputTtsVolume.value.toIntOrNull() ?: 100)
                     }
                 }
                 span {
-                    +" (100%)"
+                    +strings.ttsVolumeLevel(100)
                     id = LABEL_TTS_VOLUME_ID
                 }
                 br()
                 br()
                 button {
-                    +"Say"
+                    +strings.actionSay
                     id = ACTION_SAY_ID
                     disabled = true
                     onClickFunction = {
