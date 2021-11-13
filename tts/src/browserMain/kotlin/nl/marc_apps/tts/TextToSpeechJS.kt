@@ -121,10 +121,10 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    fun sayJsPromise(
+    override fun sayJsPromise(
         text: String,
-        clearQueue: Boolean = false,
-        resumeOnStatus: TextToSpeechInstance.Status = TextToSpeechInstance.Status.FINISHED
+        clearQueue: Boolean,
+        resumeOnStatus: TextToSpeechInstance.Status
     ): Promise<Unit> {
         return Promise { success, failure ->
             say(text, clearQueue) {
