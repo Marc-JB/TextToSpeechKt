@@ -7,7 +7,60 @@
     <title>TTS demo (JS)</title>
     <script src="../tts/build/distributions/tts.js"></script>
 </head>
-<body>
+<body onload="main()">
     <h1>Text-to-Speech demo (target: JS)</h1>
+    <br>
+    <div>
+        <label for="input_tts_text">Text: </label>
+        <input value="Hello, world!" id="input_tts_text" name="input_tts_text" />
+        <br>
+        <br>
+        <label for="input_tts_volume">Volume: </label>
+        <input type="range" value="100" min="0" max="100" id="input_tts_volume" name="input_tts_volume" oninput="onNewVolumeInput()" />
+        <span id="label_tts_volume"> (100%)</span>
+        <br>
+        <br>
+        <button id="action_say" onclick="onSayClicked()">Say</button>
+    </div>
+
+    <script>
+        'use strict';
+        let ttsInstance = null
+        let inputTtsText = null
+        let inputTtsVolume = null
+        let labelTtsVolume = null
+        let actionSay = null
+
+        function main() {
+            ttsInstance = tts.createTtsOrThrow(window)
+            inputTtsText = document.getElementById("input_tts_text")
+            inputTtsVolume = document.getElementById("input_tts_volume")
+            labelTtsVolume = document.getElementById("label_tts_volume")
+            actionSay = document.getElementById("action_say")
+        }
+
+        function onNewVolumeInput() {
+            if (labelTtsVolume != null && inputTtsVolume != null) {
+                labelTtsVolume.innerHTML = ` (${inputTtsVolume.value}%)`
+            }
+        }
+
+        function isBlank(str) {
+            return (!str || /^\s*$/.test(str));
+        }
+
+        function onSayClicked() {
+            const volumeInput = parseInt(inputTtsVolume.value)
+            if (!isNaN(volumeInput) && ttsInstance != null) {
+                ttsInstance.volume = volumeInput
+            }
+
+            const ttsText = inputTtsText.value
+
+            if (!isBlank(ttsText)) {
+                ttsInstance.enqueue(ttsText)
+            }
+        }
+    </script>
 </body>
 </html>
