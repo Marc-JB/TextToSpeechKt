@@ -45,9 +45,8 @@ See the [/browser](/browser) directory for a working example that you can try ou
 This example is written using Kotlin/JS.
 
 ### Browser (plain JavaScript)
-**Note: The typings generated (the .d.ts file) are currently incomplete.**
-
-Example is coming soon.
+See the [/browser_js](/browser_js) directory for a working example that you can try out in the browser.
+This example is written using plain JavaScript.
 
 ### Pseudocode-like example
 ```Kotlin
