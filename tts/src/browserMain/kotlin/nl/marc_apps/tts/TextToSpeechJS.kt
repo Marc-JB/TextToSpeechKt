@@ -15,7 +15,7 @@ import kotlin.js.Promise
 
 /** A TTS instance. Should be [close]d when no longer in use. */
 @ExperimentalJsExport
-internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS(), TextToSpeechInstance {
+internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceJS(), TextToSpeechInstanceWithJsPromises {
     private val speechSynthesis: SpeechSynthesis = context.speechSynthesis
 
     private var speechSynthesisUtterance = SpeechSynthesisUtterance()

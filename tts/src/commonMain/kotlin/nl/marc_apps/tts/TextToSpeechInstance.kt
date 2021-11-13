@@ -1,7 +1,7 @@
 package nl.marc_apps.tts
 
 /** A TTS instance. Should be [close]d when no longer in use. */
-expect interface TextToSpeechInstance : Closeable {
+interface TextToSpeechInstance : Closeable {
     /**
      * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
      * Changes only affect new calls to the [say] method.
@@ -48,14 +48,14 @@ expect interface TextToSpeechInstance : Closeable {
     }
 
     companion object {
-        val VOLUME_MIN: Int
+        const val VOLUME_MIN = 0
 
-        val VOLUME_MAX: Int
+        const val VOLUME_MAX = 100
 
-        val VOLUME_DEFAULT: Int
+        const val VOLUME_DEFAULT = VOLUME_MAX
 
-        val VOICE_PITCH_DEFAULT: Float
+        const val VOICE_PITCH_DEFAULT = 1f
 
-        val VOICE_RATE_DEFAULT: Float
+        const val VOICE_RATE_DEFAULT = 1f
     }
 }

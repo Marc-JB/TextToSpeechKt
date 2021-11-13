@@ -17,19 +17,19 @@ actual object TextToSpeech {
     actual val canChangeVolume = true
 
     /**
-     * Creates a new [TextToSpeechInstance].
+     * Creates a new [TextToSpeechInstanceWithJsPromises].
      * @throws TextToSpeechNotSupportedError when TTS is not supported.
      */
-    fun createOrThrowSync(context: Context = window): TextToSpeechInstance {
+    fun createOrThrowSync(context: Context = window): TextToSpeechInstanceWithJsPromises {
         if(isSupported) return TextToSpeechJS(context)
         else throw TextToSpeechNotSupportedError()
     }
 
     /**
-     * Creates a new [TextToSpeechInstance].
+     * Creates a new [TextToSpeechInstanceWithJsPromises].
      * Will return null if TTS is not supported.
      */
-    fun createOrNullSync(context: Context = window): TextToSpeechInstance? {
+    fun createOrNullSync(context: Context = window): TextToSpeechInstanceWithJsPromises? {
         return if(isSupported) TextToSpeechJS(context) else null
     }
 
@@ -59,10 +59,10 @@ actual object TextToSpeech {
     }
 
     /**
-     * Creates a new [TextToSpeechInstance].
+     * Creates a new [TextToSpeechInstanceWithJsPromises].
      * @throws TextToSpeechNotSupportedError when TTS is not supported.
      */
-    fun create(context: Context = window): Promise<TextToSpeechInstance> {
+    fun create(context: Context = window): Promise<TextToSpeechInstanceWithJsPromises> {
         return try {
             Promise.resolve(createOrThrowSync(context))
         } catch (error: Throwable) {
