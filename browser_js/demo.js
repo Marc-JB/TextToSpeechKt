@@ -1,6 +1,6 @@
 'use strict';
 /**
- * @type {import('./tts/v0.10.0/tts').tts.nl.marc_apps.tts.TextToSpeechInstanceJS | null}
+ * @type {import('./tts/v1.0.0/tts').tts.nl.marc_apps.tts.TextToSpeechInstanceJS | null}
  */
 let ttsInstance = null
 
