@@ -2,6 +2,7 @@
 
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
+import java.net.URL
 
 plugins {
     kotlin("multiplatform")
@@ -99,6 +100,36 @@ android {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+}
+
+tasks.dokkaHtml {
+    dokkaSourceSets {
+        named("commonMain") {
+            sourceLink {
+                localDirectory.set(file("src/commonMain/kotlin"))
+                remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/tts/src/commonMain/kotlin"))
+                remoteLineSuffix.set("#L")
+            }
+        }
+
+        named("androidMain") {
+            sourceLink {
+                localDirectory.set(file("src/androidMain/kotlin"))
+                remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/tts/src/androidMain/kotlin"))
+                remoteLineSuffix.set("#L")
+            }
+
+            jdkVersion.set(8)
+        }
+
+        named("browserMain") {
+            sourceLink {
+                localDirectory.set(file("src/browserMain/kotlin"))
+                remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/tts/src/browserMain/kotlin"))
+                remoteLineSuffix.set("#L")
+            }
+        }
     }
 }
 
