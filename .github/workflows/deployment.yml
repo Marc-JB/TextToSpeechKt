@@ -7,6 +7,7 @@ on:
 jobs:
   build-and-deploy-lib:
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     steps:
 
       # Checkout
@@ -72,6 +73,7 @@ jobs:
 
   deploy-docs:
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     steps:
 
       # Checkout
