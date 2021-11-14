@@ -24,9 +24,7 @@ val canChangeTtsVolume = TextToSpeech.canChangeVolume
  */
 @ExperimentalJsExport
 @JsExport
-fun createTtsOrThrow(): TextToSpeechInstanceJS {
-    return TextToSpeech.createOrThrowSync() as TextToSpeechInstanceJS
-}
+fun createTtsOrThrow() = TextToSpeechInstanceJS(TextToSpeech.createOrThrowSync())
 
 /**
  * Use from JavaScript/TypeScript code only. Use the [TextToSpeech] object from Kotlin code.
@@ -35,6 +33,4 @@ fun createTtsOrThrow(): TextToSpeechInstanceJS {
  */
 @ExperimentalJsExport
 @JsExport
-fun createTtsOrNull(): TextToSpeechInstanceJS? {
-    return TextToSpeech.createOrNullSync() as? TextToSpeechInstanceJS?
-}
+fun createTtsOrNull() = TextToSpeech.createOrNullSync()?.let { TextToSpeechInstanceJS(it) }

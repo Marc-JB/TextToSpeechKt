@@ -6,42 +6,36 @@ package nl.marc_apps.tts
  */
 @ExperimentalJsExport
 @JsExport
-open class TextToSpeechInstanceJS internal constructor() {
+class TextToSpeechInstanceJS internal constructor(private val ttsInstance: TextToSpeechInstance) {
     /**
      * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
      * Changes only affect new calls to the [enqueue] method.
      */
-    open var volume: Int = 100
+    var volume: Int by ttsInstance::volume
 
     /**
      * Alternative to setting [volume] to zero.
      * Setting this to true (and back to false) doesn't change the value of [volume].
      * Changes only affect new calls to the [enqueue] method.
      */
-    open var isMuted: Boolean = false
+    var isMuted: Boolean by ttsInstance::isMuted
 
-    open var pitch: Float = 1f
+    var pitch: Float by ttsInstance::pitch
 
-    open var rate: Float = 1f
+    var rate: Float by ttsInstance::rate
 
     /**
      * Returns a BCP 47 language tag of the selected voice on supported platforms.
      * May return the language code as ISO 639 on older platforms.
      */
-    open val language: String = "en-US"
+    val language: String by ttsInstance::language
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    open fun enqueue(text: String, clearQueue: Boolean) {
-        throw Exception()
-    }
+    fun enqueue(text: String, clearQueue: Boolean = false) = ttsInstance.enqueue(text, clearQueue)
 
     /** Clears the internal queue, but doesn't close used resources. */
-    open fun stop() {
-        throw Exception()
-    }
+    fun stop() = ttsInstance.stop()
 
     /** Clears the internal queue and closes used resources (if possible) */
-    open fun close() {
-        throw Exception()
-    }
+    fun close() = ttsInstance.close()
 }
