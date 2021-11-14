@@ -3,10 +3,12 @@ name: Gradle deployment
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build-and-deploy-lib:
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     steps:
 
       # Checkout
@@ -50,28 +52,29 @@ jobs:
         run: |
           mkdir out
           mkdir out/browser
-          cp ./tts/build/distributions/tts.js ./out/browser/TextToSpeechKt.js
-          cp ./tts/build/distributions/tts.js.map ./out/browser/TextToSpeechKt.js.map
-          cp ./tts/typings/tts.d.ts ./out/browser/TextToSpeechKt.d.ts
+          cp ./tts/build/distributions/tts.js ./out/browser/tts.js
+          cp ./tts/build/distributions/tts.js.map ./out/browser/tts.js.map
+          cp ./tts/typings/tts.d.ts ./out/browser/tts.d.ts
           mkdir out/android
-          cp ./tts/build/outputs/aar/tts-debug.aar ./out/android/TextToSpeechKt-debug.aar
-          cp ./tts/build/outputs/aar/tts-release.aar ./out/android/TextToSpeechKt-release.aar
+          cp ./tts/build/outputs/aar/tts-debug.aar ./out/android/tts-debug.aar
+          cp ./tts/build/outputs/aar/tts-release.aar ./out/android/tts-release.aar
 
       # Upload artifacts
       - uses: actions/upload-artifact@v2
         with:
           name: TextToSpeechKt (Browser)
-          path: ./out/browser/TextToSpeechKt.*
+          path: ./out/browser/tts.*
           if-no-files-found: error
 
       - uses: actions/upload-artifact@v2
         with:
           name: TextToSpeechKt (Android)
-          path: ./out/android/TextToSpeechKt-*.aar
+          path: ./out/android/tts-*.aar
           if-no-files-found: error
 
   deploy-docs:
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     steps:
 
       # Checkout

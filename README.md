@@ -16,7 +16,7 @@ repositories {
 And add the library to your dependencies:  
 ```Kotlin
 dependencies {
-    implementation("nl.marc-apps:tts:0.9.0")
+    implementation("nl.marc-apps:tts:0.10.0")
 }
 ```  
 
@@ -26,7 +26,7 @@ Add the library to your dependencies:
 <dependency>
     <groupId>nl.marc-apps</groupId>
     <artifactId>tts</artifactId>
-    <version>0.9.0</version>
+    <version>0.10.0</version>
 </dependency>
 ```
 
@@ -45,9 +45,8 @@ See the [/browser](/browser) directory for a working example that you can try ou
 This example is written using Kotlin/JS.
 
 ### Browser (plain JavaScript)
-**Note: The typings generated (the .d.ts file) are currently incomplete.**
-
-Example is coming soon.
+See the [/browser_js](/browser_js) directory for a working example that you can try out in the browser.
+This example is written using plain JavaScript.
 
 ### Pseudocode-like example
 ```Kotlin

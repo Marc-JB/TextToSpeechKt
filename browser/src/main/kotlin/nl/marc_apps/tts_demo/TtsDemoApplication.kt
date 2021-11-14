@@ -16,7 +16,7 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSpanElement
 import kotlin.properties.Delegates
 
-class TtsDemoApplication(val strings: Strings = DefaultStrings) : SuspendingApplication() {
+class TtsDemoApplication(private val strings: Strings = DefaultStrings) : SuspendingApplication() {
     private var tts: TextToSpeechInstance? = null
 
     private val inputTtsText by lazy {

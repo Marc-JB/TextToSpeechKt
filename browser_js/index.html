@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TTS demo (JS)</title>
+    
+    <script src="./tts/v0.10.0/tts.js"></script>
+    <script src="./demo.js"></script>
+</head>
+<body onload="main()">
+    <h1>Text-to-Speech demo (target: JS)</h1>
+    <br>
+    <div>
+        <label for="input_tts_text">Text: </label>
+        <input value="Hello, world!" id="input_tts_text" name="input_tts_text" />
+        <br>
+        <br>
+        <label for="input_tts_volume">Volume: </label>
+        <input type="range" value="100" min="0" max="100" id="input_tts_volume" name="input_tts_volume" oninput="onNewVolumeInput()" />
+        <span id="label_tts_volume"> (100%)</span>
+        <br>
+        <br>
+        <button id="action_say" onclick="onSayClicked()">Say</button>
+    </div>
+</body>
+</html>
