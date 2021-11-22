@@ -64,12 +64,17 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
             }
         }
-        val browserMain by getting
+        val browserMain by getting {
+            dependencies {
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.5.2")
+            }
+        }
         val androidMain by getting {
             dependencies {
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
                 implementation("androidx.annotation:annotation:1.3.0")
             }
         }
