@@ -17,7 +17,7 @@ object ProjectInfo {
 
     const val NAME = "TextToSpeechKt"
 
-    const val VERSION = "1.0.0"
+    const val VERSION = "1.1.0"
 
     object Developer {
         const val ORG_NAME = "Marc Apps & Software"
@@ -64,12 +64,17 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
             }
         }
-        val browserMain by getting
+        val browserMain by getting {
+            dependencies {
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.5.2")
+            }
+        }
         val androidMain by getting {
             dependencies {
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
                 implementation("androidx.annotation:annotation:1.3.0")
             }
         }
@@ -103,32 +108,35 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     }
 }
 
+fun configureDokkaSourceSet(platform: String, dokkaSourceSet: org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder) {
+    dokkaSourceSet.sourceLink {
+        localDirectory.set(file("src/${platform}Main/kotlin"))
+        remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/tts/src/${platform}Main/kotlin"))
+        remoteLineSuffix.set("#L")
+    }
+
+    dokkaSourceSet.externalDocumentationLink {
+        url.set(URL("https://marc-jb.github.io/TextToSpeechKt/tts"))
+        packageListUrl.set(URL("https://marc-jb.github.io/TextToSpeechKt/tts/package-list"))
+    }
+
+    if (platform == "android") {
+        dokkaSourceSet.jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
+    }
+}
+
 tasks.dokkaHtml {
     dokkaSourceSets {
         named("commonMain") {
-            sourceLink {
-                localDirectory.set(file("src/commonMain/kotlin"))
-                remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/tts/src/commonMain/kotlin"))
-                remoteLineSuffix.set("#L")
-            }
+            configureDokkaSourceSet("common", this)
         }
 
         named("androidMain") {
-            sourceLink {
-                localDirectory.set(file("src/androidMain/kotlin"))
-                remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/tts/src/androidMain/kotlin"))
-                remoteLineSuffix.set("#L")
-            }
-
-            jdkVersion.set(8)
+            configureDokkaSourceSet("android", this)
         }
 
         named("browserMain") {
-            sourceLink {
-                localDirectory.set(file("src/browserMain/kotlin"))
-                remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/tts/src/browserMain/kotlin"))
-                remoteLineSuffix.set("#L")
-            }
+            configureDokkaSourceSet("browser", this)
         }
     }
 }

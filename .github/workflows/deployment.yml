@@ -22,7 +22,8 @@ jobs:
           java-version: 11
 
       # Cache
-      - uses: actions/cache@v2
+      - name: Restore cache
+        uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
@@ -88,7 +89,8 @@ jobs:
           java-version: 11
 
       # Cache
-      - uses: actions/cache@v2
+      - name: Restore cache
+        uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
@@ -102,12 +104,31 @@ jobs:
       - name: Generate docs with Gradle & Dokka
         run: ./gradlew :tts:dokkaHtml
 
+      # Move docs
+      - name: Move docs
+        run: |
+          mkdir out
+          mv ./tts/build/dokka/html/* ./out
+
+      # Copy previous version
+      - name: Copy docs of previous version
+        uses: actions/checkout@v2
+        with:
+          ref: 'gh-pages'
+          path: './out/previous/'
+
+      # Delete unwanted files
+      - name: Delete unwanted files for previous version docs
+        run: |
+          rm -R ./out/previous/.git/
+          if [ -d "./out/previous/previous/" ]; then rm -R ./out/previous/previous/; fi
+
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         if: success()
         uses: crazy-max/ghaction-github-pages@v2
         with:
           target_branch: gh-pages
-          build_dir: ./tts/build/dokka/html/
+          build_dir: ./out/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
