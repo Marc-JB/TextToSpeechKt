@@ -33,18 +33,23 @@ Add the library to your dependencies:
 ### NPM
 NPM distribution is planned, but not available as of now.
 
-## Usage example
+## Usage
 Note: the examples are not using Jetpack Compose yet. 
 
-### Android
+### Generated docs by Dokka
+Documentation for:
+- [The current version](https://marc-jb.github.io/TextToSpeechKt/tts/nl.marc_apps.tts/index.html)
+- [The previous version](https://marc-jb.github.io/TextToSpeechKt/previous/tts/nl.marc_apps.tts/index.html)
+
+### Android example
 See the [/app](/app) directory for a working example that you can try out on Android. 
 This example is written using Kotlin/JVM.
 
-### Browser (Kotlin/JS)
+### Browser (Kotlin/JS) example
 See the [/browser](/browser) directory for a working example that you can try out in the browser. 
 This example is written using Kotlin/JS.
 
-### Browser (plain JavaScript)
+### Browser (plain JavaScript) example
 See the [/browser_js](/browser_js) directory for a working example that you can try out in the browser.
 This example is written using plain JavaScript.
 
