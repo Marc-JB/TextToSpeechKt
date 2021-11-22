@@ -88,7 +88,8 @@ jobs:
           java-version: 11
 
       # Cache
-      - uses: actions/cache@v2
+      - name: Restore cache
+        uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
