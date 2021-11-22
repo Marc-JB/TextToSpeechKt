@@ -102,6 +102,17 @@ jobs:
       - name: Generate docs with Gradle & Dokka
         run: ./gradlew :tts:dokkaHtml
 
+      # Copy previous version
+      - name: Copy docs of previous version
+        uses: actions/checkout@v2
+        with:
+          ref: 'gh-pages'
+          path: '/tts/build/dokka/html/previous/'
+
+      # Delete previous/previous
+      - name: Delete previous/previous docs
+        run: if [ -d "./tts/build/dokka/html/previous/previous/" ]; then rm -R ./tts/build/dokka/html/previous/previous/; fi
+
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         if: success()
