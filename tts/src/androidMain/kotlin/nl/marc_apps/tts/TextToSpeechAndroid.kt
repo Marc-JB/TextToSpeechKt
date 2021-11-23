@@ -163,7 +163,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             val params = Bundle()
             params.putFloat(KEY_PARAM_VOLUME, internalVolume)
-            params.putInt(KEY_PARAM_UTTERANCE_ID, utteranceId)
+            params.putString(KEY_PARAM_UTTERANCE_ID, utteranceId.toString())
             tts?.speak(text, queueMode, params, utteranceId.toString())
         } else {
             val params = hashMapOf(
