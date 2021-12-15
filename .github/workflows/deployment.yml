@@ -110,6 +110,13 @@ jobs:
           mkdir out
           mv ./tts/build/dokka/html/* ./out
 
+      # Upload artifacts
+      - uses: actions/upload-artifact@v2
+        with:
+          name: TextToSpeechKt (Docs)
+          path: ./out/*
+          if-no-files-found: error
+
       # Copy previous version
       - name: Copy docs of previous version
         uses: actions/checkout@v2
