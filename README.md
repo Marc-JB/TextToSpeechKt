@@ -1,39 +1,80 @@
-[![Gradle deployment](https://github.com/Marc-JB/TextToSpeechKt/actions/workflows/deployment.yml/badge.svg)](https://github.com/Marc-JB/TextToSpeechKt/actions) 
-[![Maven Central](https://img.shields.io/maven-central/v/nl.marc-apps/tts.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22nl.marc-apps%22%20AND%20a:%22tts%22)
-# TextToSpeechKt
-Multiplatform Text-to-Speech library for Android and Browser (JS).
+<div align="center">
+
+  # TextToSpeechKt
+  Multiplatform Text-to-Speech library for Android and Browser (JS).
+
 This library will enable you to use Text-to-Speech in multiplatform Kotlin projects and is useful when working with [Jetpack Compose on Android](https://developer.android.com/jetpack/compose) & [web (currently in preview)](https://compose-web.ui.pages.jetbrains.team/).
 
-## Setup
-### Gradle
-Configure the Maven Central repository:  
-```Kotlin
-repositories {
-    mavenCentral()
-}
-```
+  [![Gradle deployment](https://github.com/Marc-JB/TextToSpeechKt/actions/workflows/deployment.yml/badge.svg)](https://github.com/Marc-JB/TextToSpeechKt/actions) 
+  [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Marc-JB_TextToSpeechKt&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Marc-JB_TextToSpeechKt) 
+  [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://search.maven.org/search?q=g:%22nl.marc-apps%22%20AND%20a:%22tts%22)
+  [![License](https://badgen.net/github/license/Marc-JB/TextToSpeechKt)](https://github.com/Marc-JB/TextToSpeechKt/blob/main/LICENSE)
 
-And add the library to your dependencies:  
-```Kotlin
-dependencies {
-    implementation("nl.marc-apps:tts:1.0.0")
-}
-```  
+</div>
 
-### Apache Maven
-Add the library to your dependencies:
-```XML
-<dependency>
-    <groupId>nl.marc-apps</groupId>
-    <artifactId>tts</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
+# :notebook_with_decorative_cover: Table of Contents
+- [About the Project](#star2-about-the-project)
+  * [Tech Stack](#space_invader-tech-stack)
+  * [Features](#dart-features)
+- [Getting Started](#toolbox-getting-started)
+  * [Prerequisites](#bangbang-prerequisites)
+  * [Installation](#gear-installation)
+- [Usage](#eyes-usage)
+- [License](#warning-license)
+- [Acknowledgements](#gem-acknowledgements)
 
-### NPM
-NPM distribution is planned, but not available as of now.
+## :star2: About the Project
+### :space_invader: Tech Stack
+Uses Kotlin Multiplatform with an Android and JavaScript/Browser target. 
 
-## Usage
+### :dart: Features
+- Create the engine with Kotlin Coroutines
+- Listen for speech synthesis completion using Kotlin Coroutines
+- Modify the volume or mute the volume entirely
+- Modify the voice pitch
+- Modify the voice rate
+
+## 	:toolbox: Getting Started
+### :bangbang: Prerequisites
+A build tool like Gradle or Maven. NPM is not supported yet.
+
+### :gear: Installation
+<details>
+  <summary><strong>Gradle</strong></summary>
+
+  Configure the Maven Central repository:  
+  ```Kotlin
+  repositories {
+      mavenCentral()
+  }
+  ```
+
+  And add the library to your dependencies:  
+  ```Kotlin
+  dependencies {
+      implementation("nl.marc-apps:tts:1.0.0")
+  }
+  ```  
+  Make sure to configure the latest stable version: [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://search.maven.org/search?q=g:%22nl.marc-apps%22%20AND%20a:%22tts%22)   
+
+</details>
+
+<details>
+  <summary><strong>Apache Maven</strong></summary>
+
+  Add the library to your dependencies:  
+  ```XML
+  <dependency>
+      <groupId>nl.marc-apps</groupId>
+      <artifactId>tts</artifactId>
+      <version>1.0.0</version>
+  </dependency>
+  ```  
+  Make sure to configure the latest stable version: [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://search.maven.org/search?q=g:%22nl.marc-apps%22%20AND%20a:%22tts%22)   
+
+</details>
+
+## :eyes: Usage
 Note: the examples are not using Jetpack Compose yet. 
 
 ### Generated docs by Dokka
@@ -53,7 +94,7 @@ This example is written using Kotlin/JS.
 See the [/browser_js](/browser_js) directory for a working example that you can try out in the browser.
 This example is written using plain JavaScript.
 
-### Pseudocode-like example
+### Code snippet
 ```Kotlin
 import nl.marc_apps.tts.TextToSpeech
 import nl.marc_apps.tts.TextToSpeechInstance
@@ -74,3 +115,10 @@ fun onApplicationExit() {
     tts?.close()
 }
 ```
+
+## :warning: License
+This project is published under the MIT License. Read more about this license in the `LICENSE` file. 
+
+## :gem: Acknowledgements
+ - [Awesome Readme Template](https://github.com/Louis3797/awesome-readme-template)
+ - [Badgen](https://badgen.net/)
