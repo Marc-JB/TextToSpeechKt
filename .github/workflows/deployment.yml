@@ -5,6 +5,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+concurrency:
+  group: gradle-deployment-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-deploy-lib:
     runs-on: ubuntu-latest
@@ -13,21 +17,15 @@ jobs:
 
       # Checkout
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Set up JDK
       - name: Set up JDK 11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
           java-version: 11
-
-      # Cache
-      - name: Restore cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: ${{ runner.os }}-gradle-
+          distribution: 'adopt'
+          cache: 'gradle'
 
       # Permissions for Gradle
       - name: Grant execute permission for gradlew
@@ -61,13 +59,13 @@ jobs:
           cp ./tts/build/outputs/aar/tts-release.aar ./out/android/tts-release.aar
 
       # Upload artifacts
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: TextToSpeechKt (Browser)
           path: ./out/browser/tts.*
           if-no-files-found: error
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: TextToSpeechKt (Android)
           path: ./out/android/tts-*.aar
@@ -80,21 +78,15 @@ jobs:
 
       # Checkout
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Set up JDK
       - name: Set up JDK 11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
           java-version: 11
-
-      # Cache
-      - name: Restore cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: ${{ runner.os }}-gradle-
+          distribution: 'adopt'
+          cache: 'gradle'
 
       # Permissions for Gradle
       - name: Grant execute permission for gradlew
@@ -111,7 +103,7 @@ jobs:
           mv ./tts/build/dokka/html/* ./out
 
       # Upload artifacts
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: TextToSpeechKt (Docs)
           path: ./out/*
@@ -119,7 +111,7 @@ jobs:
 
       # Copy previous version
       - name: Copy docs of previous version
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: 'gh-pages'
           path: './out/previous/'
