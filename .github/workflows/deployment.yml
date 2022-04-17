@@ -31,13 +31,9 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # Build
-      - name: Build with Gradle
-        run: ./gradlew :tts:build
-
-      # Deploy
-      - name: Deploy with Gradle
-        run: ./gradlew :tts:publish
+      # Build & Deploy
+      - name: Build & Deploy with Gradle
+        run: ./gradlew :tts:build :tts:publish
         env:
           GPR_USER: github-actions
           GPR_KEY: ${{ secrets.GITHUB_TOKEN }}
