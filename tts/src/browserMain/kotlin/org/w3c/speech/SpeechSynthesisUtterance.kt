@@ -21,7 +21,7 @@ external class SpeechSynthesisUtterance(text: String = definedExternally) : Even
     var text: String
 
     /** Gets and sets the voice that will be used to speak the utterance. */
-    var voice: SpeechSynthesisVoice
+    var voice: SpeechSynthesisVoice?
 
     /** Gets and sets the volume that the utterance will be spoken at. */
     var volume: Float

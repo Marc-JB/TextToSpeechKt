@@ -18,7 +18,7 @@ object ProjectInfo {
 
     const val NAME = "TextToSpeechKt"
 
-    const val VERSION = "1.1.4-SNAPSHOT"
+    const val VERSION = "1.2.0"
 
     object Developer {
         const val ORG_NAME = "Marc Apps & Software"

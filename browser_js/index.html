@@ -8,21 +8,35 @@
     
     <script src="./tts/v1/tts.js"></script>
     <script src="./demo.js"></script>
+
+    <style>
+        body {
+            margin: 32px;
+        }
+
+        button {
+            padding: 4px 32px;
+        }
+    </style>
+
 </head>
 <body onload="main()">
     <h1>Text-to-Speech demo (target: JS)</h1>
-    <br>
-    <div>
-        <label for="input_tts_text">Text: </label>
+    <p>
+        <label for="input_tts_text"><strong>Text: </strong></label>
         <input value="Hello, world!" id="input_tts_text" name="input_tts_text" />
-        <br>
-        <br>
-        <label for="input_tts_volume">Volume: </label>
+    </p>
+    <p>
+        <label for="input_tts_volume"><strong>Volume: </strong></label>
         <input type="range" value="100" min="0" max="100" id="input_tts_volume" name="input_tts_volume" oninput="onNewVolumeInput()" />
         <span id="label_tts_volume"> (100%)</span>
-        <br>
-        <br>
+    </p>
+    <p>
+        <strong>Synthesis language: </strong>
+        <span id="label_tts_language">Unknown</span>
+    </p>
+    <p>
         <button id="action_say" onclick="onSayClicked()">Say</button>
-    </div>
+    </p>
 </body>
 </html>
