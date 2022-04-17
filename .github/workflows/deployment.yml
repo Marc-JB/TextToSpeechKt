@@ -2,7 +2,7 @@ name: Gradle deployment
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, snapshots ]
   workflow_dispatch:
 
 concurrency:
