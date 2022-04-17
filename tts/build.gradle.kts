@@ -1,5 +1,6 @@
 @file:Suppress("UNUSED_VARIABLE")
 
+import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.net.URL
@@ -17,7 +18,7 @@ object ProjectInfo {
 
     const val NAME = "TextToSpeechKt"
 
-    const val VERSION = "1.1.3"
+    const val VERSION = "1.1.4-SNAPSHOT"
 
     object Developer {
         const val ORG_NAME = "Marc Apps & Software"
@@ -64,17 +65,17 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
             }
         }
         val browserMain by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.5.2")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.6.1")
             }
         }
         val androidMain by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1")
                 implementation("androidx.annotation:annotation:1.3.0")
             }
         }
@@ -82,14 +83,14 @@ kotlin {
 }
 
 android {
-    compileSdk = 31
-    buildToolsVersion = "31.0.0"
+    compileSdk = 32
+    buildToolsVersion = "32.0.0"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 
     defaultConfig {
         minSdk = 1
-        targetSdk = 31
+        targetSdk = 32
 
         setProperty("archivesBaseName", "tts")
 
@@ -108,35 +109,35 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     }
 }
 
-fun configureDokkaSourceSet(platform: String, dokkaSourceSet: org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder) {
-    dokkaSourceSet.sourceLink {
+fun GradleDokkaSourceSetBuilder.configureDokkaSourceSet(platform: String) {
+    sourceLink {
         localDirectory.set(file("src/${platform}Main/kotlin"))
         remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/tts/src/${platform}Main/kotlin"))
         remoteLineSuffix.set("#L")
     }
 
-    dokkaSourceSet.externalDocumentationLink {
+    externalDocumentationLink {
         url.set(URL("https://marc-jb.github.io/TextToSpeechKt/tts"))
         packageListUrl.set(URL("https://marc-jb.github.io/TextToSpeechKt/tts/package-list"))
     }
 
     if (platform == "android") {
-        dokkaSourceSet.jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
+        jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
     }
 }
 
 tasks.dokkaHtml {
     dokkaSourceSets {
         named("commonMain") {
-            configureDokkaSourceSet("common", this)
+            configureDokkaSourceSet("common")
         }
 
         named("androidMain") {
-            configureDokkaSourceSet("android", this)
+            configureDokkaSourceSet("android")
         }
 
         named("browserMain") {
-            configureDokkaSourceSet("browser", this)
+            configureDokkaSourceSet("browser")
         }
     }
 }
@@ -145,19 +146,18 @@ val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
 }
 
-fun configurePublication(publication: MavenPublication) {
-    publication.groupId = ProjectInfo.GROUP_ID
+fun MavenPublication.configurePublication() {
+    groupId = ProjectInfo.GROUP_ID
 
-    publication.artifactId = "tts" + when {
-        publication.artifactId.endsWith("-android") || publication.name == "android" -> "-android"
-        publication.artifactId.endsWith("-browser") -> "-browser"
+    artifactId = "tts" + when {
+        artifactId.endsWith("-android") || name == "android" -> "-android"
+        artifactId.endsWith("-browser") -> "-browser"
         else -> ""
     }
 
-    publication.artifact(javadocJar.get())
+    artifact(javadocJar.get())
 
-    publication.pom {
-
+    pom {
         name.set(ProjectInfo.NAME)
         description.set(
             "Multiplatform Text-to-Speech library for Android and Browser (JS). " +
@@ -241,7 +241,7 @@ publishing {
 
     publications {
         withType<MavenPublication> {
-            configurePublication(this)
+            configurePublication()
         }
     }
 }
