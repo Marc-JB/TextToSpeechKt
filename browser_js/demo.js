@@ -1,6 +1,6 @@
 'use strict';
 /**
- * @type {import('./tts/v1.0.0/tts').tts.nl.marc_apps.tts.TextToSpeechInstanceJS | null}
+ * @type {import('./tts/v1/tts').tts.nl.marc_apps.tts.TextToSpeechInstanceJS | null}
  */
 let ttsInstance = null
 
@@ -19,11 +19,21 @@ let inputTtsVolume = null
  */
 let labelTtsVolume = null
 
+/**
+ * @type {HTMLSpanElement | null}
+ */
+let labelTtsLanguage = null
+
 function main() {
-    ttsInstance = tts.createTtsOrThrow(window)
+    ttsInstance = tts.createTtsOrThrow()
     inputTtsText = document.getElementById("input_tts_text")
     inputTtsVolume = document.getElementById("input_tts_volume")
     labelTtsVolume = document.getElementById("label_tts_volume")
+    labelTtsLanguage = document.getElementById("label_tts_language")
+    
+    setTimeout(() => {
+        labelTtsLanguage.textContent = ttsInstance.language
+    }, 500)
 }
 
 function onNewVolumeInput() {
@@ -41,6 +51,7 @@ function onSayClicked() {
     if (!isNaN(volumeInput) && ttsInstance !== null) {
         ttsInstance.volume = volumeInput
     }
+
     const ttsText = inputTtsText.value
     if (!isBlank(ttsText)) {
         ttsInstance.enqueue(ttsText)

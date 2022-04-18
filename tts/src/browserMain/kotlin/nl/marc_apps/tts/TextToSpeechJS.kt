@@ -65,7 +65,13 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWi
      * May return the language code as ISO 639 on older platforms.
      */
     override val language: String
-        get() = speechSynthesisUtterance.voice.lang
+        get() {
+            val reportedLanguage = speechSynthesisUtterance.voice?.lang ?: speechSynthesisUtterance.lang
+            return reportedLanguage.ifBlank {
+                val defaultLanguage = speechSynthesis.getVoices().find { it.default }?.lang
+                if (defaultLanguage.isNullOrBlank()) "Unknown" else defaultLanguage
+            }
+        }
 
     private fun resetCurrentUtterance() {
         speechSynthesisUtterance = SpeechSynthesisUtterance().also {

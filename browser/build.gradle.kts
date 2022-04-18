@@ -1,16 +1,13 @@
 plugins {
     kotlin("js")
-}
-
-repositories {
-    google()
-    mavenCentral()
-    maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
+    id("org.jetbrains.compose") version "1.1.1"
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-html:0.7.3")
     implementation(project(":tts"))
+
+    implementation(compose.web.core)
+    implementation(compose.runtime)
 
     testImplementation(kotlin("test"))
 }
@@ -18,10 +15,6 @@ dependencies {
 kotlin {
     js(IR) {
         binaries.executable()
-        browser {
-            commonWebpackConfig {
-                cssSupport.enabled = true
-            }
-        }
+        browser()
     }
 }
