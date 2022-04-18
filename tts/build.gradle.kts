@@ -18,7 +18,15 @@ object ProjectInfo {
 
     const val NAME = "TextToSpeechKt"
 
-    const val VERSION = "1.2.0"
+    const val VERSION_MAJOR_MINOR = "1.2"
+
+    const val VERSION_BUILD = "1"
+
+    const val SNAPSHOT = false
+
+    private val SNAPSHOT_SUFFIX = if (SNAPSHOT) "-SNAPSHOT" else ""
+
+    val VERSION = "${VERSION_MAJOR_MINOR}.${VERSION_BUILD}${SNAPSHOT_SUFFIX}"
 
     object Developer {
         const val ORG_NAME = "Marc Apps & Software"
@@ -126,7 +134,49 @@ fun GradleDokkaSourceSetBuilder.configureDokkaSourceSet(platform: String) {
     }
 }
 
+val versionArchiveDirectory = file(buildDir.toPath().resolve("dokka").resolve("html_version_archive"))
+
+val generateDokkaHtmlArchiveTasks by tasks.register<org.jetbrains.dokka.gradle.DokkaTask>("dokkaPreviouslyDocumentation") {
+    dependencies {
+        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.6.10")
+    }
+
+    outputDirectory.set(file(versionArchiveDirectory.toPath().resolve(ProjectInfo.VERSION_MAJOR_MINOR)))
+
+    val versioningPluginClass = "org.jetbrains.dokka.versioning.VersioningPlugin"
+    val versioningPluginConfig = """{ "version": "${ProjectInfo.VERSION_MAJOR_MINOR}" }"""
+
+    pluginsMapConfiguration.set(
+        mapOf(
+            versioningPluginClass to versioningPluginConfig
+        )
+    )
+
+    configureAllSourceSets()
+}
+
 tasks.dokkaHtml {
+    dependsOn(generateDokkaHtmlArchiveTasks)
+
+    dependencies {
+        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.6.10")
+    }
+
+    val versionArchivePath = versionArchiveDirectory.toString().replace("\\", "\\\\")
+
+    val versioningPluginClass = "org.jetbrains.dokka.versioning.VersioningPlugin"
+    val versioningPluginConfig = """{ "version": "${ProjectInfo.VERSION_MAJOR_MINOR}", "olderVersionsDir": "$versionArchivePath" }"""
+
+    pluginsMapConfiguration.set(
+        mapOf(
+            versioningPluginClass to versioningPluginConfig
+        )
+    )
+
+    configureAllSourceSets()
+}
+
+fun org.jetbrains.dokka.gradle.DokkaTask.configureAllSourceSets() {
     dokkaSourceSets {
         named("commonMain") {
             configureDokkaSourceSet("common")
@@ -216,7 +266,7 @@ publishing {
         maven {
             name = "OSSRH"
             url = uri(
-                if(project.version.toString().endsWith("-SNAPSHOT")) {
+                if(ProjectInfo.SNAPSHOT) {
                     "https://s01.oss.sonatype.org/content/repositories/snapshots/"
                 } else {
                     "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"

@@ -88,6 +88,13 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      # Copy previous versions
+      - name: Copy docs of previous versions
+        uses: actions/checkout@v3
+        with:
+          ref: 'dokka-version-archive'
+          path: './tts/build/dokka/html_version_archive/'
+
       # Generate docs
       - name: Generate docs with Gradle & Dokka
         run: ./gradlew :tts:dokkaHtml
@@ -105,18 +112,15 @@ jobs:
           path: ./out/*
           if-no-files-found: error
 
-      # Copy previous version
-      - name: Copy docs of previous version
-        uses: actions/checkout@v3
+      # Deploy Dokka archive
+      - name: Deploy Dokka archive
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v2
         with:
-          ref: 'gh-pages'
-          path: './out/previous/'
-
-      # Delete unwanted files
-      - name: Delete unwanted files for previous version docs
-        run: |
-          rm -R ./out/previous/.git/
-          if [ -d "./out/previous/previous/" ]; then rm -R ./out/previous/previous/; fi
+          target_branch: dokka-version-archive
+          build_dir: ./tts/build/dokka/html_version_archive/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
