@@ -3,8 +3,6 @@
   # TextToSpeechKt
   Multiplatform Text-to-Speech library for Android and Browser (JS).
 
-This library will enable you to use Text-to-Speech in multiplatform Kotlin projects and is useful when working with [Jetpack Compose on Android](https://developer.android.com/jetpack/compose) & [web (currently in preview)](https://compose-web.ui.pages.jetbrains.team/).
-
   [![Gradle deployment](https://github.com/Marc-JB/TextToSpeechKt/actions/workflows/deployment.yml/badge.svg)](https://github.com/Marc-JB/TextToSpeechKt/actions) 
   [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Marc-JB_TextToSpeechKt&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Marc-JB_TextToSpeechKt) 
   [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://search.maven.org/search?q=g:%22nl.marc-apps%22%20AND%20a:%22tts%22)
@@ -75,8 +73,6 @@ A build tool like Gradle or Maven. NPM is not supported yet.
 </details>
 
 ## :eyes: Usage
-Note: the examples are not using Jetpack Compose yet. 
-
 ### Generated docs by Dokka
 Documentation for:
 - [The current version](https://marc-jb.github.io/TextToSpeechKt/tts/nl.marc_apps.tts/index.html)

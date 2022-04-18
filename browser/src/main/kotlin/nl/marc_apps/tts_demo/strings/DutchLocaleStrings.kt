@@ -12,4 +12,10 @@ object DutchLocaleStrings : Strings {
     override fun ttsVolumeLevel(level: Int) = " ($level%)"
 
     override val actionSay = "Zeg"
+
+    override val ttsLanguageLabel = "Taal: "
+
+    override val ttsLanguageUnknown = "Onbekend"
+
+    override val ttsLoadingText = "Laden..."
 }

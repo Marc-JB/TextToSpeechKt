@@ -12,4 +12,10 @@ interface Strings {
     fun ttsVolumeLevel(level: Int): String
 
     val actionSay: String
+
+    val ttsLanguageLabel: String
+
+    val ttsLanguageUnknown: String
+
+    val ttsLoadingText: String
 }

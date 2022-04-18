@@ -12,4 +12,10 @@ object DefaultStrings : Strings {
     override fun ttsVolumeLevel(level: Int) = " ($level%)"
 
     override val actionSay = "Say"
+
+    override val ttsLanguageLabel = "Synthesis language: "
+
+    override val ttsLanguageUnknown = "Unknown"
+
+    override val ttsLoadingText = "Loading..."
 }
