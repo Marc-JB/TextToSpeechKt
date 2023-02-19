@@ -28,7 +28,12 @@ class TextToSpeechInstanceJS internal constructor(private val ttsInstance: TextT
      * Returns a BCP 47 language tag of the selected voice on supported platforms.
      * May return the language code as ISO 639 on older platforms.
      */
-    val language: String by ttsInstance::language
+    val language: String? by ttsInstance::language
+
+    var currentVoice: Voice by ttsInstance::currentVoice
+
+    val voices: Array<Voice>
+        get() = ttsInstance.voices.toTypedArray()
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     fun enqueue(text: String, clearQueue: Boolean = false) = ttsInstance.enqueue(text, clearQueue)

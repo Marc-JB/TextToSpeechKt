@@ -7,9 +7,13 @@ import java.net.URL
 
 plugins {
     kotlin("multiplatform")
+
     id("com.android.library")
+    id("kotlin-parcelize")
+
     `maven-publish`
     signing
+
     id("org.jetbrains.dokka")
 }
 

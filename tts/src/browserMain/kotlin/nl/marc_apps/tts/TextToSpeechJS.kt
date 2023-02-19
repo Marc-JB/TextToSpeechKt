@@ -7,6 +7,7 @@ import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import org.w3c.dom.Window
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
+import org.w3c.speech.SpeechSynthesisVoice
 import org.w3c.speech.speechSynthesis
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -64,14 +65,36 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWi
      * Returns a BCP 47 language tag of the selected voice on supported platforms.
      * May return the language code as ISO 639 on older platforms.
      */
-    override val language: String
+    override val language: String?
         get() {
             val reportedLanguage = speechSynthesisUtterance.voice?.lang ?: speechSynthesisUtterance.lang
             return reportedLanguage.ifBlank {
                 val defaultLanguage = speechSynthesis.getVoices().find { it.default }?.lang
-                if (defaultLanguage.isNullOrBlank()) "Unknown" else defaultLanguage
+                if (defaultLanguage.isNullOrBlank()) null else defaultLanguage
             }
         }
+
+    override var currentVoice: Voice
+        get() = speechSynthesisUtterance.voice?.let { convertVoice(it) } ?: voices.find { it.isDefault } ?: voices.first()
+        set(value) {
+            speechSynthesisUtterance.voice = speechSynthesis.getVoices().find {
+                it.lang == value.languageTag && it.name == value.name
+            }
+        }
+
+    override val voices: Set<Voice>
+        get() = speechSynthesis.getVoices().map { convertVoice(it) }.toSet()
+
+    private fun convertVoice(voice: SpeechSynthesisVoice): Voice {
+        return Voice(
+            voice.name,
+            voice.default,
+            !voice.localService,
+            voice.lang,
+            voice.lang.substringBefore("-"),
+            if("-" in voice.lang) voice.lang.substringAfter("-") else null
+        )
+    }
 
     private fun resetCurrentUtterance() {
         speechSynthesisUtterance = SpeechSynthesisUtterance().also {

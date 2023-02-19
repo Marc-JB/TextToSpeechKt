@@ -23,7 +23,11 @@ interface TextToSpeechInstance : Closeable {
      * Returns a BCP 47 language tag of the selected voice on supported platforms.
      * May return the language code as ISO 639 on older platforms.
      */
-    val language: String
+    val language: String?
+
+    var currentVoice: Voice
+
+    val voices: Set<Voice>
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     fun enqueue(text: String, clearQueue: Boolean = false)

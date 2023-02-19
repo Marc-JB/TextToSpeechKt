@@ -59,15 +59,55 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
             tts?.setSpeechRate(value)
         }
 
-    private val voiceLocale: Locale
-        get() = (if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) tts?.voice?.locale else tts?.language) ?: Locale.getDefault()
+    private val voiceLocale: Locale?
+        get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) (tts?.voice ?: tts?.defaultVoice)?.locale else tts?.language
 
     /**
      * Returns a BCP 47 language tag of the selected voice on supported platforms.
      * May return the language code as ISO 639 on older platforms.
      */
-    override val language: String
-        get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) voiceLocale.toLanguageTag() else voiceLocale.language
+    override val language: String?
+        get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) voiceLocale?.toLanguageTag() else voiceLocale?.language
+
+    override var currentVoice: Voice
+        get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+                (tts?.voice ?: tts?.defaultVoice)?.let { convertVoice(it) }!!
+        } else {
+            tts?.language?.let { createVoice(it) }!!
+        }
+        set(value) {}
+
+    override val voices: Set<Voice>
+        get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+                tts?.voices?.map { convertVoice(it) }?.toSet() ?: emptySet()
+        } else {
+            Locale.getAvailableLocales().filter {
+                tts?.isLanguageAvailable(it) == AndroidTTS.LANG_COUNTRY_VAR_AVAILABLE
+            }.map { createVoice(it) }.toSet()
+        }
+
+    @RequiresApi(VERSION_CODES.LOLLIPOP)
+    private fun convertVoice(voice: android.speech.tts.Voice): Voice {
+        return Voice(
+            voice.name,
+            voice == tts?.defaultVoice,
+            voice.isNetworkConnectionRequired,
+            voice.locale.toLanguageTag(),
+            voice.locale.language,
+            voice.locale.country
+        )
+    }
+
+    private fun createVoice(locale: Locale): Voice {
+        return Voice(
+            locale.displayName,
+            locale == if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2) tts?.defaultLanguage else null,
+            false,
+            locale.language,
+            locale.language,
+            locale.country
+        )
+    }
 
     init {
         if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
