@@ -190,7 +190,9 @@ fun org.jetbrains.dokka.gradle.DokkaTask.configureAllSourceSets() {
 }
 
 val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
+    dependsOn(tasks.dokkaHtml)
     archiveClassifier.set("javadoc")
+    from(buildDir.toPath().resolve("dokka"))
 }
 
 fun MavenPublication.configurePublication() {
@@ -305,4 +307,5 @@ signing {
 
 afterEvaluate {
     tasks.named("publishAndroidPublicationToOSSRHRepository").configure { mustRunAfter("signBrowserPublication") }
+    tasks.named("publishAndroidPublicationToGitHubPackagesRepository").configure { mustRunAfter("signBrowserPublication") }
 }
