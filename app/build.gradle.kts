@@ -7,6 +7,8 @@ android {
     compileSdk = 33
     buildToolsVersion = "33.0.2"
 
+    namespace = "nl.marc_apps.tts_demo"
+
     defaultConfig {
         applicationId = "nl.marc_apps.tts_demo"
 

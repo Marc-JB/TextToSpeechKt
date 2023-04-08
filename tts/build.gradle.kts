@@ -94,6 +94,8 @@ android {
     compileSdk = 33
     buildToolsVersion = "33.0.2"
 
+    namespace = "nl.marc_apps.tts"
+
     defaultConfig {
         minSdk = 1
 
@@ -308,4 +310,16 @@ signing {
 afterEvaluate {
     tasks.named("publishAndroidPublicationToOSSRHRepository").configure { mustRunAfter("signBrowserPublication") }
     tasks.named("publishAndroidPublicationToGitHubPackagesRepository").configure { mustRunAfter("signBrowserPublication") }
+    tasks.named("publishAndroidPublicationToOSSRHRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
+    tasks.named("publishAndroidPublicationToGitHubPackagesRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
+
+    tasks.named("publishBrowserPublicationToOSSRHRepository").configure { mustRunAfter("signAndroidPublication") }
+    tasks.named("publishBrowserPublicationToGitHubPackagesRepository").configure { mustRunAfter("signAndroidPublication") }
+    tasks.named("publishBrowserPublicationToOSSRHRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
+    tasks.named("publishBrowserPublicationToGitHubPackagesRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
+
+    tasks.named("publishKotlinMultiplatformPublicationToOSSRHRepository").configure { mustRunAfter("signAndroidPublication") }
+    tasks.named("publishKotlinMultiplatformPublicationToGitHubPackagesRepository").configure { mustRunAfter("signAndroidPublication") }
+    tasks.named("publishKotlinMultiplatformPublicationToOSSRHRepository").configure { mustRunAfter("signBrowserPublication") }
+    tasks.named("publishKotlinMultiplatformPublicationToGitHubPackagesRepository").configure { mustRunAfter("signBrowserPublication") }
 }
