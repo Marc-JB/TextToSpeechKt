@@ -302,3 +302,7 @@ signing {
 
     sign(publishing.publications)
 }
+
+afterEvaluate {
+    tasks.named("publishAndroidPublicationToOSSRHRepository").configure { mustRunAfter("signBrowserPublication") }
+}
