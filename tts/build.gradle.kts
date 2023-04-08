@@ -18,9 +18,9 @@ object ProjectInfo {
 
     const val NAME = "TextToSpeechKt"
 
-    const val VERSION_MAJOR_MINOR = "1.2"
+    const val VERSION_MAJOR_MINOR = "1.3"
 
-    const val VERSION_BUILD = "1"
+    const val VERSION_BUILD = "0"
 
     const val SNAPSHOT = false
 
@@ -73,32 +73,29 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
             }
         }
         val browserMain by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.6.1")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.6.4")
             }
         }
         val androidMain by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1")
-                implementation("androidx.annotation:annotation:1.3.0")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+                implementation("androidx.annotation:annotation:1.6.0")
             }
         }
     }
 }
 
 android {
-    compileSdk = 32
-    buildToolsVersion = "32.0.0"
-
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    compileSdk = 33
+    buildToolsVersion = "33.0.2"
 
     defaultConfig {
         minSdk = 1
-        targetSdk = 32
 
         setProperty("archivesBaseName", "tts")
 
@@ -138,7 +135,7 @@ val versionArchiveDirectory = file(buildDir.toPath().resolve("dokka").resolve("h
 
 val generateDokkaHtmlArchiveTasks by tasks.register<org.jetbrains.dokka.gradle.DokkaTask>("dokkaPreviouslyDocumentation") {
     dependencies {
-        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.6.10")
+        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.8.10")
     }
 
     outputDirectory.set(file(versionArchiveDirectory.toPath().resolve(ProjectInfo.VERSION_MAJOR_MINOR)))
@@ -159,7 +156,7 @@ tasks.dokkaHtml {
     dependsOn(generateDokkaHtmlArchiveTasks)
 
     dependencies {
-        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.6.10")
+        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.8.10")
     }
 
     val versionArchivePath = versionArchiveDirectory.toString().replace("\\", "\\\\")
