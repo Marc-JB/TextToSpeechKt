@@ -20,10 +20,10 @@ jobs:
         uses: actions/checkout@v3
 
       # Set up JDK
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: 11
+          java-version: 17
           distribution: 'adopt'
           cache: 'gradle'
 
@@ -77,10 +77,10 @@ jobs:
         uses: actions/checkout@v3
 
       # Set up JDK
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: 11
+          java-version: 17
           distribution: 'adopt'
           cache: 'gradle'
 
@@ -115,7 +115,7 @@ jobs:
       # Deploy Dokka archive
       - name: Deploy Dokka archive
         if: success()
-        uses: crazy-max/ghaction-github-pages@v2
+        uses: crazy-max/ghaction-github-pages@v3
         with:
           target_branch: dokka-version-archive
           build_dir: ./tts/build/dokka/html_version_archive/
@@ -125,7 +125,7 @@ jobs:
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         if: success()
-        uses: crazy-max/ghaction-github-pages@v2
+        uses: crazy-max/ghaction-github-pages@v3
         with:
           target_branch: gh-pages
           build_dir: ./out/
