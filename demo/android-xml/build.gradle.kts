@@ -6,8 +6,8 @@ plugins {
 }
 
 android {
-    compileSdk = 32
-    buildToolsVersion = "33.0.0"
+    compileSdk = 33
+    buildToolsVersion = "33.0.2"
 
     namespace = "nl.marc_apps.tts_demo"
 
@@ -29,7 +29,7 @@ android {
         applicationId = "nl.marc_apps.tts_demo"
 
         minSdk = 21
-        targetSdk = 32
+        targetSdk = 33
 
         versionCode = 1
         versionName = "1.0"
@@ -86,7 +86,7 @@ android {
 
 dependencies {
     implementation(project(":tts"))
-    implementation("com.google.android.material:material:1.5.0")
-    implementation("androidx.appcompat:appcompat:1.4.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
+    implementation("com.google.android.material:material:1.8.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 }

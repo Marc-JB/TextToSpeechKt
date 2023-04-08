@@ -19,7 +19,7 @@ kotlin {
 
         browser {
             commonWebpackConfig {
-                cssSupport.enabled = true
+                cssSupport {}
             }
         }
     }
@@ -54,15 +54,15 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
-                api("androidx.compose.runtime:runtime:1.2.1")
-                implementation("androidx.compose.ui:ui:1.2.1")
-                implementation("androidx.compose.foundation:foundation:1.2.1")
-                implementation("androidx.compose.foundation:foundation-layout:1.2.1")
-                implementation("androidx.compose.ui:ui-tooling-preview:1.2.1")
-                implementation("androidx.navigation:navigation-compose:2.5.2")
-                implementation("androidx.activity:activity-compose:1.5.1")
-                implementation("androidx.compose.material:material:1.2.1")
-                implementation("androidx.compose.material:material-icons-extended:1.2.1")
+                api("androidx.compose.runtime:runtime:1.3.1")
+                implementation("androidx.compose.ui:ui:1.3.1")
+                implementation("androidx.compose.foundation:foundation:1.3.1")
+                implementation("androidx.compose.foundation:foundation-layout:1.3.1")
+                implementation("androidx.compose.ui:ui-tooling-preview:1.3.1")
+                implementation("androidx.navigation:navigation-compose:2.5.3")
+                implementation("androidx.activity:activity-compose:1.7.0")
+                implementation("androidx.compose.material:material:1.3.1")
+                implementation("androidx.compose.material:material-icons-extended:1.3.1")
             }
         }
 
@@ -92,12 +92,12 @@ kotlin {
 }
 
 dependencies {
-    debugImplementation("androidx.compose.ui:ui-tooling:1.2.1")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.3.1")
 }
 
 android {
-    compileSdk = 32
-    buildToolsVersion = "33.0.0"
+    compileSdk = 33
+    buildToolsVersion = "33.0.2"
 
     sourceSets {
         named("main") {
@@ -126,7 +126,7 @@ android {
         applicationId = "nl.marc_apps.tts_demo"
 
         minSdk = 21
-        targetSdk = 32
+        targetSdk = 33
 
         versionCode = 1
         versionName = "1.0"

@@ -38,7 +38,7 @@ kotlin {
 
         browser {
             commonWebpackConfig {
-                cssSupport.enabled = true
+                cssSupport {}
             }
         }
     }
@@ -70,8 +70,8 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
-                api("androidx.compose.runtime:runtime:1.2.1")
-                implementation("androidx.compose.foundation:foundation:1.2.1")
+                api("androidx.compose.runtime:runtime:1.3.1")
+                implementation("androidx.compose.foundation:foundation:1.3.1")
             }
         }
 
@@ -98,8 +98,8 @@ kotlin {
 }
 
 android {
-    compileSdk = 32
-    buildToolsVersion = "33.0.0"
+    compileSdk = 33
+    buildToolsVersion = "33.0.2"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     
@@ -107,7 +107,7 @@ android {
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 32
+        targetSdk = 33
 
         setProperty("archivesBaseName", "tts-compose")
 

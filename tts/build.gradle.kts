@@ -36,9 +36,7 @@ kotlin {
 
         browser {
             commonWebpackConfig {
-                cssSupport {
-                    enabled = true
-                }
+                cssSupport {}
             }
         }
     }
@@ -68,7 +66,7 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
-                implementation("androidx.annotation:annotation:1.5.0")
+                implementation("androidx.annotation:annotation:1.6.0")
             }
         }
 
@@ -91,8 +89,8 @@ kotlin {
 }
 
 android {
-    compileSdk = 32
-    buildToolsVersion = "33.0.0"
+    compileSdk = 33
+    buildToolsVersion = "33.0.2"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     
@@ -100,7 +98,7 @@ android {
 
     defaultConfig {
         minSdk = 1
-        targetSdk = 32
+        targetSdk = 33
 
         setProperty("archivesBaseName", "tts")
 
