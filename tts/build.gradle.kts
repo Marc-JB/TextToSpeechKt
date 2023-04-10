@@ -1,5 +1,6 @@
-@file:Suppress("UNUSED_VARIABLE")
+@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
 
+import com.android.repository.Revision
 import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
@@ -18,15 +19,9 @@ object ProjectInfo {
 
     const val NAME = "TextToSpeechKt"
 
-    const val VERSION_MAJOR_MINOR = "1.3"
+    val version = Revision(1, 3, 0, 1)
 
-    const val VERSION_BUILD = "0"
-
-    const val SNAPSHOT = false
-
-    private val SNAPSHOT_SUFFIX = if (SNAPSHOT) "-SNAPSHOT" else ""
-
-    val VERSION = "${VERSION_MAJOR_MINOR}.${VERSION_BUILD}${SNAPSHOT_SUFFIX}"
+    val mavenVersion = "${version.major}.${version.minor}.${version.micro}${if (version.isPreview) "-SNAPSHOT" else ""}"
 
     object Developer {
         const val ORG_NAME = "Marc Apps & Software"
@@ -43,20 +38,14 @@ object ProjectInfo {
     const val LOCATION = "github.com/${Developer.GITHUB_NAME}/TextToSpeechKt"
 
     const val LOCATION_HTTP = "https://$LOCATION"
+
+    const val DOCUMENTATION_URL = "https://marc-jb.github.io/TextToSpeechKt"
 }
+
+val config = Config()
 
 group = ProjectInfo.GROUP_ID
-version = ProjectInfo.VERSION
-
-fun getLocalProperties(): Properties {
-    return Properties().also { properties ->
-        try {
-            file("../local.properties").inputStream().use {
-                properties.load(it)
-            }
-        } catch (ignored: java.io.FileNotFoundException) {}
-    }
-}
+version = ProjectInfo.mavenVersion
 
 kotlin {
     js("browser", IR) {
@@ -101,7 +90,7 @@ android {
 
         setProperty("archivesBaseName", "tts")
 
-        buildConfigField("String", "LIBRARY_VERSION", "\"${ProjectInfo.VERSION}\"")
+        buildConfigField("String", "LIBRARY_VERSION", "\"${ProjectInfo.version}\"")
     }
 
     compileOptions {
@@ -116,23 +105,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     }
 }
 
-fun GradleDokkaSourceSetBuilder.configureDokkaSourceSet(platform: String) {
-    sourceLink {
-        localDirectory.set(file("src/${platform}Main/kotlin"))
-        remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/tts/src/${platform}Main/kotlin"))
-        remoteLineSuffix.set("#L")
-    }
-
-    externalDocumentationLink {
-        url.set(URL("https://marc-jb.github.io/TextToSpeechKt/tts"))
-        packageListUrl.set(URL("https://marc-jb.github.io/TextToSpeechKt/tts/package-list"))
-    }
-
-    if (platform == "android") {
-        jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
-    }
-}
-
 val versionArchiveDirectory = file(buildDir.toPath().resolve("dokka").resolve("html_version_archive"))
 
 val generateDokkaHtmlArchiveTasks by tasks.register<org.jetbrains.dokka.gradle.DokkaTask>("dokkaPreviouslyDocumentation") {
@@ -140,10 +112,12 @@ val generateDokkaHtmlArchiveTasks by tasks.register<org.jetbrains.dokka.gradle.D
         dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.8.10")
     }
 
-    outputDirectory.set(file(versionArchiveDirectory.toPath().resolve(ProjectInfo.VERSION_MAJOR_MINOR)))
+    val currentVersion = "${ProjectInfo.version.major}.${ProjectInfo.version.minor}"
+
+    outputDirectory.set(file(versionArchiveDirectory.toPath().resolve(currentVersion)))
 
     val versioningPluginClass = "org.jetbrains.dokka.versioning.VersioningPlugin"
-    val versioningPluginConfig = """{ "version": "${ProjectInfo.VERSION_MAJOR_MINOR}" }"""
+    val versioningPluginConfig = """{ "version": "$currentVersion" }"""
 
     pluginsMapConfiguration.set(
         mapOf(
@@ -164,7 +138,7 @@ tasks.dokkaHtml {
     val versionArchivePath = versionArchiveDirectory.toString().replace("\\", "\\\\")
 
     val versioningPluginClass = "org.jetbrains.dokka.versioning.VersioningPlugin"
-    val versioningPluginConfig = """{ "version": "${ProjectInfo.VERSION_MAJOR_MINOR}", "olderVersionsDir": "$versionArchivePath" }"""
+    val versioningPluginConfig = """{ "version": "${ProjectInfo.version.major}.${ProjectInfo.version.minor}", "olderVersionsDir": "$versionArchivePath" }"""
 
     pluginsMapConfiguration.set(
         mapOf(
@@ -173,6 +147,57 @@ tasks.dokkaHtml {
     )
 
     configureAllSourceSets()
+}
+
+val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
+    dependsOn(tasks.dokkaHtml)
+    archiveClassifier.set("javadoc")
+    from(buildDir.toPath().resolve("dokka"))
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "OSSRH"
+            url = uri(
+                if(ProjectInfo.version.isPreview) {
+                    "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                } else {
+                    "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                }
+            )
+
+            credentials {
+                username = config["ossrh", "username"]
+                password = config["ossrh", "password"]
+            }
+        }
+
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Marc-JB/TextToSpeechKt")
+            credentials {
+                username = config["gpr", "user"]
+                password = config["gpr", "key"]
+            }
+        }
+    }
+
+    publications {
+        withType<MavenPublication> {
+            configurePublication()
+        }
+    }
+}
+
+signing {
+    isRequired = true
+
+    val signingKey = config["gpg", "signing", "key"]
+    val signingPassword = config["gpg", "signing", "password"]
+    useInMemoryPgpKeys(signingKey, signingPassword)
+
+    sign(publishing.publications)
 }
 
 fun org.jetbrains.dokka.gradle.DokkaTask.configureAllSourceSets() {
@@ -191,10 +216,21 @@ fun org.jetbrains.dokka.gradle.DokkaTask.configureAllSourceSets() {
     }
 }
 
-val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
-    dependsOn(tasks.dokkaHtml)
-    archiveClassifier.set("javadoc")
-    from(buildDir.toPath().resolve("dokka"))
+fun GradleDokkaSourceSetBuilder.configureDokkaSourceSet(platform: String) {
+    sourceLink {
+        localDirectory.set(file("src/${platform}Main/kotlin"))
+        remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/tts/src/${platform}Main/kotlin"))
+        remoteLineSuffix.set("#L")
+    }
+
+    externalDocumentationLink {
+        url.set(URL("${ProjectInfo.DOCUMENTATION_URL}/tts"))
+        packageListUrl.set(URL("${ProjectInfo.DOCUMENTATION_URL}/tts/package-list"))
+    }
+
+    if (platform == "android") {
+        jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
+    }
 }
 
 fun MavenPublication.configurePublication() {
@@ -256,55 +292,19 @@ fun MavenPublication.configurePublication() {
     }
 }
 
-val keys = getLocalProperties()
-
-fun getProperty(key: String): String? {
-    return keys.getProperty(key) ?: System.getenv(key.toUpperCaseAsciiOnly().replace(".", "_"))
-}
-
-publishing {
-    repositories {
-        maven {
-            name = "OSSRH"
-            url = uri(
-                if(ProjectInfo.SNAPSHOT) {
-                    "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                } else {
-                    "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-                }
-            )
-
-            credentials {
-                username = getProperty("ossrh.username")
-                password = getProperty("ossrh.password")
+class Config {
+    private val localProperties = Properties().also { properties ->
+        try {
+            project.rootProject.file("local.properties").inputStream().use {
+                properties.load(it)
             }
-        }
-
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Marc-JB/TextToSpeechKt")
-            credentials {
-                username = getProperty("gpr.user")
-                password = getProperty("gpr.key")
-            }
-        }
+        } catch (ignored: java.io.FileNotFoundException) {}
     }
 
-    publications {
-        withType<MavenPublication> {
-            configurePublication()
-        }
+    operator fun get(vararg path: String): String? {
+        return localProperties.getProperty(path.joinToString(","))
+            ?: System.getenv(path.joinToString("_") { it.toUpperCaseAsciiOnly() })
     }
-}
-
-signing {
-    isRequired = true
-
-    val signingKey = getProperty("gpg.signing.key")
-    val signingPassword = getProperty("gpg.signing.password")
-    useInMemoryPgpKeys(signingKey, signingPassword)
-
-    sign(publishing.publications)
 }
 
 afterEvaluate {
