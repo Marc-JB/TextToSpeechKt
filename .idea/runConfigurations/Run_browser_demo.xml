@@ -2,9 +2,9 @@
   <configuration default="false" name="Run browser demo" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" />
-      <option name="externalProjectPath" value="$PROJECT_DIR$/browser" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/demo/browser" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="--continuous" />
+      <option name="scriptParameters" value="" />
       <option name="taskDescriptions">
         <list />
       </option>
