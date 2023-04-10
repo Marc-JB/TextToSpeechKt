@@ -6,7 +6,6 @@ import android.annotation.TargetApi
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
-import android.speech.tts.UtteranceProgressListener
 import androidx.annotation.IntRange
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +13,6 @@ import nl.marc_apps.tts.errors.*
 import nl.marc_apps.tts.utils.TtsProgressConverter
 import nl.marc_apps.tts.utils.getContinuationId
 import java.util.*
-import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
