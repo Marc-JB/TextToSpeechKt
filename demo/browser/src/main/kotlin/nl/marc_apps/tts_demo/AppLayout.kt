@@ -23,10 +23,23 @@ fun getStrings(): Strings {
     }
 }
 
-suspend fun createTts(): TextToSpeechInstance {
-    val tts = TextToSpeech.createOrThrow(window)
-    delay(500)
-    return tts
+@Composable
+fun rememberTextToSpeechOrNull(): TextToSpeechInstance? {
+    var textToSpeech by remember { mutableStateOf<TextToSpeechInstance?>(null) }
+
+    LaunchedEffect(Unit) {
+        val tts = TextToSpeech.createOrThrow(window)
+        delay(500)
+        textToSpeech = tts
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            textToSpeech?.close()
+        }
+    }
+
+    return textToSpeech
 }
 
 @Composable
@@ -37,9 +50,7 @@ fun AppLayout() {
 
     val coroutineScope = rememberCoroutineScope()
 
-    var ttsState by remember { mutableStateOf<TextToSpeechInstance?>(null) }
-
-    var isSynthesisRunning by remember { mutableStateOf(false) }
+    val textToSpeechInstance = rememberTextToSpeechOrNull()
 
     var ttsTextState by remember { mutableStateOf(strings.ttsTextDefaultValue) }
 
@@ -47,12 +58,14 @@ fun AppLayout() {
         Text(strings.pageTitle)
     }
 
-    if (ttsState == null) {
+    if (textToSpeechInstance == null) {
         Span {
             Text(strings.ttsLoadingText)
         }
     } else {
-        var ttsVolumeState by remember { mutableStateOf(ttsState?.volume ?: TextToSpeechInstance.VOLUME_DEFAULT) }
+        val isSynthesisRunning by textToSpeechInstance.isSynthesizing.collectAsState()
+
+        var ttsVolumeState by remember { mutableStateOf(textToSpeechInstance.volume) }
 
         TextToSpeechInput(strings, ttsTextState) {
             ttsTextState = it
@@ -72,21 +85,15 @@ fun AppLayout() {
             }
 
             Span {
-                Text(ttsState?.language ?: strings.ttsLanguageUnknown)
+                Text(textToSpeechInstance.language)
             }
         }
 
         SynthesiseButton(strings, isSynthesisRunning) {
-            isSynthesisRunning = true
-            ttsState?.volume = ttsVolumeState
+            textToSpeechInstance.volume = ttsVolumeState
             coroutineScope.launch {
-                ttsState?.say(ttsTextState)
-                isSynthesisRunning = false
+                textToSpeechInstance.say(ttsTextState)
             }
         }
-    }
-
-    coroutineScope.launch {
-        ttsState = createTts()
     }
 }
