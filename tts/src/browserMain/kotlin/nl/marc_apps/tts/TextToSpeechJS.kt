@@ -3,6 +3,7 @@
 package nl.marc_apps.tts
 
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.MutableStateFlow
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import org.w3c.dom.Window
 import org.w3c.speech.SpeechSynthesis
@@ -16,6 +17,8 @@ import kotlin.js.Promise
 /** A TTS instance. Should be [close]d when no longer in use. */
 @ExperimentalJsExport
 internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWithJsPromises {
+    override val isSynthesizing = MutableStateFlow(false)
+
     private val speechSynthesis: SpeechSynthesis = context.speechSynthesis
 
     private var speechSynthesisUtterance = SpeechSynthesisUtterance()
@@ -103,9 +106,12 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWi
         }
 
         speechSynthesisUtterance.onstart = {
+            isSynthesizing.value = true
             callback(Result.success(TextToSpeechInstance.Status.STARTED))
         }
+
         speechSynthesisUtterance.onend = {
+            isSynthesizing.value = false
             callback(Result.success(TextToSpeechInstance.Status.FINISHED))
         }
 
@@ -114,7 +120,7 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWi
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override suspend fun say(text: String, clearQueue: Boolean, resumeOnStatus: TextToSpeechInstance.Status) {
-        suspendCoroutine<Unit> { cont ->
+        suspendCoroutine { cont ->
             say(text, clearQueue) {
                 if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
                     cont.resume(Unit)

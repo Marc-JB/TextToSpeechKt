@@ -6,10 +6,12 @@ import android.annotation.TargetApi
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
-import android.speech.tts.UtteranceProgressListener
 import androidx.annotation.IntRange
 import androidx.annotation.RequiresApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import nl.marc_apps.tts.errors.*
+import nl.marc_apps.tts.utils.TtsProgressConverter
+import nl.marc_apps.tts.utils.getContinuationId
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -19,7 +21,11 @@ import android.speech.tts.TextToSpeech as AndroidTTS
 /** A TTS instance. Should be [close]d when no longer in use. */
 @TargetApi(VERSION_CODES.DONUT)
 internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechInstance {
-    private val callbacks = mutableMapOf<Int, (Result<TextToSpeechInstance.Status>) -> Unit>()
+    private val callbacks = mutableMapOf<UUID, (Result<TextToSpeechInstance.Status>) -> Unit>()
+
+    override val isSynthesizing = MutableStateFlow(false)
+
+    private var preIcsQueueSize = 0
 
     private val internalVolume: Float
         get() = if(!isMuted) volume / 100f else 0f
@@ -79,66 +85,19 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
 
     private fun setProgressListenersLegacy() {
         tts?.setOnUtteranceCompletedListener {
-            onTtsStatusUpdate(it?.toInt() ?: -1, TextToSpeechInstance.Status.FINISHED)
+            val id = getContinuationId(it) ?: return@setOnUtteranceCompletedListener
+            onTtsStatusUpdate(id, Result.success(TextToSpeechInstance.Status.FINISHED))
         }
     }
 
     @RequiresApi(VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
     private fun setProgressListeners() {
-        tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-            override fun onStart(utteranceId: String?) {
-                onTtsStatusUpdate(utteranceId?.toInt() ?: -1, TextToSpeechInstance.Status.STARTED)
-            }
-
-            override fun onDone(utteranceId: String?) {
-                onTtsStatusUpdate(utteranceId?.toInt() ?: -1, TextToSpeechInstance.Status.FINISHED)
-            }
-
-            override fun onError(utteranceId: String?) {
-                onTtsStatusUpdate(utteranceId?.toInt() ?: -1, UnknownTextToSpeechSynthesisError())
-            }
-
-            override fun onError(utteranceId: String?, errorCode: Int) {
-                onTtsStatusUpdate(utteranceId?.toInt() ?: -1, mapErrorCodeToThrowable(errorCode))
-            }
-
-            override fun onStop(utteranceId: String?, interrupted: Boolean) {
-                onTtsStatusUpdate(utteranceId?.toInt() ?: -1, TextToSpeechSynthesisInterruptedError())
-            }
-        })
-    }
-
-    private fun mapErrorCodeToThrowable(errorCode: Int): TextToSpeechSynthesisError {
-        return when(errorCode) {
-            ERROR_SYNTHESIS -> TextToSpeechFlawedTextInputError()
-            ERROR_SERVICE -> TextToSpeechServiceFailureError()
-            ERROR_OUTPUT -> DeviceAudioOutputError()
-            ERROR_NETWORK -> NetworkConnectivityError()
-            ERROR_NETWORK_TIMEOUT -> NetworkTimeoutError()
-            ERROR_INVALID_REQUEST -> TextToSpeechRequestInvalidError()
-            ERROR_NOT_INSTALLED_YET -> TextToSpeechEngineUnavailableError()
-            else -> UnknownTextToSpeechSynthesisError()
-        }
+        tts?.setOnUtteranceProgressListener(TtsProgressConverter(::onTtsStatusUpdate))
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override fun enqueue(text: String, clearQueue: Boolean) {
-        if(isMuted || internalVolume == 0f) {
-            if(clearQueue) stop()
-            return
-        }
-
-        val queueMode = if(clearQueue) AndroidTTS.QUEUE_FLUSH else AndroidTTS.QUEUE_ADD
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            val params = Bundle()
-            params.putFloat(KEY_PARAM_VOLUME, internalVolume)
-            tts?.speak(text, queueMode, params, null)
-        } else {
-            val params = hashMapOf(
-                KEY_PARAM_VOLUME to internalVolume.toString()
-            )
-            tts?.speak(text, queueMode, params)
-        }
+        say(text, clearQueue) {}
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
@@ -150,7 +109,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
 
         val queueMode = if(clearQueue) AndroidTTS.QUEUE_FLUSH else AndroidTTS.QUEUE_ADD
-        val utteranceId = arrayOf(System.currentTimeMillis(), text).contentHashCode()
+        val utteranceId = UUID.randomUUID()
 
         callbacks += utteranceId to {
             callback(it)
@@ -170,13 +129,19 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
                 KEY_PARAM_VOLUME to internalVolume.toString(),
                 KEY_PARAM_UTTERANCE_ID to utteranceId.toString()
             )
+
+            if (VERSION.SDK_INT < VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                preIcsQueueSize++
+                isSynthesizing.value = true
+            }
+
             tts?.speak(text, queueMode, params)
         }
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override suspend fun say(text: String, clearQueue: Boolean, resumeOnStatus: TextToSpeechInstance.Status) {
-        suspendCoroutine<Unit> { cont ->
+        suspendCoroutine { cont ->
             say(text, clearQueue) {
                 if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
                     cont.resume(Unit)
@@ -188,12 +153,18 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
     }
 
-    private fun onTtsStatusUpdate(utteranceId: Int, newStatus: TextToSpeechInstance.Status = TextToSpeechInstance.Status.FINISHED) {
-        callbacks[utteranceId]?.invoke(Result.success(newStatus))
-    }
+    private fun onTtsStatusUpdate(utteranceId: UUID, result: Result<TextToSpeechInstance.Status>) {
+        if (VERSION.SDK_INT < VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            preIcsQueueSize--
+            if (preIcsQueueSize == 0)
+            {
+                isSynthesizing.value = false
+            }
+        } else {
+            isSynthesizing.value = result.getOrNull() == TextToSpeechInstance.Status.STARTED
+        }
 
-    private fun onTtsStatusUpdate(utteranceId: Int, error: Throwable) {
-        callbacks[utteranceId]?.invoke(Result.failure(error))
+        callbacks[utteranceId]?.invoke(result)
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
@@ -202,6 +173,11 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     /** Clears the internal queue, but doesn't close used resources. */
     override fun stop() {
         tts?.stop()
+
+        if (VERSION.SDK_INT < VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            preIcsQueueSize = 0
+            isSynthesizing.value = false
+        }
     }
 
     /** Clears the internal queue and closes used resources (if possible) */
@@ -221,26 +197,5 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         private const val KEY_PARAM_VOLUME = "volume"
 
         private const val KEY_PARAM_UTTERANCE_ID = "utteranceId"
-
-        /** Denotes a failure of a TTS engine to synthesize the given input. */
-        private const val ERROR_SYNTHESIS = -3
-
-        /** Denotes a failure of a TTS service. */
-        private const val ERROR_SERVICE = -4
-
-        /** Denotes a failure related to the output (audio device or a file). */
-        private const val ERROR_OUTPUT = -5
-
-        /** Denotes a failure caused by a network connectivity problems. */
-        private const val ERROR_NETWORK = -6
-
-        /** Denotes a failure caused by network timeout.*/
-        private const val ERROR_NETWORK_TIMEOUT = -7
-
-        /** Denotes a failure caused by an invalid request. */
-        private const val ERROR_INVALID_REQUEST = -8
-
-        /** Denotes a failure caused by an unfinished download of the voice data. */
-        private const val ERROR_NOT_INSTALLED_YET = -9
     }
 }

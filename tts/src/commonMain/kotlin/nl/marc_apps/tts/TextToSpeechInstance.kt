@@ -1,7 +1,11 @@
 package nl.marc_apps.tts
 
+import kotlinx.coroutines.flow.StateFlow
+
 /** A TTS instance. Should be [close]d when no longer in use. */
 interface TextToSpeechInstance : Closeable {
+    val isSynthesizing: StateFlow<Boolean>
+
     /**
      * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
      * Changes only affect new calls to the [say] method.
