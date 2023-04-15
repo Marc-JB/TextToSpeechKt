@@ -89,8 +89,6 @@ android {
         minSdk = 1
 
         setProperty("archivesBaseName", "tts")
-
-        buildConfigField("String", "LIBRARY_VERSION", "\"${ProjectInfo.version}\"")
     }
 
     compileOptions {
