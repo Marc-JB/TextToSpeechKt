@@ -85,7 +85,7 @@ See the [/demo/browser-html-dom](/demo/browser-html-dom) directory for a working
 This example is written using Kotlin/JS.
 
 ### Browser (plain JavaScript) example
-See the [/demo/browser_js](/demo/browser_js) directory for a working example that you can try out in the browser.
+See the [/demo/browser-js](/demo/browser-js) directory for a working example that you can try out in the browser.
 This example is written using plain JavaScript.
 
 ### Code snippet
