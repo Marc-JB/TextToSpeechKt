@@ -18,5 +18,5 @@ dependencyResolutionManagement {
 rootProject.name = "TextToSpeechKt"
 
 include(":tts")
-include(":demo:app")
-include(":demo:browser")
+include(":demo:android-xml")
+include(":demo:browser-html-dom")
