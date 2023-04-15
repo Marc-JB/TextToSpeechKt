@@ -19,4 +19,4 @@ rootProject.name = "TextToSpeechKt"
 
 include(":tts")
 include(":demo:android-xml")
-include(":demo:browser")
+include(":demo:browser-html-dom")

@@ -81,11 +81,11 @@ See the [/demo/android-xml](/demo/android-xml) directory for a working example t
 This example is written using Kotlin/JVM.
 
 ### Browser (Kotlin/JS) example
-See the [/browser](/browser) directory for a working example that you can try out in the browser. 
+See the [/demo/browser-html-dom](/demo/browser-html-dom) directory for a working example that you can try out in the browser. 
 This example is written using Kotlin/JS.
 
 ### Browser (plain JavaScript) example
-See the [/browser_js](/browser_js) directory for a working example that you can try out in the browser.
+See the [/demo/browser_js](/demo/browser_js) directory for a working example that you can try out in the browser.
 This example is written using plain JavaScript.
 
 ### Code snippet
