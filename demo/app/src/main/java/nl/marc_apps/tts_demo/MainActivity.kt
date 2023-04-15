@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import nl.marc_apps.tts.TextToSpeech
+import nl.marc_apps.tts.TextToSpeechFactory
 import nl.marc_apps.tts.TextToSpeechInstance
 import nl.marc_apps.tts_demo.databinding.ActivityMainBinding
 
@@ -22,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         binding.actionSay.isEnabled = false
 
         lifecycleScope.launch {
-            ttsInstance = TextToSpeech.createOrNull(applicationContext)
+            ttsInstance = TextToSpeechFactory(applicationContext).createOrNull()
             binding.actionSay.isEnabled = true
 
             repeatOnLifecycle(Lifecycle.State.STARTED) {

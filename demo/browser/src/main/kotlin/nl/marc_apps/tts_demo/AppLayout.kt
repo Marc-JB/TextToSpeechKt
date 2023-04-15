@@ -5,6 +5,7 @@ import kotlinx.browser.window
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import nl.marc_apps.tts.TextToSpeech
+import nl.marc_apps.tts.TextToSpeechFactory
 import nl.marc_apps.tts.TextToSpeechInstance
 import nl.marc_apps.tts_demo.strings.DefaultStrings
 import nl.marc_apps.tts_demo.strings.DutchLocaleStrings
@@ -28,7 +29,7 @@ fun rememberTextToSpeechOrNull(): TextToSpeechInstance? {
     var textToSpeech by remember { mutableStateOf<TextToSpeechInstance?>(null) }
 
     LaunchedEffect(Unit) {
-        val tts = TextToSpeech.createOrThrow(window)
+        val tts = TextToSpeechFactory(window).createOrNull()
         delay(500)
         textToSpeech = tts
     }

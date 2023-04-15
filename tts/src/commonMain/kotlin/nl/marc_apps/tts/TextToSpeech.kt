@@ -21,6 +21,7 @@ expect object TextToSpeech {
      * Creates a new [TextToSpeechInstance].
      * Will do nothing and will not execute [callback] when TTS is not supported.
      */
+    @Deprecated("Use create or createOrNull instead", ReplaceWith("createOrNull(context, callback)"))
     fun createOrNothing(context: Context, callback: (TextToSpeechInstance) -> Unit)
 
     /** Creates a new [TextToSpeechInstance]. */
