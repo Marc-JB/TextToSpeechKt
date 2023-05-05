@@ -4,6 +4,7 @@ package nl.marc_apps.tts
 
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import org.w3c.dom.Window
 import org.w3c.speech.SpeechSynthesis
@@ -18,6 +19,10 @@ import kotlin.js.Promise
 @ExperimentalJsExport
 internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWithJsPromises {
     override val isSynthesizing = MutableStateFlow(false)
+
+    override val isWarmingUp = MutableStateFlow(false)
+
+    private var hasSpoken = false
 
     private val speechSynthesis: SpeechSynthesis = context.speechSynthesis
 
@@ -91,6 +96,11 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWi
             return
         }
 
+        if (!hasSpoken) {
+            hasSpoken = true
+            isWarmingUp.value = true
+        }
+
         speechSynthesisUtterance.text = text
         speechSynthesis.speak(speechSynthesisUtterance)
 
@@ -106,11 +116,13 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWi
         }
 
         speechSynthesisUtterance.onstart = {
+            isWarmingUp.value = false
             isSynthesizing.value = true
             callback(Result.success(TextToSpeechInstance.Status.STARTED))
         }
 
         speechSynthesisUtterance.onend = {
+            isWarmingUp.value = false
             isSynthesizing.value = false
             callback(Result.success(TextToSpeechInstance.Status.FINISHED))
         }

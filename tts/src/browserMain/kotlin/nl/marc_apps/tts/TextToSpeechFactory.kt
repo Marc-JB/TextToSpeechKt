@@ -4,6 +4,9 @@ import kotlinx.browser.window
 import nl.marc_apps.tts.errors.TextToSpeechNotSupportedError
 import org.w3c.dom.Window
 
+/**
+ * Factory class to create a Text-to-Speech instance.
+ */
 actual class TextToSpeechFactory(
     private val context: Window = window
 ) {

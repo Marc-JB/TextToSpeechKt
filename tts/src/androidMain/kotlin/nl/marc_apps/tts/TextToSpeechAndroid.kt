@@ -6,9 +6,11 @@ import android.annotation.TargetApi
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.IntRange
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import nl.marc_apps.tts.errors.*
 import nl.marc_apps.tts.utils.TtsProgressConverter
 import nl.marc_apps.tts.utils.getContinuationId
@@ -24,6 +26,10 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     private val callbacks = mutableMapOf<UUID, (Result<TextToSpeechInstance.Status>) -> Unit>()
 
     override val isSynthesizing = MutableStateFlow(false)
+
+    override val isWarmingUp = MutableStateFlow(false)
+
+    private var hasSpoken = false
 
     private var preIcsQueueSize = 0
 
@@ -119,6 +125,11 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
             }
         }
 
+        if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1 && !hasSpoken) {
+            hasSpoken = true
+            isWarmingUp.value = true
+        }
+
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             val params = Bundle()
             params.putFloat(KEY_PARAM_VOLUME, internalVolume)
@@ -161,6 +172,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
                 isSynthesizing.value = false
             }
         } else {
+            isWarmingUp.value = false
             isSynthesizing.value = result.getOrNull() == TextToSpeechInstance.Status.STARTED
         }
 

@@ -26,24 +26,11 @@ class TtsProgressConverter(val onTtsStatusUpdate: (UUID, Result<TextToSpeechInst
 
     override fun onError(utteranceId: String?, errorCode: Int) {
         val id = getContinuationId(utteranceId) ?: return
-        onTtsStatusUpdate(id, Result.failure(mapErrorCodeToThrowable(errorCode)))
+        onTtsStatusUpdate(id, Result.failure(ErrorCodes.mapToThrowable(errorCode)))
     }
 
     override fun onStop(utteranceId: String?, interrupted: Boolean) {
         val id = getContinuationId(utteranceId) ?: return
         onTtsStatusUpdate(id, Result.failure(TextToSpeechSynthesisInterruptedError()))
-    }
-
-    private fun mapErrorCodeToThrowable(errorCode: Int): TextToSpeechSynthesisError {
-        return when(errorCode) {
-            ErrorCodes.ERROR_SYNTHESIS -> TextToSpeechFlawedTextInputError()
-            ErrorCodes.ERROR_SERVICE -> TextToSpeechServiceFailureError()
-            ErrorCodes.ERROR_OUTPUT -> DeviceAudioOutputError()
-            ErrorCodes.ERROR_NETWORK -> NetworkConnectivityError()
-            ErrorCodes.ERROR_NETWORK_TIMEOUT -> NetworkTimeoutError()
-            ErrorCodes.ERROR_INVALID_REQUEST -> TextToSpeechRequestInvalidError()
-            ErrorCodes.ERROR_NOT_INSTALLED_YET -> TextToSpeechEngineUnavailableError()
-            else -> UnknownTextToSpeechSynthesisError()
-        }
     }
 }
