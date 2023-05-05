@@ -4,7 +4,8 @@ import android.os.Build
 import android.speech.tts.UtteranceProgressListener
 import androidx.annotation.RequiresApi
 import nl.marc_apps.tts.TextToSpeechInstance
-import nl.marc_apps.tts.errors.*
+import nl.marc_apps.tts.errors.TextToSpeechSynthesisInterruptedError
+import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import java.util.*
 
 @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)

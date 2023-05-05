@@ -4,9 +4,9 @@ import android.content.Context
 import android.os.Build
 import android.speech.tts.TextToSpeech
 import androidx.annotation.ChecksSdkIntAtLeast
+import nl.marc_apps.tts.TextToSpeechFactory.Companion
 import nl.marc_apps.tts.errors.TextToSpeechNotSupportedError
 import nl.marc_apps.tts.errors.TextToSpeechSecurityError
-import nl.marc_apps.tts.errors.UnknownTextToSpeechInitialisationError
 import nl.marc_apps.tts.utils.ErrorCodes
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException

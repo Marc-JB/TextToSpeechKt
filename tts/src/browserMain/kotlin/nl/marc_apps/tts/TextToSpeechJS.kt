@@ -4,7 +4,6 @@ package nl.marc_apps.tts
 
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import org.w3c.dom.Window
 import org.w3c.speech.SpeechSynthesis

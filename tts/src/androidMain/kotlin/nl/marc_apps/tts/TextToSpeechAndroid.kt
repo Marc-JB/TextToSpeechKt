@@ -6,11 +6,9 @@ import android.annotation.TargetApi
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.IntRange
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import nl.marc_apps.tts.errors.*
 import nl.marc_apps.tts.utils.TtsProgressConverter
 import nl.marc_apps.tts.utils.getContinuationId
