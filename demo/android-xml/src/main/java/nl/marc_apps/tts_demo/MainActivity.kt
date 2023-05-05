@@ -1,10 +1,9 @@
 package nl.marc_apps.tts_demo
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.Lifecycle
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import nl.marc_apps.tts.TextToSpeechFactory
 import nl.marc_apps.tts.TextToSpeechInstance
@@ -13,23 +12,19 @@ import nl.marc_apps.tts_demo.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     private var ttsInstance: TextToSpeechInstance? = null
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.actionSay.isEnabled = false
+        binding.loadingIndicator.visibility = View.VISIBLE
 
         lifecycleScope.launch {
-            ttsInstance = TextToSpeechFactory(applicationContext).createOrNull()
-            binding.actionSay.isEnabled = true
-
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                ttsInstance?.isSynthesizing?.collect {
-                    binding.actionSay.isEnabled = !it
-                }
-            }
+            initTextToSpeech()
         }
 
         binding.actionSay.setOnClickListener {
@@ -49,6 +44,29 @@ class MainActivity : AppCompatActivity() {
 
         binding.inputTtsVolume.setLabelFormatter {
             it.toInt().toString()
+        }
+    }
+
+    private suspend fun initTextToSpeech() {
+        val textToSpeechFactory = TextToSpeechFactory(applicationContext, TextToSpeechFactory.ENGINE_SPEECH_SERVICES_BY_GOOGLE)
+
+        ttsInstance = textToSpeechFactory.createOrNull()
+        binding.loadingIndicator.visibility = View.GONE
+        binding.actionSay.isEnabled = true
+
+        lifecycleScope.launch {
+            ttsInstance?.isSynthesizing?.collect {
+                binding.actionSay.isEnabled = !it
+            }
+        }
+
+        lifecycleScope.launch {
+            ttsInstance?.isWarmingUp?.collect {
+                if (it) {
+                    binding.actionSay.isEnabled = false
+                }
+                binding.loadingIndicator.visibility = if (it) View.VISIBLE else View.GONE
+            }
         }
     }
 

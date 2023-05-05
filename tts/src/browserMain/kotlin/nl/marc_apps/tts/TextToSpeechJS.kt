@@ -19,6 +19,10 @@ import kotlin.js.Promise
 internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWithJsPromises {
     override val isSynthesizing = MutableStateFlow(false)
 
+    override val isWarmingUp = MutableStateFlow(false)
+
+    private var hasSpoken = false
+
     private val speechSynthesis: SpeechSynthesis = context.speechSynthesis
 
     private var speechSynthesisUtterance = SpeechSynthesisUtterance()
@@ -91,6 +95,11 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWi
             return
         }
 
+        if (!hasSpoken) {
+            hasSpoken = true
+            isWarmingUp.value = true
+        }
+
         speechSynthesisUtterance.text = text
         speechSynthesis.speak(speechSynthesisUtterance)
 
@@ -106,11 +115,13 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWi
         }
 
         speechSynthesisUtterance.onstart = {
+            isWarmingUp.value = false
             isSynthesizing.value = true
             callback(Result.success(TextToSpeechInstance.Status.STARTED))
         }
 
         speechSynthesisUtterance.onend = {
+            isWarmingUp.value = false
             isSynthesizing.value = false
             callback(Result.success(TextToSpeechInstance.Status.FINISHED))
         }

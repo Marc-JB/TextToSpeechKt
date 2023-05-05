@@ -19,7 +19,7 @@ object ProjectInfo {
 
     const val NAME = "TextToSpeechKt"
 
-    val version = Revision(1, 5, 0)
+    val version = Revision(1, 6, 0)
 
     val mavenVersion = "${version.major}.${version.minor}.${version.micro}${if (version.isPreview) "-SNAPSHOT" else ""}"
 

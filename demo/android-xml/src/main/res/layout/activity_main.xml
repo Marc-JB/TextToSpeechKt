@@ -44,7 +44,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:padding="4dp"
+            android:padding="8dp"
             android:tint="?attr/colorPrimary"
             app:layout_constraintBottom_toTopOf="@id/action_say"
             app:layout_constraintEnd_toStartOf="@id/input_tts_volume"
@@ -76,12 +76,25 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="16dp"
-            android:padding="4dp"
+            android:padding="8dp"
             android:tint="?attr/colorPrimary"
             app:layout_constraintBottom_toTopOf="@id/action_say"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/input_tts_volume"
             app:srcCompat="@drawable/ic_volume_up" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/loading_indicator"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:indeterminate="true"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp"
+            tools:visibility="visible"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/action_say"
+            app:layout_constraintTop_toTopOf="@id/action_say"
+            app:layout_constraintEnd_toStartOf="@id/action_say" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/action_say"

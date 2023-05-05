@@ -65,6 +65,8 @@ fun AppLayout() {
     } else {
         val isSynthesisRunning by textToSpeechInstance.isSynthesizing.collectAsState()
 
+        val isWarmingUp by textToSpeechInstance.isSynthesizing.collectAsState()
+
         var ttsVolumeState by remember { mutableStateOf(textToSpeechInstance.volume) }
 
         TextToSpeechInput(strings, ttsTextState) {
@@ -89,7 +91,7 @@ fun AppLayout() {
             }
         }
 
-        SynthesiseButton(strings, isSynthesisRunning) {
+        SynthesiseButton(strings, isSynthesisRunning || isWarmingUp) {
             textToSpeechInstance.volume = ttsVolumeState
             coroutineScope.launch {
                 textToSpeechInstance.say(ttsTextState)

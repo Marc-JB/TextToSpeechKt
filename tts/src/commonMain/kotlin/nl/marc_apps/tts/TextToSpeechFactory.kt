@@ -1,5 +1,8 @@
 package nl.marc_apps.tts
 
+/**
+ * Factory class to create a Text-to-Speech instance.
+ */
 expect class TextToSpeechFactory {
     val isSupported: Boolean
 

@@ -7,6 +7,13 @@ interface TextToSpeechInstance : Closeable {
     val isSynthesizing: StateFlow<Boolean>
 
     /**
+     * Value indicating if the engine is warming up.
+     * Is true after [enqueue] or [say] has been called the first time,
+     * but before [isSynthesizing] is true. Is false otherwise.
+     */
+    val isWarmingUp: StateFlow<Boolean>
+
+    /**
      * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
      * Changes only affect new calls to the [say] method.
      */

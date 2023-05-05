@@ -25,6 +25,10 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
 
     override val isSynthesizing = MutableStateFlow(false)
 
+    override val isWarmingUp = MutableStateFlow(false)
+
+    private var hasSpoken = false
+
     private var preIcsQueueSize = 0
 
     private val internalVolume: Float
@@ -119,6 +123,11 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
             }
         }
 
+        if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1 && !hasSpoken) {
+            hasSpoken = true
+            isWarmingUp.value = true
+        }
+
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             val params = Bundle()
             params.putFloat(KEY_PARAM_VOLUME, internalVolume)
@@ -161,6 +170,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
                 isSynthesizing.value = false
             }
         } else {
+            isWarmingUp.value = false
             isSynthesizing.value = result.getOrNull() == TextToSpeechInstance.Status.STARTED
         }
 
