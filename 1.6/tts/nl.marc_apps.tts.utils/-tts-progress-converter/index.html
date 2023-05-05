@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>TtsProgressConverter</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+<link href="../../../styles/multimodule.css" rel="Stylesheet">
+</head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+            <a href="../../../index.html">
+                    <span>tts</span>
+            </a>
+    </div>
+    <div>
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;tts/nl.marc_apps.tts.utils/-tts-progress-converter/index.html&quot;}">1.6</dokka-template-command>    </div>
+    <div class="pull-right d-flex">
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":tts:dokkaPreviouslyDocumentation/androidMain">android</button>
+        </div>
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="tts::nl.marc_apps.tts.utils/TtsProgressConverter///PointingToDeclaration//-1335874104">
+  <div class="breadcrumbs"><a href="../../../index.html">tts</a><span class="delimiter">/</span><a href="../index.html">nl.marc_apps.tts.utils</a><span class="delimiter">/</span><span class="current">TtsProgressConverter</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Tts</span><wbr></wbr><span>Progress</span><wbr></wbr><span><span>Converter</span></span></h1>
+    <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain" data-active="" data-toggle=":tts:dokkaPreviouslyDocumentation/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaPreviouslyDocumentation/androidMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RequiresApi.html"><span class="token annotation builtin">RequiresApi</span></a><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token constant">15</span></span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">class </span><a href="index.html">TtsProgressConverter</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>onTtsStatusUpdate<span class="token operator">: </span><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/util/UUID.html">UUID</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-result/index.html">Result</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://marc-jb.github.io/TextToSpeechKt/tts/tts/nl.marc_apps.tts/-text-to-speech-instance/-status/index.html">TextToSpeechInstance.Status</a><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span> : <a href="https://developer.android.com/reference/kotlin/android/speech/tts/UtteranceProgressListener.html">UtteranceProgressListener</a><span class="clearfix"><span class="floating-right">(<a href="https://github.com/Marc-JB/TextToSpeechKt/blob/main/tts/src/androidMain/kotlin/nl/marc_apps/tts/utils/TtsProgressConverter.kt#L12">source</a>)</span></span></div></div>    </div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,FUNCTION,PROPERTY">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="293716566%2FConstructors%2F-1335874104" anchor-label="TtsProgressConverter" id="293716566%2FConstructors%2F-1335874104" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tts-progress-converter.html"><span>Tts</span><wbr></wbr><span>Progress</span><wbr></wbr><span><span>Converter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="293716566%2FConstructors%2F-1335874104"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain" data-active="" data-toggle=":tts:dokkaPreviouslyDocumentation/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaPreviouslyDocumentation/androidMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">onTtsStatusUpdate<span class="token operator">: </span><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/util/UUID.html">UUID</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-result/index.html">Result</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://marc-jb.github.io/TextToSpeechKt/tts/tts/nl.marc_apps.tts/-text-to-speech-instance/-status/index.html">TextToSpeechInstance.Status</a><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-1396654116%2FFunctions%2F-1335874104" anchor-label="onAudioAvailable" id="-1396654116%2FFunctions%2F-1335874104" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1396654116%2FFunctions%2F-1335874104"><span>on</span><wbr></wbr><span>Audio</span><wbr></wbr><span><span>Available</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1396654116%2FFunctions%2F-1335874104"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain" data-active="" data-toggle=":tts:dokkaPreviouslyDocumentation/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaPreviouslyDocumentation/androidMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="index.html#-1396654116%2FFunctions%2F-1335874104"><span class="token function">onAudioAvailable</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p0<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">p1<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-byte-array/index.html">ByteArray</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1439623782%2FFunctions%2F-1335874104" anchor-label="onBeginSynthesis" id="1439623782%2FFunctions%2F-1335874104" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1439623782%2FFunctions%2F-1335874104"><span>on</span><wbr></wbr><span>Begin</span><wbr></wbr><span><span>Synthesis</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1439623782%2FFunctions%2F-1335874104"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain" data-active="" data-toggle=":tts:dokkaPreviouslyDocumentation/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaPreviouslyDocumentation/androidMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="index.html#1439623782%2FFunctions%2F-1335874104"><span class="token function">onBeginSynthesis</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p0<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">p1<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">p2<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">p3<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-345616457%2FFunctions%2F-1335874104" anchor-label="onDone" id="-345616457%2FFunctions%2F-1335874104" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-done.html"><span>on</span><wbr></wbr><span><span>Done</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-345616457%2FFunctions%2F-1335874104"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain" data-active="" data-toggle=":tts:dokkaPreviouslyDocumentation/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaPreviouslyDocumentation/androidMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="on-done.html"><span class="token function">onDone</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">utteranceId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1524586609%2FFunctions%2F-1335874104" anchor-label="onError" id="1524586609%2FFunctions%2F-1335874104" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-error.html"><span>on</span><wbr></wbr><span><span>Error</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1524586609%2FFunctions%2F-1335874104"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain" data-active="" data-toggle=":tts:dokkaPreviouslyDocumentation/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaPreviouslyDocumentation/androidMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="on-error.html"><span class="token function">onError</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">utteranceId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="on-error.html"><span class="token function">onError</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">utteranceId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">errorCode<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="444029548%2FFunctions%2F-1335874104" anchor-label="onRangeStart" id="444029548%2FFunctions%2F-1335874104" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#444029548%2FFunctions%2F-1335874104"><span>on</span><wbr></wbr><span>Range</span><wbr></wbr><span><span>Start</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="444029548%2FFunctions%2F-1335874104"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain" data-active="" data-toggle=":tts:dokkaPreviouslyDocumentation/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaPreviouslyDocumentation/androidMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="index.html#444029548%2FFunctions%2F-1335874104"><span class="token function">onRangeStart</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p0<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">p1<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">p2<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">p3<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="638265917%2FFunctions%2F-1335874104" anchor-label="onStart" id="638265917%2FFunctions%2F-1335874104" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-start.html"><span>on</span><wbr></wbr><span><span>Start</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="638265917%2FFunctions%2F-1335874104"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain" data-active="" data-toggle=":tts:dokkaPreviouslyDocumentation/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaPreviouslyDocumentation/androidMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="on-start.html"><span class="token function">onStart</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">utteranceId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="93487981%2FFunctions%2F-1335874104" anchor-label="onStop" id="93487981%2FFunctions%2F-1335874104" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-stop.html"><span>on</span><wbr></wbr><span><span>Stop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="93487981%2FFunctions%2F-1335874104"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain" data-active="" data-toggle=":tts:dokkaPreviouslyDocumentation/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaPreviouslyDocumentation/androidMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="on-stop.html"><span class="token function">onStop</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">utteranceId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">interrupted<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-650516078%2FProperties%2F-1335874104" anchor-label="onTtsStatusUpdate" id="-650516078%2FProperties%2F-1335874104" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-tts-status-update.html"><span>on</span><wbr></wbr><span>Tts</span><wbr></wbr><span>Status</span><wbr></wbr><span><span>Update</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-650516078%2FProperties%2F-1335874104"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaPreviouslyDocumentation/androidMain" data-filterable-set=":tts:dokkaPreviouslyDocumentation/androidMain" data-active="" data-toggle=":tts:dokkaPreviouslyDocumentation/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaPreviouslyDocumentation/androidMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="on-tts-status-update.html">onTtsStatusUpdate</a><span class="token operator">: </span><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/util/UUID.html">UUID</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-result/index.html">Result</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://marc-jb.github.io/TextToSpeechKt/tts/tts/nl.marc_apps.tts/-text-to-speech-instance/-status/index.html">TextToSpeechInstance.Status</a><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+</body>
+</html>
