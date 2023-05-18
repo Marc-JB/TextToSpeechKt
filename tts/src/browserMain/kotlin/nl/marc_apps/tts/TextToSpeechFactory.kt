@@ -15,7 +15,7 @@ actual class TextToSpeechFactory(
     actual val canChangeVolume = true
 
     actual suspend fun create(): Result<TextToSpeechInstance> {
-        return if (TextToSpeech.isSupported) {
+        return if (isSupported) {
             Result.success(TextToSpeechJS(context))
         } else {
             Result.failure(TextToSpeechNotSupportedError())

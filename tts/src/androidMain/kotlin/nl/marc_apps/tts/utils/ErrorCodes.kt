@@ -29,13 +29,13 @@ object ErrorCodes {
      */
     fun mapToThrowable(errorCode: Int): TextToSpeechSynthesisError {
         return when(errorCode) {
-            ErrorCodes.ERROR_SYNTHESIS -> TextToSpeechFlawedTextInputError()
-            ErrorCodes.ERROR_SERVICE -> TextToSpeechServiceFailureError()
-            ErrorCodes.ERROR_OUTPUT -> DeviceAudioOutputError()
-            ErrorCodes.ERROR_NETWORK -> NetworkConnectivityError()
-            ErrorCodes.ERROR_NETWORK_TIMEOUT -> NetworkTimeoutError()
-            ErrorCodes.ERROR_INVALID_REQUEST -> TextToSpeechRequestInvalidError()
-            ErrorCodes.ERROR_NOT_INSTALLED_YET -> TextToSpeechEngineUnavailableError()
+            ERROR_SYNTHESIS -> TextToSpeechInputError()
+            ERROR_SERVICE -> TextToSpeechServiceFailureError()
+            ERROR_OUTPUT -> DeviceAudioOutputError()
+            ERROR_NETWORK -> TextToSpeechNetworkError(timeout = false)
+            ERROR_NETWORK_TIMEOUT -> TextToSpeechNetworkError(timeout = true)
+            ERROR_INVALID_REQUEST -> TextToSpeechInputError()
+            ERROR_NOT_INSTALLED_YET -> TextToSpeechEngineUnavailableError()
             else -> UnknownTextToSpeechSynthesisError()
         }
     }

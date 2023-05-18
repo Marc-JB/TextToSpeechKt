@@ -41,7 +41,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     @IntRange(from = TextToSpeechInstance.VOLUME_MIN.toLong(), to = TextToSpeechInstance.VOLUME_MAX.toLong())
     override var volume: Int = TextToSpeechInstance.VOLUME_DEFAULT
         set(value) {
-            if(TextToSpeech.canChangeVolume) {
+            if(TextToSpeechFactory.canChangeVolume) {
                 field = when {
                     value < TextToSpeechInstance.VOLUME_MIN -> TextToSpeechInstance.VOLUME_MIN
                     value > TextToSpeechInstance.VOLUME_MAX -> TextToSpeechInstance.VOLUME_MAX

@@ -16,7 +16,7 @@ import kotlin.js.Promise
 
 /** A TTS instance. Should be [close]d when no longer in use. */
 @ExperimentalJsExport
-internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWithJsPromises {
+internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
     override val isSynthesizing = MutableStateFlow(false)
 
     override val isWarmingUp = MutableStateFlow(false)
@@ -144,7 +144,7 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWi
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun sayJsPromise(
+    fun sayJsPromise(
         text: String,
         clearQueue: Boolean,
         resumeOnStatus: TextToSpeechInstance.Status
