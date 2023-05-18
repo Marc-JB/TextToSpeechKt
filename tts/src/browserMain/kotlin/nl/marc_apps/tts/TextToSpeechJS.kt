@@ -107,34 +107,33 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun say(text: String, clearQueue: Boolean, callback: (Result<TextToSpeechInstance.Status>) -> Unit) {
+    override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
         if(isMuted || internalVolume == 0f) {
             if(clearQueue) stop()
-            callback(Result.success(TextToSpeechInstance.Status.FINISHED))
+            callback(Result.success(Unit))
             return
         }
 
         speechSynthesisUtterance.onstart = {
             isWarmingUp.value = false
             isSynthesizing.value = true
-            callback(Result.success(TextToSpeechInstance.Status.STARTED))
         }
 
         speechSynthesisUtterance.onend = {
             isWarmingUp.value = false
             isSynthesizing.value = false
-            callback(Result.success(TextToSpeechInstance.Status.FINISHED))
+            callback(Result.success(Unit))
         }
 
         enqueue(text, clearQueue)
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override suspend fun say(text: String, clearQueue: Boolean, resumeOnStatus: TextToSpeechInstance.Status) {
+    override suspend fun say(text: String, clearQueue: Boolean) {
         suspendCoroutine { cont ->
             say(text, clearQueue) {
-                if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
-                    cont.resume(Unit)
+                if (it.isSuccess) {
+                    cont.resume(it.getOrThrow())
                 } else if (it.isFailure) {
                     val error = it.exceptionOrNull() ?: UnknownTextToSpeechSynthesisError()
                     cont.resumeWithException(error)
@@ -146,13 +145,12 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     fun sayJsPromise(
         text: String,
-        clearQueue: Boolean,
-        resumeOnStatus: TextToSpeechInstance.Status
+        clearQueue: Boolean
     ): Promise<Unit> {
         return Promise { success, failure ->
             say(text, clearQueue) {
-                if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
-                    success(Unit)
+                if (it.isSuccess) {
+                    success(it.getOrThrow())
                 } else if (it.isFailure) {
                     val error = it.exceptionOrNull() ?: UnknownTextToSpeechSynthesisError()
                     failure(error)
