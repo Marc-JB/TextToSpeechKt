@@ -59,6 +59,16 @@ kotlin {
         publishAllLibraryVariants()
     }
 
+    /*jvm("desktop") {
+        compilations.all {
+            kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+        }
+
+        testRuns["test"].executionTask.configure {
+            useJUnitPlatform()
+        }
+    }*/
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -76,6 +86,11 @@ kotlin {
                 implementation("androidx.annotation:annotation:1.6.0")
             }
         }
+        /*val desktopMain by getting {
+            dependencies {
+                implementation("net.sf.sociaal:freetts:1.2.2")
+            }
+        }*/
     }
 }
 
