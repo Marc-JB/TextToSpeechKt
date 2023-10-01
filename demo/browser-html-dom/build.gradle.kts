@@ -1,12 +1,12 @@
 plugins {
     kotlin("js")
-    id("org.jetbrains.compose") version "1.3.1"
+    id("org.jetbrains.compose")
 }
 
 dependencies {
     implementation(project(":tts"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.7.3")
 
     implementation(compose.web.core)
     implementation(compose.runtime)

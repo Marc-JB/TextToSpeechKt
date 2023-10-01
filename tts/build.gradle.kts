@@ -54,12 +54,12 @@ kotlin {
         binaries.executable()
     }
 
-    android {
+    androidTarget {
         publishLibraryVariantsGroupedByFlavor = true
         publishAllLibraryVariants()
     }
 
-    /*jvm("desktop") {
+    jvm("desktop") {
         compilations.all {
             kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
@@ -67,36 +67,36 @@ kotlin {
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
         }
-    }*/
+    }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
             }
         }
         val browserMain by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.6.4")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.7.3")
             }
         }
         val androidMain by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
-                implementation("androidx.annotation:annotation:1.6.0")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+                implementation("androidx.annotation:annotation:1.7.0")
             }
         }
-        /*val desktopMain by getting {
+        val desktopMain by getting {
             dependencies {
                 implementation("net.sf.sociaal:freetts:1.2.2")
             }
-        }*/
+        }
     }
 }
 
 android {
-    compileSdk = 33
-    buildToolsVersion = "33.0.2"
+    compileSdk = 34
+    buildToolsVersion = "34.0.0"
 
     namespace = "nl.marc_apps.tts"
 
@@ -122,7 +122,7 @@ val versionArchiveDirectory = file(buildDir.toPath().resolve("dokka").resolve("h
 
 val generateDokkaHtmlArchiveTasks by tasks.register<org.jetbrains.dokka.gradle.DokkaTask>("dokkaPreviouslyDocumentation") {
     dependencies {
-        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.8.10")
+        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
     }
 
     val currentVersion = "${ProjectInfo.version.major}.${ProjectInfo.version.minor}"
@@ -145,7 +145,7 @@ tasks.dokkaHtml {
     dependsOn(generateDokkaHtmlArchiveTasks)
 
     dependencies {
-        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.8.10")
+        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
     }
 
     val versionArchivePath = versionArchiveDirectory.toString().replace("\\", "\\\\")
