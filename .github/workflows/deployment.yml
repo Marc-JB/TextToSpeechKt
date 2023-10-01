@@ -33,7 +33,7 @@ jobs:
 
       # Build & Deploy
       - name: Build & Deploy with Gradle
-        run: ./gradlew :tts:build :tts:publish
+        run: ./gradlew :tts:build :tts-compose:build :tts:publish :tts-compose:publish
         env:
           GPR_USER: github-actions
           GPR_KEY: ${{ secrets.GITHUB_TOKEN }}
@@ -49,10 +49,11 @@ jobs:
           mkdir out/browser
           cp ./tts/build/distributions/tts.js ./out/browser/tts.js
           cp ./tts/build/distributions/tts.js.map ./out/browser/tts.js.map
-          cp ./tts/typings/tts.d.ts ./out/browser/tts.d.ts
           mkdir out/android
           cp ./tts/build/outputs/aar/tts-debug.aar ./out/android/tts-debug.aar
           cp ./tts/build/outputs/aar/tts-release.aar ./out/android/tts-release.aar
+          cp ./tts-compose/build/outputs/aar/tts-compose-debug.aar ./out/android/tts-compose-debug.aar
+          cp ./tts-compose/build/outputs/aar/tts-compose-release.aar ./out/android/tts-compose-release.aar
 
       # Upload artifacts
       - uses: actions/upload-artifact@v3
@@ -95,15 +96,23 @@ jobs:
           ref: 'dokka-version-archive'
           path: './tts/build/dokka/html_version_archive/'
 
+      # Copy previous versions
+      - name: Copy docs of previous compose versions
+        uses: actions/checkout@v3
+        with:
+          ref: 'dokka-version-archive-compose'
+          path: './tts-compose/build/dokka/html_version_archive/'
+
       # Generate docs
       - name: Generate docs with Gradle & Dokka
-        run: ./gradlew :tts:dokkaHtml
+        run: ./gradlew :tts:dokkaHtml :tts-compose:dokkaHtml
 
       # Move docs
       - name: Move docs
         run: |
           mkdir out
           mv ./tts/build/dokka/html/* ./out
+          mv ./tts-compose/build/dokka/html/* ./out
 
       # Upload artifacts
       - uses: actions/upload-artifact@v3
@@ -119,6 +128,16 @@ jobs:
         with:
           target_branch: dokka-version-archive
           build_dir: ./tts/build/dokka/html_version_archive/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Deploy Dokka archive
+      - name: Deploy Dokka archive
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v3
+        with:
+          target_branch: dokka-version-archive-compose
+          build_dir: ./tts-compose/build/dokka/html_version_archive/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -1,7 +1,9 @@
-@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
+@file:Suppress("UnstableApiUsage")
 
 import com.android.repository.Revision
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.net.URL
@@ -42,7 +44,7 @@ object ProjectInfo {
     const val DOCUMENTATION_URL = "https://marc-jb.github.io/TextToSpeechKt"
 }
 
-val config = Config()
+val config by lazy { Config() }
 
 group = ProjectInfo.GROUP_ID
 version = ProjectInfo.mavenVersion
@@ -63,27 +65,17 @@ kotlin {
         compilations.all {
             kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
-
-        testRuns["test"].executionTask.configure {
-            useJUnitPlatform()
-        }
     }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-            }
-        }
-        val browserMain by getting {
-            dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.7.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
             }
         }
         val androidMain by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-                implementation("androidx.annotation:annotation:1.7.0")
+                api("androidx.annotation:annotation:1.7.0")
             }
         }
         val desktopMain by getting {
@@ -112,54 +104,19 @@ android {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 }
 
-val versionArchiveDirectory = file(buildDir.toPath().resolve("dokka").resolve("html_version_archive"))
-
-val generateDokkaHtmlArchiveTasks by tasks.register<org.jetbrains.dokka.gradle.DokkaTask>("dokkaPreviouslyDocumentation") {
-    dependencies {
-        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
-    }
-
-    val currentVersion = "${ProjectInfo.version.major}.${ProjectInfo.version.minor}"
-
-    outputDirectory.set(file(versionArchiveDirectory.toPath().resolve(currentVersion)))
-
-    val versioningPluginClass = "org.jetbrains.dokka.versioning.VersioningPlugin"
-    val versioningPluginConfig = """{ "version": "$currentVersion" }"""
-
-    pluginsMapConfiguration.set(
-        mapOf(
-            versioningPluginClass to versioningPluginConfig
-        )
-    )
-
-    configureAllSourceSets()
+val generateDokkaHtmlArchiveTasks by tasks.register<DokkaTask>("dokkaPreviouslyDocumentation") {
+    configureDokka(includePath = false, setOutputDir = true)
 }
 
 tasks.dokkaHtml {
     dependsOn(generateDokkaHtmlArchiveTasks)
-
-    dependencies {
-        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
-    }
-
-    val versionArchivePath = versionArchiveDirectory.toString().replace("\\", "\\\\")
-
-    val versioningPluginClass = "org.jetbrains.dokka.versioning.VersioningPlugin"
-    val versioningPluginConfig = """{ "version": "${ProjectInfo.version.major}.${ProjectInfo.version.minor}", "olderVersionsDir": "$versionArchivePath" }"""
-
-    pluginsMapConfiguration.set(
-        mapOf(
-            versioningPluginClass to versioningPluginConfig
-        )
-    )
-
-    configureAllSourceSets()
+    configureDokka(includePath = true, setOutputDir = false)
 }
 
 val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
@@ -213,7 +170,41 @@ signing {
     sign(publishing.publications)
 }
 
-fun org.jetbrains.dokka.gradle.DokkaTask.configureAllSourceSets() {
+val versionArchiveDirectory = file(buildDir.toPath().resolve("dokka").resolve("html_version_archive"))
+
+fun DokkaTask.configureDokka(includePath: Boolean, setOutputDir: Boolean) {
+    dependencies {
+        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
+    }
+
+    val currentVersion = "${ProjectInfo.version.major}.${ProjectInfo.version.minor}"
+
+    if (setOutputDir) {
+        outputDirectory.set(file(versionArchiveDirectory.toPath().resolve(currentVersion)))
+    }
+
+    configurePluginMap(includePath, currentVersion)
+    configureAllSourceSets()
+}
+
+fun DokkaTask.configurePluginMap(includePath: Boolean, currentVersion: String) {
+    val versionArchivePath = versionArchiveDirectory.toString().replace("\\", "\\\\")
+
+    val versioningPluginClass = "org.jetbrains.dokka.versioning.VersioningPlugin"
+    val versioningPluginConfig = if (includePath){
+        """{ "version": "$currentVersion", "olderVersionsDir": "$versionArchivePath" }"""
+    } else {
+        """{ "version": "$currentVersion" }"""
+    }
+
+    pluginsMapConfiguration.set(
+        mapOf(
+            versioningPluginClass to versioningPluginConfig
+        )
+    )
+}
+
+fun DokkaTask.configureAllSourceSets() {
     dokkaSourceSets {
         named("commonMain") {
             configureDokkaSourceSet("common")
@@ -225,6 +216,10 @@ fun org.jetbrains.dokka.gradle.DokkaTask.configureAllSourceSets() {
 
         named("browserMain") {
             configureDokkaSourceSet("browser")
+        }
+
+        named("desktopMain") {
+            configureDokkaSourceSet("desktop")
         }
     }
 }
@@ -241,9 +236,7 @@ fun GradleDokkaSourceSetBuilder.configureDokkaSourceSet(platform: String) {
         packageListUrl.set(URL("${ProjectInfo.DOCUMENTATION_URL}/tts/package-list"))
     }
 
-    if (platform == "android") {
-        jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
-    }
+    jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
 }
 
 fun MavenPublication.configurePublication() {
@@ -252,6 +245,7 @@ fun MavenPublication.configurePublication() {
     artifactId = "tts" + when {
         artifactId.endsWith("-android") || name == "android" -> "-android"
         artifactId.endsWith("-browser") -> "-browser"
+        artifactId.endsWith("-desktop") -> "-desktop"
         else -> ""
     }
 
@@ -306,16 +300,19 @@ fun MavenPublication.configurePublication() {
 }
 
 class Config {
-    private val localProperties = Properties().also { properties ->
-        try {
-            project.rootProject.file("local.properties").inputStream().use {
-                properties.load(it)
-            }
-        } catch (ignored: java.io.FileNotFoundException) {}
+    private val localProperties by lazy {
+        Properties().also { properties ->
+            try {
+                project.rootProject.file("local.properties").inputStream().use {
+                    properties.load(it)
+                }
+            } catch (ignored: java.io.FileNotFoundException) {}
+        }
     }
 
     operator fun get(vararg path: String): String? {
-        return localProperties.getProperty(path.joinToString(","))
+        return findProperty(path.joinToString("."))?.toString()
+            ?: localProperties.getProperty(path.joinToString("."))
             ?: System.getenv(path.joinToString("_") { it.toUpperCaseAsciiOnly() })
     }
 }

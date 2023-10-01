@@ -1,31 +1,54 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.android.repository.Revision
+import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.konan.properties.Properties
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
+import java.net.URL
 
 plugins {
     kotlin("multiplatform")
-
-    id("org.jetbrains.compose")
-
     id("com.android.library")
+    `maven-publish`
+    signing
+    id("org.jetbrains.dokka")
+    id("org.jetbrains.compose")
 }
 
 object ProjectInfo {
     const val GROUP_ID = "nl.marc-apps"
 
-    const val VERSION_MAJOR_MINOR = "2.0"
+    const val NAME = "TextToSpeechKt"
 
-    const val VERSION_BUILD = "0"
+    val version = Revision(2, 0)
 
-    const val SNAPSHOT = true
+    val mavenVersion = "${version.major}.${version.minor}.${version.micro}${if (version.isPreview) "-SNAPSHOT" else ""}"
 
-    private val SNAPSHOT_SUFFIX = if (SNAPSHOT) "-SNAPSHOT" else ""
+    object Developer {
+        const val ORG_NAME = "Marc Apps & Software"
 
-    val VERSION = "${VERSION_MAJOR_MINOR}.${VERSION_BUILD}${SNAPSHOT_SUFFIX}"
+        const val WEBSITE = "https://marc-apps.nl"
+
+        const val NAME = "Marc"
+
+        const val EMAIL = "16156117+Marc-JB@users.noreply.github.com"
+
+        const val GITHUB_NAME = "Marc-JB"
+    }
+
+    const val LOCATION = "github.com/${Developer.GITHUB_NAME}/TextToSpeechKt"
+
+    const val LOCATION_HTTP = "https://$LOCATION"
+
+    const val DOCUMENTATION_URL = "https://marc-jb.github.io/TextToSpeechKt"
 }
 
+val config by lazy { Config() }
+
 group = ProjectInfo.GROUP_ID
-version = ProjectInfo.VERSION
+version = ProjectInfo.mavenVersion
 
 kotlin {
     js("browser", IR) {
@@ -43,37 +66,19 @@ kotlin {
         compilations.all {
             kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
-
-        testRuns["test"].executionTask.configure {
-            useJUnitPlatform()
-        }
     }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(compose.runtime)
+                implementation(compose.runtime)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
                 api(project(":tts"))
             }
         }
-
         val androidMain by getting {
             dependencies {
-                api("androidx.compose.runtime:runtime:1.5.0")
-                implementation("androidx.compose.foundation:foundation:1.5.0")
-            }
-        }
-
-        val browserMain by getting {
-            dependencies {
-                api(compose.runtime)
-            }
-        }
-
-        val desktopMain by getting {
-            dependencies {
-                api(compose.runtime)
+                implementation(compose.foundation)
             }
         }
     }
@@ -110,4 +115,228 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
+}
+
+val generateDokkaHtmlArchiveTasks by tasks.register<DokkaTask>("dokkaPreviouslyDocumentation") {
+    configureDokka(includePath = false, setOutputDir = true)
+}
+
+tasks.dokkaHtml {
+    dependsOn(generateDokkaHtmlArchiveTasks)
+    configureDokka(includePath = true, setOutputDir = false)
+}
+
+val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
+    dependsOn(tasks.dokkaHtml)
+    archiveClassifier.set("javadoc")
+    from(buildDir.toPath().resolve("dokka"))
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "OSSRH"
+            url = uri(
+                if(ProjectInfo.version.isPreview) {
+                    "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                } else {
+                    "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                }
+            )
+
+            credentials {
+                username = config["ossrh", "username"]
+                password = config["ossrh", "password"]
+            }
+        }
+
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Marc-JB/TextToSpeechKt")
+            credentials {
+                username = config["gpr", "user"]
+                password = config["gpr", "key"]
+            }
+        }
+    }
+
+    publications {
+        withType<MavenPublication> {
+            configurePublication()
+        }
+    }
+}
+
+signing {
+    isRequired = true
+
+    val signingKey = config["gpg", "signing", "key"]
+    val signingPassword = config["gpg", "signing", "password"]
+    useInMemoryPgpKeys(signingKey, signingPassword)
+
+    sign(publishing.publications)
+}
+
+val versionArchiveDirectory = file(buildDir.toPath().resolve("dokka").resolve("html_version_archive"))
+
+fun DokkaTask.configureDokka(includePath: Boolean, setOutputDir: Boolean) {
+    dependencies {
+        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
+    }
+
+    val currentVersion = "${ProjectInfo.version.major}.${ProjectInfo.version.minor}"
+
+    if (setOutputDir) {
+        outputDirectory.set(file(versionArchiveDirectory.toPath().resolve(currentVersion)))
+    }
+
+    configurePluginMap(includePath, currentVersion)
+    configureAllSourceSets()
+}
+
+fun DokkaTask.configurePluginMap(includePath: Boolean, currentVersion: String) {
+    val versionArchivePath = versionArchiveDirectory.toString().replace("\\", "\\\\")
+
+    val versioningPluginClass = "org.jetbrains.dokka.versioning.VersioningPlugin"
+    val versioningPluginConfig = if (includePath){
+        """{ "version": "$currentVersion", "olderVersionsDir": "$versionArchivePath" }"""
+    } else {
+        """{ "version": "$currentVersion" }"""
+    }
+
+    pluginsMapConfiguration.set(
+        mapOf(
+            versioningPluginClass to versioningPluginConfig
+        )
+    )
+}
+
+fun DokkaTask.configureAllSourceSets() {
+    dokkaSourceSets {
+        named("commonMain") {
+            configureDokkaSourceSet("common")
+        }
+
+        named("androidMain") {
+            configureDokkaSourceSet("android")
+        }
+
+        named("browserMain") {
+            configureDokkaSourceSet("browser")
+        }
+
+        named("desktopMain") {
+            configureDokkaSourceSet("desktop")
+        }
+    }
+}
+
+fun GradleDokkaSourceSetBuilder.configureDokkaSourceSet(platform: String) {
+    sourceLink {
+        localDirectory.set(file("src/${platform}Main/kotlin"))
+        remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/tts-compose/src/${platform}Main/kotlin"))
+        remoteLineSuffix.set("#L")
+    }
+
+    externalDocumentationLink {
+        url.set(URL("${ProjectInfo.DOCUMENTATION_URL}/tts-compose"))
+        packageListUrl.set(URL("${ProjectInfo.DOCUMENTATION_URL}/tts-compose/package-list"))
+    }
+
+    jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
+}
+
+fun MavenPublication.configurePublication() {
+    groupId = ProjectInfo.GROUP_ID
+
+    artifactId = "tts-compose-" + when {
+        artifactId.endsWith("-android") || name == "android" -> "-android"
+        artifactId.endsWith("-browser") -> "-browser"
+        artifactId.endsWith("-desktop") -> "-desktop"
+        else -> ""
+    }
+
+    artifact(javadocJar.get())
+
+    pom {
+        name.set(ProjectInfo.NAME)
+        description.set(
+            "Multiplatform Text-to-Speech library for Android and Browser (JS). " +
+                    "This library will enable you to use Text-to-Speech in multiplatform Kotlin projects."
+        )
+        url.set(ProjectInfo.LOCATION_HTTP)
+        inceptionYear.set("2020")
+
+        licenses {
+            license {
+                name.set("MIT")
+                url.set("https://opensource.org/licenses/MIT")
+            }
+        }
+
+        organization {
+            name.set(ProjectInfo.Developer.ORG_NAME)
+            url.set(ProjectInfo.Developer.WEBSITE)
+        }
+
+        developers {
+            developer {
+                id.set(ProjectInfo.Developer.GITHUB_NAME)
+                name.set(ProjectInfo.Developer.NAME)
+                email.set(ProjectInfo.Developer.EMAIL)
+                url.set(ProjectInfo.Developer.WEBSITE)
+                organization.set(ProjectInfo.Developer.ORG_NAME)
+                organizationUrl.set(ProjectInfo.Developer.WEBSITE)
+            }
+        }
+
+        issueManagement {
+            url.set("${ProjectInfo.LOCATION_HTTP}/issues")
+        }
+
+        ciManagement {
+            url.set("${ProjectInfo.LOCATION_HTTP}/actions")
+        }
+
+        scm {
+            connection.set("scm:git:git://${ProjectInfo.LOCATION}.git")
+            developerConnection.set("scm:git:ssh://${ProjectInfo.LOCATION}.git")
+            url.set(ProjectInfo.LOCATION_HTTP)
+        }
+    }
+}
+
+class Config {
+    private val localProperties by lazy {
+        Properties().also { properties ->
+            try {
+                project.rootProject.file("local.properties").inputStream().use {
+                    properties.load(it)
+                }
+            } catch (ignored: java.io.FileNotFoundException) {}
+        }
+    }
+
+    operator fun get(vararg path: String): String? {
+        return findProperty(path.joinToString("."))?.toString()
+            ?: localProperties.getProperty(path.joinToString("."))
+            ?: System.getenv(path.joinToString("_") { it.toUpperCaseAsciiOnly() })
+    }
+}
+
+afterEvaluate {
+    tasks.named("publishAndroidPublicationToOSSRHRepository").configure { mustRunAfter("signBrowserPublication") }
+    tasks.named("publishAndroidPublicationToGitHubPackagesRepository").configure { mustRunAfter("signBrowserPublication") }
+    tasks.named("publishAndroidPublicationToOSSRHRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
+    tasks.named("publishAndroidPublicationToGitHubPackagesRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
+
+    tasks.named("publishBrowserPublicationToOSSRHRepository").configure { mustRunAfter("signAndroidPublication") }
+    tasks.named("publishBrowserPublicationToGitHubPackagesRepository").configure { mustRunAfter("signAndroidPublication") }
+    tasks.named("publishBrowserPublicationToOSSRHRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
+    tasks.named("publishBrowserPublicationToGitHubPackagesRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
+
+    tasks.named("publishKotlinMultiplatformPublicationToOSSRHRepository").configure { mustRunAfter("signAndroidPublication") }
+    tasks.named("publishKotlinMultiplatformPublicationToGitHubPackagesRepository").configure { mustRunAfter("signAndroidPublication") }
+    tasks.named("publishKotlinMultiplatformPublicationToOSSRHRepository").configure { mustRunAfter("signBrowserPublication") }
+    tasks.named("publishKotlinMultiplatformPublicationToGitHubPackagesRepository").configure { mustRunAfter("signBrowserPublication") }
 }
