@@ -94,25 +94,17 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: 'dokka-version-archive'
-          path: './tts/build/dokka/html_version_archive/'
-
-      # Copy previous versions
-      - name: Copy docs of previous compose versions
-        uses: actions/checkout@v3
-        with:
-          ref: 'dokka-version-archive-compose'
-          path: './tts-compose/build/dokka/html_version_archive/'
+          path: './build/dokka/html_version_archive/'
 
       # Generate docs
       - name: Generate docs with Gradle & Dokka
-        run: ./gradlew :tts:dokkaHtml :tts-compose:dokkaHtml
+        run: ./gradlew :dokkaHtmlMultiModule
 
       # Move docs
       - name: Move docs
         run: |
           mkdir out
-          mv ./tts/build/dokka/html/* ./out
-          mv ./tts-compose/build/dokka/html/* ./out
+          mv ./build/dokka/html/* ./out
 
       # Upload artifacts
       - uses: actions/upload-artifact@v3
@@ -127,17 +119,7 @@ jobs:
         uses: crazy-max/ghaction-github-pages@v3
         with:
           target_branch: dokka-version-archive
-          build_dir: ./tts/build/dokka/html_version_archive/
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Deploy Dokka archive
-      - name: Deploy Dokka archive
-        if: success()
-        uses: crazy-max/ghaction-github-pages@v3
-        with:
-          target_branch: dokka-version-archive-compose
-          build_dir: ./tts-compose/build/dokka/html_version_archive/
+          build_dir: ./build/dokka/html_version_archive/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

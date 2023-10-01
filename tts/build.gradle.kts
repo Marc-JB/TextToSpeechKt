@@ -2,6 +2,7 @@
 
 import com.android.repository.Revision
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.properties.Properties
@@ -110,17 +111,46 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-val generateDokkaHtmlArchiveTasks by tasks.register<DokkaTask>("dokkaPreviouslyDocumentation") {
-    configureDokka(includePath = false, setOutputDir = true)
+dependencies {
+    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:1.9.0")
+    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
 }
 
-tasks.dokkaHtml {
-    dependsOn(generateDokkaHtmlArchiveTasks)
-    configureDokka(includePath = true, setOutputDir = false)
+tasks.dokkaHtmlPartial {
+    val versionArchiveDirectory = project.rootProject.buildDir.resolve("dokka").resolve("html_version_archive")
+    val currentVersion = "${ProjectInfo.version.major}.${ProjectInfo.version.minor}"
+    outputDirectory.set(file(versionArchiveDirectory.resolve(currentVersion)))
+}
+
+tasks.withType<DokkaTaskPartial>().configureEach {
+    dokkaSourceSets.configureEach {
+        val platform = when(name){
+            "commonMain" -> "common"
+            "androidMain" -> "android"
+            "browserMain" -> "browser"
+            "desktopMain" -> "desktop"
+            else -> null
+        }
+
+        if (platform != null) {
+            sourceLink {
+                localDirectory.set(file("src/${platform}Main/kotlin"))
+                remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/tts/src/${platform}Main/kotlin"))
+                remoteLineSuffix.set("#L")
+            }
+
+            externalDocumentationLink {
+                url.set(URL("${ProjectInfo.DOCUMENTATION_URL}/tts"))
+                packageListUrl.set(URL("${ProjectInfo.DOCUMENTATION_URL}/tts/package-list"))
+            }
+
+            jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
+        }
+    }
 }
 
 val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
-    dependsOn(tasks.dokkaHtml)
+    dependsOn(tasks.dokkaHtmlPartial)
     archiveClassifier.set("javadoc")
     from(buildDir.toPath().resolve("dokka"))
 }
@@ -168,75 +198,6 @@ signing {
     useInMemoryPgpKeys(signingKey, signingPassword)
 
     sign(publishing.publications)
-}
-
-val versionArchiveDirectory = file(buildDir.toPath().resolve("dokka").resolve("html_version_archive"))
-
-fun DokkaTask.configureDokka(includePath: Boolean, setOutputDir: Boolean) {
-    dependencies {
-        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
-    }
-
-    val currentVersion = "${ProjectInfo.version.major}.${ProjectInfo.version.minor}"
-
-    if (setOutputDir) {
-        outputDirectory.set(file(versionArchiveDirectory.toPath().resolve(currentVersion)))
-    }
-
-    configurePluginMap(includePath, currentVersion)
-    configureAllSourceSets()
-}
-
-fun DokkaTask.configurePluginMap(includePath: Boolean, currentVersion: String) {
-    val versionArchivePath = versionArchiveDirectory.toString().replace("\\", "\\\\")
-
-    val versioningPluginClass = "org.jetbrains.dokka.versioning.VersioningPlugin"
-    val versioningPluginConfig = if (includePath){
-        """{ "version": "$currentVersion", "olderVersionsDir": "$versionArchivePath" }"""
-    } else {
-        """{ "version": "$currentVersion" }"""
-    }
-
-    pluginsMapConfiguration.set(
-        mapOf(
-            versioningPluginClass to versioningPluginConfig
-        )
-    )
-}
-
-fun DokkaTask.configureAllSourceSets() {
-    dokkaSourceSets {
-        named("commonMain") {
-            configureDokkaSourceSet("common")
-        }
-
-        named("androidMain") {
-            configureDokkaSourceSet("android")
-        }
-
-        named("browserMain") {
-            configureDokkaSourceSet("browser")
-        }
-
-        named("desktopMain") {
-            configureDokkaSourceSet("desktop")
-        }
-    }
-}
-
-fun GradleDokkaSourceSetBuilder.configureDokkaSourceSet(platform: String) {
-    sourceLink {
-        localDirectory.set(file("src/${platform}Main/kotlin"))
-        remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/tts/src/${platform}Main/kotlin"))
-        remoteLineSuffix.set("#L")
-    }
-
-    externalDocumentationLink {
-        url.set(URL("${ProjectInfo.DOCUMENTATION_URL}/tts"))
-        packageListUrl.set(URL("${ProjectInfo.DOCUMENTATION_URL}/tts/package-list"))
-    }
-
-    jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
 }
 
 fun MavenPublication.configurePublication() {

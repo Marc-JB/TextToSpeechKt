@@ -2,7 +2,7 @@
   <configuration default="false" name="Create library docs" type="GradleRunConfiguration" factoryName="Gradle" folderName="Library Utils">
     <ExternalSystemSettings>
       <option name="executionName" />
-      <option name="externalProjectPath" value="$PROJECT_DIR$/tts" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
       <option name="scriptParameters" value="" />
       <option name="taskDescriptions">
