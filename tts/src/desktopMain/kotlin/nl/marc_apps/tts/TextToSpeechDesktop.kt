@@ -10,7 +10,7 @@ import nl.marc_apps.tts.experimental.ExperimentalDesktopTarget
 private const val VOICE_NAME = "kevin16"
 
 @ExperimentalDesktopTarget
-class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechInstance {
+internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechInstance {
     private val voice = voiceManager.getVoice(VOICE_NAME)
 
     override val isSynthesizing = MutableStateFlow(false)

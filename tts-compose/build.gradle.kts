@@ -123,12 +123,6 @@ dependencies {
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
 }
 
-tasks.dokkaHtmlPartial {
-    val versionArchiveDirectory = project.rootProject.buildDir.resolve("dokka").resolve("html_version_archive")
-    val currentVersion = "${ProjectInfo.version.major}.${ProjectInfo.version.minor}"
-    outputDirectory.set(file(versionArchiveDirectory.resolve(currentVersion)))
-}
-
 tasks.withType<DokkaTaskPartial>().configureEach {
     dokkaSourceSets.configureEach {
         val platform = when(name){
