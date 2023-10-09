@@ -20,6 +20,8 @@ plugins {
 object ProjectInfo {
     const val GROUP_ID = "nl.marc-apps"
 
+    const val ID = "tts"
+
     const val NAME = "TextToSpeechKt"
 
     val version = Revision(2, 0)
@@ -96,7 +98,7 @@ android {
     defaultConfig {
         minSdk = 1
 
-        setProperty("archivesBaseName", "tts")
+        setProperty("archivesBaseName", ProjectInfo.ID)
     }
 
     compileOptions {
@@ -129,13 +131,13 @@ tasks.withType<DokkaTaskPartial>().configureEach {
         if (platform != null) {
             sourceLink {
                 localDirectory.set(file("src/${platform}Main/kotlin"))
-                remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/tts/src/${platform}Main/kotlin"))
+                remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/${ProjectInfo.ID}/src/${platform}Main/kotlin"))
                 remoteLineSuffix.set("#L")
             }
 
             externalDocumentationLink {
-                url.set(URL("${ProjectInfo.DOCUMENTATION_URL}/tts"))
-                packageListUrl.set(URL("${ProjectInfo.DOCUMENTATION_URL}/tts/package-list"))
+                url.set(URL("${ProjectInfo.DOCUMENTATION_URL}/${ProjectInfo.ID}"))
+                packageListUrl.set(URL("${ProjectInfo.DOCUMENTATION_URL}/${ProjectInfo.ID}/package-list"))
             }
 
             jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
@@ -197,7 +199,7 @@ signing {
 fun MavenPublication.configurePublication() {
     groupId = ProjectInfo.GROUP_ID
 
-    artifactId = "tts" + when {
+    artifactId = ProjectInfo.ID + when {
         artifactId.endsWith("-android") || name == "android" -> "-android"
         artifactId.endsWith("-browser") -> "-browser"
         artifactId.endsWith("-desktop") -> "-desktop"
