@@ -33,9 +33,11 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
             field = value
         }
 
+    private val defaultPitch = voice.pitch
+
     override var pitch = 1f
         set(value) {
-            voice.pitch = value
+            voice.pitch = value * defaultPitch
             field = value
         }
 
