@@ -61,11 +61,15 @@ fun TtsDemoView(
                 OptionsCard(
                     defaultVolume = textToSpeech.volume,
                     defaultRate = textToSpeech.rate,
+                    defaultPitch = textToSpeech.pitch,
                     onVolumeChanged = {
                         textToSpeech.volume = it
                     },
                     onRateChanged = {
                         textToSpeech.rate = it
+                    },
+                    onPitchChanged = {
+                        textToSpeech.pitch = it
                     }
                 )
 
@@ -95,8 +99,10 @@ fun TtsDemoView(
 private fun OptionsCard(
     defaultVolume: Int,
     defaultRate: Float,
+    defaultPitch: Float,
     onVolumeChanged: (Int) -> Unit,
-    onRateChanged: (Float) -> Unit
+    onRateChanged: (Float) -> Unit,
+    onPitchChanged: (Float) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -179,6 +185,29 @@ private fun OptionsCard(
                         },
                         valueRange = 1f..20f,
                         steps = 20,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                Row (
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(16.dp, 8.dp)
+                        .height(48.dp)
+                ) {
+                    Icon(Icons.Rounded.Moving, contentDescription = null)
+
+                    var preferredPitch by remember { mutableStateOf(defaultPitch * 10 - 5) }
+
+                    Slider(
+                        value = preferredPitch,
+                        onValueChange = {
+                            preferredPitch = it
+                            onPitchChanged(it * 0.1f + 0.5f)
+                        },
+                        valueRange = 1f..10f,
+                        steps = 10,
                         modifier = Modifier.weight(1f)
                     )
                 }
