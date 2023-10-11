@@ -39,9 +39,11 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
             field = value
         }
 
+    private val defaultRate = voice.rate
+
     override var rate = 1f
         set(value) {
-            voice.rate = value
+            voice.rate = value * defaultRate
             field = value
         }
 
