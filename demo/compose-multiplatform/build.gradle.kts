@@ -33,27 +33,18 @@ kotlin {
                 implementation(compose.ui)
                 implementation(compose.foundation)
                 implementation(compose.material)
+                implementation(compose.materialIconsExtended)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
                 implementation(project(":tts-compose"))
             }
         }
+
         val androidMain by getting {
             dependencies {
-                api("androidx.compose.runtime:runtime:1.5.0")
-                implementation("androidx.compose.ui:ui:1.5.0")
-                implementation("androidx.compose.foundation:foundation:1.5.0")
-                implementation("androidx.compose.foundation:foundation-layout:1.5.0")
-                implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
-                implementation("androidx.navigation:navigation-compose:2.7.3")
-                implementation("androidx.activity:activity-compose:1.7.2")
-                implementation("androidx.compose.material:material:1.5.0")
-                implementation("androidx.compose.material:material-icons-extended:1.5.0")
-            }
-        }
-
-        val browserMain by getting {
-            dependencies {
-                implementation(compose.web.core)
+                implementation(compose.preview)
+                implementation(compose.uiTooling)
+                implementation("androidx.navigation:navigation-compose:2.7.4")
+                implementation("androidx.activity:activity-compose:1.8.0")
             }
         }
 
@@ -61,7 +52,6 @@ kotlin {
             dependencies {
                 implementation(compose.preview)
                 implementation(compose.uiTooling)
-                implementation(compose.materialIconsExtended)
                 implementation(compose.desktop.currentOs)
             }
         }
@@ -69,7 +59,7 @@ kotlin {
 }
 
 dependencies {
-    debugImplementation("androidx.compose.ui:ui-tooling:1.5.0")
+    debugImplementation(compose.uiTooling)
 }
 
 android {
