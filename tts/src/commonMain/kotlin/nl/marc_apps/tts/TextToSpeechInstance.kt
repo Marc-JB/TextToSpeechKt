@@ -1,6 +1,8 @@
 package nl.marc_apps.tts
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 
 /** A TTS instance. Should be [close]d when no longer in use. */
 interface TextToSpeechInstance : Closeable {
@@ -35,6 +37,12 @@ interface TextToSpeechInstance : Closeable {
      * May return the language code as ISO 639 on older platforms.
      */
     val language: String
+
+    @ExperimentalVoiceApi
+    var currentVoice: Voice?
+
+    @ExperimentalVoiceApi
+    val voices: Flow<Set<Voice>>
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     fun enqueue(text: String, clearQueue: Boolean = false)

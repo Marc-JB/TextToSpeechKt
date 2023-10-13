@@ -3,9 +3,12 @@ package nl.marc_apps.tts
 import com.sun.speech.freetts.VoiceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import nl.marc_apps.tts.experimental.ExperimentalDesktopTarget
+import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 
 private const val VOICE_NAME = "kevin16"
 
@@ -48,6 +51,33 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
             voice.rate = value * defaultRate
             field = value
         }
+
+    @ExperimentalVoiceApi
+    private val defaultVoice = object : Voice {
+        override val name = "Kevin"
+
+        override val isDefault = true
+
+        override val isOnline = false
+
+        override val languageTag = voice.locale.toLanguageTag()
+
+        override val language = voice.locale.displayLanguage
+
+        override val region = voice.locale.displayCountry
+
+        override val locale = voice.locale
+    }
+
+    @ExperimentalVoiceApi
+    @Suppress("SetterBackingFieldAssignment")
+    override var currentVoice: Voice? = defaultVoice
+        set(_) {}
+
+    @ExperimentalVoiceApi
+    override val voices: Flow<Set<Voice>> = flow {
+        emit(setOf(defaultVoice))
+    }
 
     init {
         voice.allocate()

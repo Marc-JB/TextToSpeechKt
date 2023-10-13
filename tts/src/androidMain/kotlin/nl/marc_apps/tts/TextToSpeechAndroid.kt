@@ -7,12 +7,18 @@ import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.os.LocaleList
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.IntRange
 import androidx.annotation.RequiresApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import nl.marc_apps.tts.errors.*
+import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import nl.marc_apps.tts.utils.TtsProgressConverter
+import nl.marc_apps.tts.utils.VoiceAndroidLegacy
+import nl.marc_apps.tts.utils.VoiceAndroidModern
 import nl.marc_apps.tts.utils.getContinuationId
 import java.util.*
 import kotlin.coroutines.resume
@@ -80,6 +86,41 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
      */
     override val language: String
         get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) voiceLocale.toLanguageTag() else voiceLocale.language
+
+    @ExperimentalVoiceApi
+    private val defaultVoice: Voice? = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP){
+        (tts?.voice ?: tts?.defaultVoice)?.let { VoiceAndroidModern(it, true) }
+    } else {
+        tts?.language?.let { VoiceAndroidLegacy(it, true) }
+    }
+
+    @ExperimentalVoiceApi
+    override var currentVoice: Voice? = defaultVoice
+        set(value) {
+            val result = if (value is VoiceAndroidModern && VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+                tts?.setVoice(value.androidVoice)
+            } else if (value is VoiceAndroidLegacy) {
+                tts?.setLanguage(value.locale)
+            } else null
+            if (result != null && result >= 0) {
+                field = value
+            }
+        }
+
+    @ExperimentalVoiceApi
+    override val voices: Flow<Set<Voice>> = flow {
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            emit(tts?.voices?.map {
+                VoiceAndroidModern(it, it == (defaultVoice as? VoiceAndroidModern)?.androidVoice)
+            }?.toSet() ?: emptySet())
+        } else {
+            emit(Locale.getAvailableLocales().filter {
+                tts?.isLanguageAvailable(it) == AndroidTTS.LANG_AVAILABLE
+            }.map {
+                VoiceAndroidLegacy(it, it == defaultVoice?.locale)
+            }.toSet())
+        }
+    }
 
     init {
         if (hasModernProgressListeners) {

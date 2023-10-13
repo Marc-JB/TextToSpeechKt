@@ -3,17 +3,16 @@ package nl.marc_apps.tts_demo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import nl.marc_apps.tts.TextToSpeechInstance
+import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import kotlin.math.roundToInt
 
 @Composable
@@ -24,14 +23,14 @@ fun TtsDemoView(
     val coroutineScope = rememberCoroutineScope()
 
     Surface(
-        color = MaterialTheme.colors.background
+        color = MaterialTheme.colorScheme.background
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.background)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .padding(24.dp)
         ) {
@@ -58,31 +57,19 @@ fun TtsDemoView(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                OptionsCard(
-                    defaultVolume = textToSpeech.volume,
-                    defaultRate = textToSpeech.rate,
-                    defaultPitch = textToSpeech.pitch,
-                    onVolumeChanged = {
-                        textToSpeech.volume = it
-                    },
-                    onRateChanged = {
-                        textToSpeech.rate = it
-                    },
-                    onPitchChanged = {
-                        textToSpeech.pitch = it
-                    }
-                )
+                OptionsCard(textToSpeech)
 
                 Spacer(Modifier.weight(1f))
 
-                Button(
+                ElevatedButton(
                     onClick = {
                         coroutineScope.launch {
                             textToSpeech.say(text)
                         }
                     },
                     enabled = text.isNotBlank(),
-                    modifier = Modifier.align(Alignment.End)
+                    modifier = Modifier.align(Alignment.End),
+                    contentPadding = PaddingValues(32.dp, 16.dp)
                 ) {
                     Icon(Icons.Rounded.RecordVoiceOver, contentDescription = null)
 
@@ -95,21 +82,17 @@ fun TtsDemoView(
     }
 }
 
+@OptIn(ExperimentalVoiceApi::class)
 @Composable
 private fun OptionsCard(
-    defaultVolume: Int,
-    defaultRate: Float,
-    defaultPitch: Float,
-    onVolumeChanged: (Int) -> Unit,
-    onRateChanged: (Float) -> Unit,
-    onPitchChanged: (Float) -> Unit
+    textToSpeech: TextToSpeechInstance
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Surface(
-        color = MaterialTheme.colors.surface,
+        color = MaterialTheme.colorScheme.surface,
         shape = MaterialTheme.shapes.medium,
-        elevation = if (expanded) 6.dp else 2.dp
+        tonalElevation = if (expanded) 6.dp else 2.dp
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -128,7 +111,7 @@ private fun OptionsCard(
 
                 Text(
                     "Options",
-                    style = MaterialTheme.typography.subtitle1,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -150,13 +133,13 @@ private fun OptionsCard(
                 ) {
                     Icon(Icons.Rounded.VolumeMute, contentDescription = null)
 
-                    var preferredSoundLevel by remember { mutableStateOf(defaultVolume.toFloat()) }
+                    var preferredSoundLevel by remember { mutableStateOf(textToSpeech.volume.toFloat()) }
 
                     Slider(
                         value = preferredSoundLevel,
                         onValueChange = {
                             preferredSoundLevel = it.roundToInt().toFloat()
-                            onVolumeChanged(it.roundToInt())
+                            textToSpeech.volume = it.roundToInt()
                         },
                         valueRange = 0f..100f,
                         steps = 10,
@@ -175,13 +158,13 @@ private fun OptionsCard(
                 ) {
                     Icon(Icons.Rounded.Speed, contentDescription = null)
 
-                    var preferredRate by remember { mutableStateOf(defaultRate * 10) }
+                    var preferredRate by remember { mutableStateOf(textToSpeech.rate * 10) }
 
                     Slider(
                         value = preferredRate,
                         onValueChange = {
                             preferredRate = it
-                            onRateChanged(it * 0.1f)
+                            textToSpeech.rate = it * 0.1f
                         },
                         valueRange = 1f..20f,
                         steps = 20,
@@ -198,17 +181,32 @@ private fun OptionsCard(
                 ) {
                     Icon(Icons.Rounded.Moving, contentDescription = null)
 
-                    var preferredPitch by remember { mutableStateOf(defaultPitch * 10 - 5) }
+                    var preferredPitch by remember { mutableStateOf(textToSpeech.pitch * 10 - 5) }
 
                     Slider(
                         value = preferredPitch,
                         onValueChange = {
                             preferredPitch = it
-                            onPitchChanged(it * 0.1f + 0.5f)
+                            textToSpeech.pitch = it * 0.1f + 0.5f
                         },
                         valueRange = 1f..10f,
                         steps = 10,
                         modifier = Modifier.weight(1f)
+                    )
+                }
+
+                Row (
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(16.dp, 8.dp)
+                        .height(48.dp)
+                ) {
+                    Icon(Icons.Rounded.Language, contentDescription = null)
+
+                    Text(
+                        textToSpeech.currentVoice?.name ?: "Unknown",
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
             }

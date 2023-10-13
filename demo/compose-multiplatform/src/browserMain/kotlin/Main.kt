@@ -1,3 +1,4 @@
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.CanvasBasedWindow
 import kotlinx.browser.window
@@ -10,7 +11,7 @@ fun main() {
 
     onWasmReady {
         CanvasBasedWindow("TTS Demo") {
-            TtsDemoApp(darkMode, false)
+            TtsDemoApp(darkMode)
         }
     }
 }

@@ -3,8 +3,11 @@
 package nl.marc_apps.tts
 
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
+import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import org.w3c.dom.Window
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
@@ -79,6 +82,37 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
                 if (defaultLanguage.isNullOrBlank()) "Unknown" else defaultLanguage
             }
         }
+
+    @ExperimentalVoiceApi
+    private val defaultVoice
+        get() = (SpeechSynthesisUtterance().voice ?: speechSynthesis.getVoices().find { it.default })?.let { BrowserVoice(it) }
+
+    @ExperimentalVoiceApi
+    override var currentVoice: Voice? = defaultVoice
+        set(value) {
+            if (value is BrowserVoice) {
+                speechSynthesisUtterance.voice = value.browserVoice
+                field = value
+            }
+        }
+
+    @ExperimentalVoiceApi
+    override val voices: Flow<Set<Voice>> = flow {
+        emit(speechSynthesis.getVoices().map { BrowserVoice(it) }.toSet())
+    }
+
+    @OptIn(ExperimentalVoiceApi::class)
+    private fun onVoicesUpdated(){
+        if (currentVoice == null){
+            currentVoice = defaultVoice
+        }
+    }
+
+    init {
+        speechSynthesis.voiceschanged = {
+            onVoicesUpdated()
+        }
+    }
 
     private fun resetCurrentUtterance() {
         speechSynthesisUtterance = SpeechSynthesisUtterance().also {
