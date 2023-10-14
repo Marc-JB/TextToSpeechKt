@@ -12,7 +12,7 @@ concurrency:
 jobs:
   build-and-deploy-lib:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 20
     steps:
 
       # Checkout
