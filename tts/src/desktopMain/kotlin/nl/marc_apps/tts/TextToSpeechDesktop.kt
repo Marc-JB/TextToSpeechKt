@@ -75,8 +75,8 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
         set(_) {}
 
     @ExperimentalVoiceApi
-    override val voices: Flow<Set<Voice>> = flow {
-        emit(setOf(defaultVoice))
+    override val voices: Sequence<Voice> = sequence {
+        yield(defaultVoice)
     }
 
     init {

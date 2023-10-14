@@ -3,6 +3,8 @@ package nl.marc_apps.tts_demo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
@@ -10,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.launch
 import nl.marc_apps.tts.TextToSpeechInstance
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
@@ -82,7 +85,7 @@ fun TtsDemoView(
     }
 }
 
-@OptIn(ExperimentalVoiceApi::class)
+@OptIn(ExperimentalVoiceApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun OptionsCard(
     textToSpeech: TextToSpeechInstance
@@ -195,12 +198,18 @@ private fun OptionsCard(
                     )
                 }
 
+                var showDialog by remember { mutableStateOf(false) }
+
                 Row (
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .padding(16.dp, 8.dp)
                         .height(48.dp)
+                        .fillMaxWidth()
+                        .clickable {
+                            showDialog = true
+                        }
                 ) {
                     Icon(Icons.Rounded.Language, contentDescription = null)
 
@@ -208,6 +217,54 @@ private fun OptionsCard(
                         textToSpeech.currentVoice?.name ?: "Unknown",
                         style = MaterialTheme.typography.bodySmall
                     )
+                }
+
+                Row (
+                    horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(16.dp, 8.dp)
+                        .height(48.dp)
+                        .fillMaxWidth()
+                ) {
+                    Button(
+                        onClick = {
+                            textToSpeech.volume = TextToSpeechInstance.VOLUME_DEFAULT
+                            textToSpeech.pitch = TextToSpeechInstance.VOICE_PITCH_DEFAULT
+                            textToSpeech.rate = TextToSpeechInstance.VOICE_RATE_DEFAULT
+                            textToSpeech.currentVoice = textToSpeech.voices.firstOrNull { it.isDefault }
+                            expanded = false
+                        }
+                    ) {
+                        Text("Reset")
+                    }
+                }
+
+                if (showDialog) {
+                    AlertDialog(
+                        onDismissRequest = {
+                            showDialog = false
+                        },
+                        modifier = Modifier.defaultMinSize(160.dp, 160.dp)
+                    ) {
+                        Surface(
+                            tonalElevation = 8.dp
+                        ) {
+                            LazyColumn {
+                                items(textToSpeech.voices.toList(), key = { it.hashCode() }) {
+                                    Text(
+                                        it.name,
+                                        modifier = Modifier
+                                            .padding(16.dp, 4.dp)
+                                            .clickable {
+                                                textToSpeech.currentVoice = it
+                                                showDialog = false
+                                            }
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

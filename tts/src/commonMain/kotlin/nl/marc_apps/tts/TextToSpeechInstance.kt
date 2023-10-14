@@ -42,7 +42,7 @@ interface TextToSpeechInstance : Closeable {
     var currentVoice: Voice?
 
     @ExperimentalVoiceApi
-    val voices: Flow<Set<Voice>>
+    val voices: Sequence<Voice>
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     fun enqueue(text: String, clearQueue: Boolean = false)

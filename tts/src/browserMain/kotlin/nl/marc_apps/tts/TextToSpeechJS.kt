@@ -18,7 +18,6 @@ import kotlin.coroutines.suspendCoroutine
 import kotlin.js.Promise
 
 /** A TTS instance. Should be [close]d when no longer in use. */
-@ExperimentalJsExport
 internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
     override val isSynthesizing = MutableStateFlow(false)
 
@@ -84,11 +83,13 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
         }
 
     @ExperimentalVoiceApi
-    private val defaultVoice
-        get() = (SpeechSynthesisUtterance().voice ?: speechSynthesis.getVoices().find { it.default })?.let { BrowserVoice(it) }
+    private val defaultVoice by lazy {
+        speechSynthesis.getVoices().find { it.default }?.let { BrowserVoice(it) }
+    }
 
     @ExperimentalVoiceApi
-    override var currentVoice: Voice? = defaultVoice
+    override var currentVoice: Voice? = null
+        get() = field ?: defaultVoice
         set(value) {
             if (value is BrowserVoice) {
                 speechSynthesisUtterance.voice = value.browserVoice
@@ -97,28 +98,17 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
         }
 
     @ExperimentalVoiceApi
-    override val voices: Flow<Set<Voice>> = flow {
-        emit(speechSynthesis.getVoices().map { BrowserVoice(it) }.toSet())
+    override val voices: Sequence<Voice> by lazy {
+        speechSynthesis.getVoices().asSequence().map { BrowserVoice(it) }
     }
 
     @OptIn(ExperimentalVoiceApi::class)
-    private fun onVoicesUpdated(){
-        if (currentVoice == null){
-            currentVoice = defaultVoice
-        }
-    }
-
-    init {
-        speechSynthesis.voiceschanged = {
-            onVoicesUpdated()
-        }
-    }
-
     private fun resetCurrentUtterance() {
         speechSynthesisUtterance = SpeechSynthesisUtterance().also {
             it.volume = internalVolume
             it.pitch = pitch
             it.rate = rate
+            it.voice = (currentVoice as? BrowserVoice)?.browserVoice
         }
     }
 
@@ -177,6 +167,7 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    @Deprecated("Use suspend fun say(text)")
     fun sayJsPromise(
         text: String,
         clearQueue: Boolean

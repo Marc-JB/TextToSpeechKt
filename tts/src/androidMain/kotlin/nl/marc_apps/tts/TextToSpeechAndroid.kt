@@ -13,6 +13,7 @@ import androidx.annotation.IntRange
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import nl.marc_apps.tts.errors.*
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
@@ -108,17 +109,15 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
 
     @ExperimentalVoiceApi
-    override val voices: Flow<Set<Voice>> = flow {
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            emit(tts?.voices?.map {
-                VoiceAndroidModern(it, it == (defaultVoice as? VoiceAndroidModern)?.androidVoice)
-            }?.toSet() ?: emptySet())
-        } else {
-            emit(Locale.getAvailableLocales().filter {
-                tts?.isLanguageAvailable(it) == AndroidTTS.LANG_AVAILABLE
-            }.map {
-                VoiceAndroidLegacy(it, it == defaultVoice?.locale)
-            }.toSet())
+    override val voices: Sequence<Voice> = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+        (tts?.voices ?: emptySet()).asSequence().map {
+            VoiceAndroidModern(it, it == (defaultVoice as? VoiceAndroidModern)?.androidVoice)
+        }
+    } else {
+        Locale.getAvailableLocales().asSequence().filter {
+            tts?.isLanguageAvailable(it) == AndroidTTS.LANG_AVAILABLE
+        }.map {
+            VoiceAndroidLegacy(it, it == defaultVoice?.locale)
         }
     }
 
