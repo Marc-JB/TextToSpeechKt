@@ -141,7 +141,7 @@ tasks.withType<DokkaTaskPartial>().configureEach {
 
             externalDocumentationLink {
                 url.set(URL("${ProjectInfo.DOCUMENTATION_URL}/${ProjectInfo.ID}"))
-                packageListUrl.set(URL("${ProjectInfo.DOCUMENTATION_URL}/${ProjectInfo.ID}/package-list"))
+                packageListUrl.set(URL("${ProjectInfo.DOCUMENTATION_URL}/package-list"))
             }
 
             jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
