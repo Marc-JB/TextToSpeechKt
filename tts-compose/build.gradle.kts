@@ -1,9 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import com.android.repository.Revision
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
-import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly

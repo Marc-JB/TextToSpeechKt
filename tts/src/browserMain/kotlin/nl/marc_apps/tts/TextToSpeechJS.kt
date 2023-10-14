@@ -3,9 +3,7 @@
 package nl.marc_apps.tts
 
 import kotlinx.browser.window
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import org.w3c.dom.Window

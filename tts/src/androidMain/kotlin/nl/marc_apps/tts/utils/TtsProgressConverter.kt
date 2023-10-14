@@ -3,7 +3,6 @@ package nl.marc_apps.tts.utils
 import android.os.Build
 import android.speech.tts.UtteranceProgressListener
 import androidx.annotation.RequiresApi
-import nl.marc_apps.tts.TextToSpeechInstance
 import nl.marc_apps.tts.errors.TextToSpeechSynthesisInterruptedError
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import java.util.*

@@ -3,9 +3,7 @@ package nl.marc_apps.tts
 import com.sun.speech.freetts.VoiceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import nl.marc_apps.tts.experimental.ExperimentalDesktopTarget
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi

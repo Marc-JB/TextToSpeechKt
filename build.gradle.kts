@@ -1,5 +1,5 @@
-import org.jetbrains.dokka.versioning.VersioningPlugin
 import org.jetbrains.dokka.versioning.VersioningConfiguration
+import org.jetbrains.dokka.versioning.VersioningPlugin
 
 plugins {
     val androidVersion = "8.1.0"

@@ -9,7 +9,8 @@ import nl.marc_apps.tts.TextToSpeechInstance
 import nl.marc_apps.tts_demo.strings.DefaultStrings
 import nl.marc_apps.tts_demo.strings.DutchLocaleStrings
 import nl.marc_apps.tts_demo.strings.Strings
-import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.Style
+import org.jetbrains.compose.web.css.fontWeight
 import org.jetbrains.compose.web.dom.H1
 import org.jetbrains.compose.web.dom.Section
 import org.jetbrains.compose.web.dom.Span
