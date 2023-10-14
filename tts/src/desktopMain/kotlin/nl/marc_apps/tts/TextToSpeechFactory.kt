@@ -21,15 +21,11 @@ actual class TextToSpeechFactory {
     @ExperimentalDesktopTarget
     @Throws(RuntimeException::class)
     actual suspend fun createOrThrow(): TextToSpeechInstance {
-        System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory")
-        val voiceManager = VoiceManager.getInstance()
-        return TextToSpeechDesktop(voiceManager)
+        return create().getOrThrow()
     }
 
     @ExperimentalDesktopTarget
     actual suspend fun createOrNull(): TextToSpeechInstance? {
-        System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory")
-        val voiceManager = VoiceManager.getInstance()
-        return TextToSpeechDesktop(voiceManager)
+        return create().getOrNull()
     }
 }

@@ -1,14 +1,16 @@
 package nl.marc_apps.tts.errors
 
+private const val defaultErrorMessage = "Error while trying to synthesise text input"
+
 /** Error that is thrown when synthesising text input fails. */
 sealed class TextToSpeechSynthesisError(
-    message: String? = "Error while trying to synthesise text input",
+    message: String? = defaultErrorMessage,
     cause: Throwable? = null
 ) : Exception(message, cause)
 
 /** Error that is thrown when synthesising text input fails because of the user input. */
 class TextToSpeechInputError(
-    message: String? = "Error while trying to synthesise text input",
+    message: String? = defaultErrorMessage,
     cause: Throwable? = null
 ) : TextToSpeechSynthesisError(message, cause)
 
@@ -19,7 +21,7 @@ class TextToSpeechSynthesisInterruptedError(
 
 /** Error that is thrown when synthesising text input fails because of the TTS engine. */
 sealed class TextToSpeechEngineError(
-    message: String? = "Error while trying to synthesise text input",
+    message: String? = defaultErrorMessage,
     cause: Throwable? = null
 ) : TextToSpeechSynthesisError(message, cause)
 

@@ -70,7 +70,9 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
     @ExperimentalVoiceApi
     @Suppress("SetterBackingFieldAssignment")
     override var currentVoice: Voice? = defaultVoice
-        set(_) {}
+        set(_) {
+            // Ignored: Not supported yet
+        }
 
     @ExperimentalVoiceApi
     override val voices: Sequence<Voice> = sequence {
