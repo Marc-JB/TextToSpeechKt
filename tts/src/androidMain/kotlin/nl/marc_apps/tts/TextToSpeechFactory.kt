@@ -6,7 +6,7 @@ import android.speech.tts.TextToSpeech
 import androidx.annotation.ChecksSdkIntAtLeast
 import nl.marc_apps.tts.TextToSpeechFactory.Companion
 import nl.marc_apps.tts.errors.TextToSpeechNotSupportedError
-import nl.marc_apps.tts.errors.TextToSpeechSecurityError
+import nl.marc_apps.tts.errors.UnknownTextToSpeechInitialisationError
 import nl.marc_apps.tts.utils.ErrorCodes
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -51,8 +51,8 @@ actual class TextToSpeechFactory(
                     } else {
                         TextToSpeech(context, initListener)
                     }
-                } catch (e: SecurityException) {
-                    continuation.resumeWithException(TextToSpeechSecurityError(e))
+                } catch (e: Throwable) {
+                    continuation.resumeWithException(UnknownTextToSpeechInitialisationError(e))
                 }
             } else continuation.resumeWithException(TextToSpeechNotSupportedError())
         }
@@ -64,5 +64,11 @@ actual class TextToSpeechFactory(
 
     companion object {
         const val ENGINE_SPEECH_SERVICES_BY_GOOGLE = "com.google.android.tts"
+
+        @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.DONUT)
+        val isSupported: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT
+
+        @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.HONEYCOMB)
+        val canChangeVolume = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
     }
 }

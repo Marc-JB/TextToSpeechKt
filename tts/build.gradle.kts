@@ -1,7 +1,8 @@
-@file:Suppress("UNUSED_VARIABLE", "UnstableApiUsage")
+@file:Suppress("UnstableApiUsage")
 
 import com.android.repository.Revision
-import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.net.URL
@@ -17,9 +18,11 @@ plugins {
 object ProjectInfo {
     const val GROUP_ID = "nl.marc-apps"
 
+    const val ID = "tts"
+
     const val NAME = "TextToSpeechKt"
 
-    val version = Revision(1, 6, 0)
+    val version = Revision(2, 0)
 
     val mavenVersion = "${version.major}.${version.minor}.${version.micro}${if (version.isPreview) "-SNAPSHOT" else ""}"
 
@@ -42,7 +45,7 @@ object ProjectInfo {
     const val DOCUMENTATION_URL = "https://marc-jb.github.io/TextToSpeechKt"
 }
 
-val config = Config()
+val config by lazy { Config() }
 
 group = ProjectInfo.GROUP_ID
 version = ProjectInfo.mavenVersion
@@ -54,41 +57,46 @@ kotlin {
         binaries.executable()
     }
 
-    android {
+    androidTarget {
         publishLibraryVariantsGroupedByFlavor = true
         publishAllLibraryVariants()
+    }
+
+    jvm("desktop") {
+        compilations.all {
+            kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+        }
     }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-            }
-        }
-        val browserMain by getting {
-            dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.6.4")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
             }
         }
         val androidMain by getting {
             dependencies {
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
-                implementation("androidx.annotation:annotation:1.6.0")
+                implementation("androidx.annotation:annotation:1.7.0")
+            }
+        }
+        val desktopMain by getting {
+            dependencies {
+                implementation("net.sf.sociaal:freetts:1.2.2")
             }
         }
     }
 }
 
 android {
-    compileSdk = 33
-    buildToolsVersion = "33.0.2"
+    compileSdk = 34
+    buildToolsVersion = "34.0.0"
 
     namespace = "nl.marc_apps.tts"
 
     defaultConfig {
         minSdk = 1
 
-        setProperty("archivesBaseName", "tts")
+        setProperty("archivesBaseName", ProjectInfo.ID)
     }
 
     compileOptions {
@@ -97,58 +105,46 @@ android {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 }
 
-val versionArchiveDirectory = file(buildDir.toPath().resolve("dokka").resolve("html_version_archive"))
-
-val generateDokkaHtmlArchiveTasks by tasks.register<org.jetbrains.dokka.gradle.DokkaTask>("dokkaPreviouslyDocumentation") {
-    dependencies {
-        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.8.10")
-    }
-
-    val currentVersion = "${ProjectInfo.version.major}.${ProjectInfo.version.minor}"
-
-    outputDirectory.set(file(versionArchiveDirectory.toPath().resolve(currentVersion)))
-
-    val versioningPluginClass = "org.jetbrains.dokka.versioning.VersioningPlugin"
-    val versioningPluginConfig = """{ "version": "$currentVersion" }"""
-
-    pluginsMapConfiguration.set(
-        mapOf(
-            versioningPluginClass to versioningPluginConfig
-        )
-    )
-
-    configureAllSourceSets()
+dependencies {
+    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:1.9.0")
+    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
 }
 
-tasks.dokkaHtml {
-    dependsOn(generateDokkaHtmlArchiveTasks)
+tasks.withType<DokkaTaskPartial>().configureEach {
+    dokkaSourceSets.configureEach {
+        val platform = when(name){
+            "commonMain" -> "common"
+            "androidMain" -> "android"
+            "browserMain" -> "browser"
+            "desktopMain" -> "desktop"
+            else -> null
+        }
 
-    dependencies {
-        dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.8.10")
+        if (platform != null) {
+            sourceLink {
+                localDirectory.set(file("src/${platform}Main/kotlin"))
+                remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/${ProjectInfo.ID}/src/${platform}Main/kotlin"))
+                remoteLineSuffix.set("#L")
+            }
+
+            externalDocumentationLink {
+                url.set(URL("${ProjectInfo.DOCUMENTATION_URL}/${ProjectInfo.ID}"))
+                packageListUrl.set(URL("${ProjectInfo.DOCUMENTATION_URL}/${ProjectInfo.ID}/package-list"))
+            }
+
+            jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
+        }
     }
-
-    val versionArchivePath = versionArchiveDirectory.toString().replace("\\", "\\\\")
-
-    val versioningPluginClass = "org.jetbrains.dokka.versioning.VersioningPlugin"
-    val versioningPluginConfig = """{ "version": "${ProjectInfo.version.major}.${ProjectInfo.version.minor}", "olderVersionsDir": "$versionArchivePath" }"""
-
-    pluginsMapConfiguration.set(
-        mapOf(
-            versioningPluginClass to versioningPluginConfig
-        )
-    )
-
-    configureAllSourceSets()
 }
 
 val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
-    dependsOn(tasks.dokkaHtml)
+    dependsOn(tasks.dokkaHtmlPartial)
     archiveClassifier.set("javadoc")
     from(buildDir.toPath().resolve("dokka"))
 }
@@ -198,45 +194,13 @@ signing {
     sign(publishing.publications)
 }
 
-fun org.jetbrains.dokka.gradle.DokkaTask.configureAllSourceSets() {
-    dokkaSourceSets {
-        named("commonMain") {
-            configureDokkaSourceSet("common")
-        }
-
-        named("androidMain") {
-            configureDokkaSourceSet("android")
-        }
-
-        named("browserMain") {
-            configureDokkaSourceSet("browser")
-        }
-    }
-}
-
-fun GradleDokkaSourceSetBuilder.configureDokkaSourceSet(platform: String) {
-    sourceLink {
-        localDirectory.set(file("src/${platform}Main/kotlin"))
-        remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/tts/src/${platform}Main/kotlin"))
-        remoteLineSuffix.set("#L")
-    }
-
-    externalDocumentationLink {
-        url.set(URL("${ProjectInfo.DOCUMENTATION_URL}/tts"))
-        packageListUrl.set(URL("${ProjectInfo.DOCUMENTATION_URL}/tts/package-list"))
-    }
-
-    if (platform == "android") {
-        jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
-    }
-}
-
 fun MavenPublication.configurePublication() {
     groupId = ProjectInfo.GROUP_ID
 
-    artifactId = "tts" + when {
+    artifactId = ProjectInfo.ID + when {
         artifactId.endsWith("-android") || name == "android" -> "-android"
         artifactId.endsWith("-browser") -> "-browser"
+        artifactId.endsWith("-desktop") -> "-desktop"
         else -> ""
     }
 
@@ -291,33 +255,50 @@ fun MavenPublication.configurePublication() {
 }
 
 class Config {
-    private val localProperties = Properties().also { properties ->
-        try {
-            project.rootProject.file("local.properties").inputStream().use {
-                properties.load(it)
-            }
-        } catch (ignored: java.io.FileNotFoundException) {}
+    private val localProperties by lazy {
+        Properties().also { properties ->
+            try {
+                project.rootProject.file("local.properties").inputStream().use {
+                    properties.load(it)
+                }
+            } catch (ignored: java.io.FileNotFoundException) {}
+        }
     }
 
     operator fun get(vararg path: String): String? {
-        return localProperties.getProperty(path.joinToString(","))
+        return findProperty(path.joinToString("."))?.toString()
+            ?: localProperties.getProperty(path.joinToString("."))
             ?: System.getenv(path.joinToString("_") { it.toUpperCaseAsciiOnly() })
     }
 }
 
+// TODO: Remove when this is fixed.
 afterEvaluate {
     tasks.named("publishAndroidPublicationToOSSRHRepository").configure { mustRunAfter("signBrowserPublication") }
     tasks.named("publishAndroidPublicationToGitHubPackagesRepository").configure { mustRunAfter("signBrowserPublication") }
     tasks.named("publishAndroidPublicationToOSSRHRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
     tasks.named("publishAndroidPublicationToGitHubPackagesRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
+    tasks.named("publishAndroidPublicationToOSSRHRepository").configure { mustRunAfter("signDesktopPublication") }
+    tasks.named("publishAndroidPublicationToGitHubPackagesRepository").configure { mustRunAfter("signDesktopPublication") }
 
     tasks.named("publishBrowserPublicationToOSSRHRepository").configure { mustRunAfter("signAndroidPublication") }
     tasks.named("publishBrowserPublicationToGitHubPackagesRepository").configure { mustRunAfter("signAndroidPublication") }
     tasks.named("publishBrowserPublicationToOSSRHRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
     tasks.named("publishBrowserPublicationToGitHubPackagesRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
+    tasks.named("publishBrowserPublicationToOSSRHRepository").configure { mustRunAfter("signDesktopPublication") }
+    tasks.named("publishBrowserPublicationToGitHubPackagesRepository").configure { mustRunAfter("signDesktopPublication") }
 
     tasks.named("publishKotlinMultiplatformPublicationToOSSRHRepository").configure { mustRunAfter("signAndroidPublication") }
     tasks.named("publishKotlinMultiplatformPublicationToGitHubPackagesRepository").configure { mustRunAfter("signAndroidPublication") }
     tasks.named("publishKotlinMultiplatformPublicationToOSSRHRepository").configure { mustRunAfter("signBrowserPublication") }
     tasks.named("publishKotlinMultiplatformPublicationToGitHubPackagesRepository").configure { mustRunAfter("signBrowserPublication") }
+    tasks.named("publishKotlinMultiplatformPublicationToOSSRHRepository").configure { mustRunAfter("signDesktopPublication") }
+    tasks.named("publishKotlinMultiplatformPublicationToGitHubPackagesRepository").configure { mustRunAfter("signDesktopPublication") }
+
+    tasks.named("publishDesktopPublicationToOSSRHRepository").configure { mustRunAfter("signAndroidPublication") }
+    tasks.named("publishDesktopPublicationToGitHubPackagesRepository").configure { mustRunAfter("signAndroidPublication") }
+    tasks.named("publishDesktopPublicationToOSSRHRepository").configure { mustRunAfter("signBrowserPublication") }
+    tasks.named("publishDesktopPublicationToGitHubPackagesRepository").configure { mustRunAfter("signBrowserPublication") }
+    tasks.named("publishDesktopPublicationToOSSRHRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
+    tasks.named("publishDesktopPublicationToGitHubPackagesRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
 }

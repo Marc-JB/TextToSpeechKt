@@ -15,8 +15,3 @@ class UnknownTextToSpeechInitialisationError(
 class TextToSpeechNotSupportedError(
     cause: Throwable? = null
 ) : TextToSpeechInitialisationError("Text-to-Speech is not supported on this platform", cause)
-
-/** Error that is thrown on some Samsung devices while creating a TTS instance. */
-class TextToSpeechSecurityError(
-    cause: Throwable? = null
-) : TextToSpeechInitialisationError("Text-to-Speech security error", cause)

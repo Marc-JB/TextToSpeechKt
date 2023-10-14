@@ -1,6 +1,7 @@
 package nl.marc_apps.tts
 
 import kotlinx.coroutines.flow.StateFlow
+import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 
 /** A TTS instance. Should be [close]d when no longer in use. */
 interface TextToSpeechInstance : Closeable {
@@ -36,14 +37,20 @@ interface TextToSpeechInstance : Closeable {
      */
     val language: String
 
+    @ExperimentalVoiceApi
+    var currentVoice: Voice?
+
+    @ExperimentalVoiceApi
+    val voices: Sequence<Voice>
+
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     fun enqueue(text: String, clearQueue: Boolean = false)
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    fun say(text: String, clearQueue: Boolean = false, callback: (Result<Status>) -> Unit)
+    fun say(text: String, clearQueue: Boolean = false, callback: (Result<Unit>) -> Unit)
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    suspend fun say(text: String, clearQueue: Boolean = false, resumeOnStatus: Status = Status.FINISHED)
+    suspend fun say(text: String, clearQueue: Boolean = false)
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     operator fun plusAssign(text: String)
@@ -53,10 +60,6 @@ interface TextToSpeechInstance : Closeable {
 
     /** Clears the internal queue and closes used resources (if possible) */
     override fun close()
-
-    enum class Status {
-        STARTED, FINISHED
-    }
 
     companion object {
         const val VOLUME_MIN = 0

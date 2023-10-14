@@ -35,4 +35,9 @@ external interface SpeechSynthesis {
      * it will be spoken when any other utterances queued before it have been spoken.
      */
     fun speak(utterance: SpeechSynthesisUtterance)
+
+    /**
+     * Fired when the list of [SpeechSynthesisVoice] objects that would be returned by the [getVoices] method has changed.
+     */
+    var voiceschanged: ((event: dynamic) -> Unit)?
 }

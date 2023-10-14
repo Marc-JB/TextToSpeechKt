@@ -5,6 +5,7 @@ package nl.marc_apps.tts
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
+import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import org.w3c.dom.Window
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
@@ -15,8 +16,7 @@ import kotlin.coroutines.suspendCoroutine
 import kotlin.js.Promise
 
 /** A TTS instance. Should be [close]d when no longer in use. */
-@ExperimentalJsExport
-internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWithJsPromises {
+internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
     override val isSynthesizing = MutableStateFlow(false)
 
     override val isWarmingUp = MutableStateFlow(false)
@@ -80,11 +80,33 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWi
             }
         }
 
+    @ExperimentalVoiceApi
+    private val defaultVoice by lazy {
+        speechSynthesis.getVoices().find { it.default }?.let { BrowserVoice(it) }
+    }
+
+    @ExperimentalVoiceApi
+    override var currentVoice: Voice? = null
+        get() = field ?: defaultVoice
+        set(value) {
+            if (value is BrowserVoice) {
+                speechSynthesisUtterance.voice = value.browserVoice
+                field = value
+            }
+        }
+
+    @ExperimentalVoiceApi
+    override val voices: Sequence<Voice> by lazy {
+        speechSynthesis.getVoices().asSequence().map { BrowserVoice(it) }
+    }
+
+    @OptIn(ExperimentalVoiceApi::class)
     private fun resetCurrentUtterance() {
         speechSynthesisUtterance = SpeechSynthesisUtterance().also {
             it.volume = internalVolume
             it.pitch = pitch
             it.rate = rate
+            it.voice = (currentVoice as? BrowserVoice)?.browserVoice
         }
     }
 
@@ -107,34 +129,33 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWi
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun say(text: String, clearQueue: Boolean, callback: (Result<TextToSpeechInstance.Status>) -> Unit) {
+    override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
         if(isMuted || internalVolume == 0f) {
             if(clearQueue) stop()
-            callback(Result.success(TextToSpeechInstance.Status.FINISHED))
+            callback(Result.success(Unit))
             return
         }
 
         speechSynthesisUtterance.onstart = {
             isWarmingUp.value = false
             isSynthesizing.value = true
-            callback(Result.success(TextToSpeechInstance.Status.STARTED))
         }
 
         speechSynthesisUtterance.onend = {
             isWarmingUp.value = false
             isSynthesizing.value = false
-            callback(Result.success(TextToSpeechInstance.Status.FINISHED))
+            callback(Result.success(Unit))
         }
 
         enqueue(text, clearQueue)
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override suspend fun say(text: String, clearQueue: Boolean, resumeOnStatus: TextToSpeechInstance.Status) {
+    override suspend fun say(text: String, clearQueue: Boolean) {
         suspendCoroutine { cont ->
             say(text, clearQueue) {
-                if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
-                    cont.resume(Unit)
+                if (it.isSuccess) {
+                    cont.resume(it.getOrThrow())
                 } else if (it.isFailure) {
                     val error = it.exceptionOrNull() ?: UnknownTextToSpeechSynthesisError()
                     cont.resumeWithException(error)
@@ -144,15 +165,15 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstanceWi
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun sayJsPromise(
+    @Deprecated("Use suspend fun say(text)")
+    fun sayJsPromise(
         text: String,
-        clearQueue: Boolean,
-        resumeOnStatus: TextToSpeechInstance.Status
+        clearQueue: Boolean
     ): Promise<Unit> {
         return Promise { success, failure ->
             say(text, clearQueue) {
-                if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
-                    success(Unit)
+                if (it.isSuccess) {
+                    success(it.getOrThrow())
                 } else if (it.isFailure) {
                     val error = it.exceptionOrNull() ?: UnknownTextToSpeechSynthesisError()
                     failure(error)

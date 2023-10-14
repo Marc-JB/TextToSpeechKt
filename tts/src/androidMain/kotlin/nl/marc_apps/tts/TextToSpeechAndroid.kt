@@ -6,11 +6,14 @@ import android.annotation.TargetApi
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.IntRange
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import nl.marc_apps.tts.errors.*
+import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import nl.marc_apps.tts.utils.TtsProgressConverter
+import nl.marc_apps.tts.utils.VoiceAndroidLegacy
+import nl.marc_apps.tts.utils.VoiceAndroidModern
 import nl.marc_apps.tts.utils.getContinuationId
 import java.util.*
 import kotlin.coroutines.resume
@@ -21,7 +24,7 @@ import android.speech.tts.TextToSpeech as AndroidTTS
 /** A TTS instance. Should be [close]d when no longer in use. */
 @TargetApi(VERSION_CODES.DONUT)
 internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechInstance {
-    private val callbacks = mutableMapOf<UUID, (Result<TextToSpeechInstance.Status>) -> Unit>()
+    private val callbacks = mutableMapOf<UUID, (Result<Unit>) -> Unit>()
 
     override val isSynthesizing = MutableStateFlow(false)
 
@@ -41,7 +44,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     @IntRange(from = TextToSpeechInstance.VOLUME_MIN.toLong(), to = TextToSpeechInstance.VOLUME_MAX.toLong())
     override var volume: Int = TextToSpeechInstance.VOLUME_DEFAULT
         set(value) {
-            if(TextToSpeech.canChangeVolume) {
+            if(TextToSpeechFactory.canChangeVolume) {
                 field = when {
                     value < TextToSpeechInstance.VOLUME_MIN -> TextToSpeechInstance.VOLUME_MIN
                     value > TextToSpeechInstance.VOLUME_MAX -> TextToSpeechInstance.VOLUME_MAX
@@ -79,8 +82,41 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     override val language: String
         get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) voiceLocale.toLanguageTag() else voiceLocale.language
 
+    @ExperimentalVoiceApi
+    private val defaultVoice: Voice? = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP){
+        (tts?.voice ?: tts?.defaultVoice)?.let { VoiceAndroidModern(it, true) }
+    } else {
+        tts?.language?.let { VoiceAndroidLegacy(it, true) }
+    }
+
+    @ExperimentalVoiceApi
+    override var currentVoice: Voice? = defaultVoice
+        set(value) {
+            val result = if (value is VoiceAndroidModern && VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+                tts?.setVoice(value.androidVoice)
+            } else if (value is VoiceAndroidLegacy) {
+                tts?.setLanguage(value.locale)
+            } else null
+            if (result != null && result >= 0) {
+                field = value
+            }
+        }
+
+    @ExperimentalVoiceApi
+    override val voices: Sequence<Voice> = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+        (tts?.voices ?: emptySet()).asSequence().map {
+            VoiceAndroidModern(it, it == (defaultVoice as? VoiceAndroidModern)?.androidVoice)
+        }
+    } else {
+        Locale.getAvailableLocales().asSequence().filter {
+            tts?.isLanguageAvailable(it) == AndroidTTS.LANG_AVAILABLE
+        }.map {
+            VoiceAndroidLegacy(it, it == defaultVoice?.locale)
+        }
+    }
+
     init {
-        if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+        if (hasModernProgressListeners) {
             setProgressListeners()
         } else {
             setProgressListenersLegacy()
@@ -90,13 +126,13 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     private fun setProgressListenersLegacy() {
         tts?.setOnUtteranceCompletedListener {
             val id = getContinuationId(it) ?: return@setOnUtteranceCompletedListener
-            onTtsStatusUpdate(id, Result.success(TextToSpeechInstance.Status.FINISHED))
+            onTtsCompleted(id, Result.success(Unit))
         }
     }
 
     @RequiresApi(VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
     private fun setProgressListeners() {
-        tts?.setOnUtteranceProgressListener(TtsProgressConverter(::onTtsStatusUpdate))
+        tts?.setOnUtteranceProgressListener(TtsProgressConverter(::onTtsStarted, ::onTtsCompleted))
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
@@ -105,10 +141,10 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun say(text: String, clearQueue: Boolean, callback: (Result<TextToSpeechInstance.Status>) -> Unit) {
+    override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
         if(isMuted || internalVolume == 0f) {
             if(clearQueue) stop()
-            callback(Result.success(TextToSpeechInstance.Status.FINISHED))
+            callback(Result.success(Unit))
             return
         }
 
@@ -117,10 +153,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
 
         callbacks += utteranceId to {
             callback(it)
-
-            if (it.isFailure || it.getOrNull() == TextToSpeechInstance.Status.FINISHED) {
-                callbacks.remove(utteranceId)
-            }
+            callbacks.remove(utteranceId)
         }
 
         if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1 && !hasSpoken) {
@@ -139,7 +172,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
                 KEY_PARAM_UTTERANCE_ID to utteranceId.toString()
             )
 
-            if (VERSION.SDK_INT < VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            if (!hasModernProgressListeners) {
                 preIcsQueueSize++
                 isSynthesizing.value = true
             }
@@ -149,10 +182,10 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override suspend fun say(text: String, clearQueue: Boolean, resumeOnStatus: TextToSpeechInstance.Status) {
+    override suspend fun say(text: String, clearQueue: Boolean) {
         suspendCoroutine { cont ->
             say(text, clearQueue) {
-                if (it.isSuccess && it.getOrNull() in arrayOf(resumeOnStatus, TextToSpeechInstance.Status.FINISHED)) {
+                if (it.isSuccess) {
                     cont.resume(Unit)
                 } else if (it.isFailure) {
                     val error = it.exceptionOrNull() ?: Exception()
@@ -162,16 +195,22 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
     }
 
-    private fun onTtsStatusUpdate(utteranceId: UUID, result: Result<TextToSpeechInstance.Status>) {
-        if (VERSION.SDK_INT < VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+    private fun onTtsStarted(utteranceId: UUID) {
+        isWarmingUp.value = false
+        isSynthesizing.value = true
+    }
+
+    private fun onTtsCompleted(utteranceId: UUID, result: Result<Unit>) {
+        isWarmingUp.value = false
+
+        if (!hasModernProgressListeners) {
             preIcsQueueSize--
             if (preIcsQueueSize == 0)
             {
                 isSynthesizing.value = false
             }
         } else {
-            isWarmingUp.value = false
-            isSynthesizing.value = result.getOrNull() == TextToSpeechInstance.Status.STARTED
+            isSynthesizing.value = false
         }
 
         callbacks[utteranceId]?.invoke(result)
@@ -184,7 +223,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     override fun stop() {
         tts?.stop()
 
-        if (VERSION.SDK_INT < VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+        if (!hasModernProgressListeners) {
             preIcsQueueSize = 0
             isSynthesizing.value = false
         }
@@ -193,7 +232,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     /** Clears the internal queue and closes used resources (if possible) */
     override fun close() {
         stop()
-        if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+        if (hasModernProgressListeners) {
             tts?.setOnUtteranceProgressListener(null)
         } else {
             tts?.setOnUtteranceCompletedListener(null)
@@ -207,5 +246,8 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         private const val KEY_PARAM_VOLUME = "volume"
 
         private const val KEY_PARAM_UTTERANCE_ID = "utteranceId"
+
+        @ChecksSdkIntAtLeast(api = VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+        private val hasModernProgressListeners = VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1
     }
 }

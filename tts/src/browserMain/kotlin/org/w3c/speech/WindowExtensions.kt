@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package org.w3c.speech
 
 import org.w3c.dom.Window
