@@ -33,7 +33,7 @@ jobs:
 
       # Build & Deploy
       - name: Build & Deploy with Gradle
-        run: ./gradlew :tts:build :tts-compose:build :tts:publish :tts-compose:publish
+        run: ./gradlew :tts:publish :tts-compose:publish
         env:
           GPR_USER: github-actions
           GPR_KEY: ${{ secrets.GITHUB_TOKEN }}
