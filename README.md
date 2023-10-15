@@ -5,7 +5,7 @@
 
   [![Gradle deployment](https://github.com/Marc-JB/TextToSpeechKt/actions/workflows/deployment.yml/badge.svg)](https://github.com/Marc-JB/TextToSpeechKt/actions) 
   [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Marc-JB_TextToSpeechKt&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Marc-JB_TextToSpeechKt) 
-  [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://central.sonatype.com/search?smo=true&namespace=nl.marc-apps)
+  [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://central.sonatype.com/search?smo=true&namespace=nl.marc-apps&q=tts)
   [![License](https://badgen.net/github/license/Marc-JB/TextToSpeechKt)](https://github.com/Marc-JB/TextToSpeechKt/blob/main/LICENSE)
 
 </div>
@@ -53,14 +53,14 @@ A build tool like Gradle or Maven.
   <summary><strong>Gradle</strong></summary>
 
   Configure the Maven Central repository:  
-  ```Kotlin
+  ```Kotlin copy
   repositories {
       mavenCentral()
   }
   ```
 
   And add the library to your dependencies:  
-  ```Kotlin
+  ```Kotlin copy
   dependencies {
       implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
       implementation("nl.marc-apps:tts:2.0.0")
@@ -72,7 +72,7 @@ A build tool like Gradle or Maven.
 
   Or
 
-  ```Kotlin
+  ```Kotlin copy
   kotlin {
       sourceSets {
           val commonMain by getting {
@@ -88,8 +88,7 @@ A build tool like Gradle or Maven.
   }
   ```
 
-  > [!IMPORTANT]  
-  > Make sure to configure the latest stable version: [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://central.sonatype.com/search?smo=true&namespace=nl.marc-apps)   
+  Make sure to configure the latest stable version: [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://central.sonatype.com/search?smo=true&namespace=nl.marc-apps&q=tts)   
 
 </details>
 
@@ -97,7 +96,7 @@ A build tool like Gradle or Maven.
   <summary><strong>Apache Maven</strong></summary>
 
   Add the library to your dependencies:  
-  ```XML
+  ```XML copy
   <dependency>
       <groupId>org.jetbrains.kotlinx</groupId>
       <artifactId>kotlinx-coroutines-core</artifactId>
@@ -116,8 +115,7 @@ A build tool like Gradle or Maven.
   </dependency>
   ```  
 
-  > [!IMPORTANT]  
-  > Make sure to configure the latest stable version: [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://central.sonatype.com/search?smo=true&namespace=nl.marc-apps)
+  Make sure to configure the latest stable version: [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://central.sonatype.com/search?smo=true&namespace=nl.marc-apps&q=tts)
 
 </details>
 
