@@ -26,7 +26,7 @@ internal data class VoiceAndroidModern(
     )
 
     constructor(androidVoice: android.speech.tts.Voice, isDefault: Boolean) : this(
-        androidVoice.name,
+        androidVoice.locale.displayName,
         isDefault,
         androidVoice.isNetworkConnectionRequired,
         androidVoice.locale.toLanguageTag(),
