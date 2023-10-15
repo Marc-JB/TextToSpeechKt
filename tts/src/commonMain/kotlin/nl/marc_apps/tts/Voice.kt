@@ -2,6 +2,9 @@ package nl.marc_apps.tts
 
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 
+/**
+ * @hide
+ */
 interface CommonVoice {
     val name: String
     val isDefault: Boolean
