@@ -31,6 +31,10 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      # Exclude demo projects
+      - name: Exclude demo projects
+        run: sed -i 's/val includeDemoProjects = true/val includeDemoProjects = false/g' settings.gradle.kts
+
       # Build & Deploy
       - name: Build & Deploy with Gradle
         run: ./gradlew :tts:publish :tts-compose:publish
@@ -42,31 +46,17 @@ jobs:
           GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
           GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
 
-      # Move artifacts
-      - name: Move artifacts
-        run: |
-          mkdir out
-          mkdir out/browser
-          cp ./tts/build/distributions/tts.js ./out/browser/tts.js
-          cp ./tts/build/distributions/tts.js.map ./out/browser/tts.js.map
-          mkdir out/android
-          cp ./tts/build/outputs/aar/tts-debug.aar ./out/android/tts-debug.aar
-          cp ./tts/build/outputs/aar/tts-release.aar ./out/android/tts-release.aar
-          cp ./tts-compose/build/outputs/aar/tts-compose-debug.aar ./out/android/tts-compose-debug.aar
-          cp ./tts-compose/build/outputs/aar/tts-compose-release.aar ./out/android/tts-compose-release.aar
-
       # Upload artifacts
       - uses: actions/upload-artifact@v3
         with:
-          name: TextToSpeechKt (Browser)
-          path: ./out/browser/tts.*
-          if-no-files-found: error
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: TextToSpeechKt (Android)
-          path: ./out/android/tts-*.aar
-          if-no-files-found: error
+          name: TextToSpeechKt (Libs)
+          path: |
+            ./tts/build/outputs/aar/tts-*.aar
+            ./tts/build/libs/tts-browser-*.klib
+            ./tts/build/libs/tts-desktop-*.jar
+            ./tts-compose/build/outputs/aar/tts-compose-*.aar
+            ./tts-compose/build/libs/tts-compose-browser-*.klib
+            ./tts-compose/build/libs/tts-compose-desktop-*.jar
 
   deploy-docs:
     runs-on: ubuntu-latest
@@ -95,6 +85,10 @@ jobs:
         with:
           ref: 'dokka-version-archive'
           path: './build/dokka/html_version_archive/'
+
+      # Exclude demo projects
+      - name: Exclude demo projects
+        run: sed -i 's/val includeDemoProjects = true/val includeDemoProjects = false/g' settings.gradle.kts
 
       # Generate docs
       - name: Generate docs with Gradle & Dokka
