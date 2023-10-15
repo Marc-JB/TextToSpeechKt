@@ -1,12 +1,10 @@
 package nl.marc_apps.tts_demo
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.rounded.GraphicEq
+import androidx.compose.material.icons.rounded.RecordVoiceOver
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,8 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import nl.marc_apps.tts.TextToSpeechInstance
-import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
-import kotlin.math.roundToInt
 
 @Composable
 fun TtsDemoView(
