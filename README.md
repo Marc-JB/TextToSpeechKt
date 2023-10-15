@@ -1,11 +1,11 @@
-<div align="center" style="align: center;">
+<div align="center">
 
   # TextToSpeechKt
   Multiplatform Text-to-Speech library for Android and Browser (JS).
 
   [![Gradle deployment](https://github.com/Marc-JB/TextToSpeechKt/actions/workflows/deployment.yml/badge.svg)](https://github.com/Marc-JB/TextToSpeechKt/actions) 
   [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Marc-JB_TextToSpeechKt&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Marc-JB_TextToSpeechKt) 
-  [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://search.maven.org/search?q=g:%22nl.marc-apps%22%20AND%20a:%22tts%22)
+  [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://central.sonatype.com/search?smo=true&namespace=nl.marc-apps)
   [![License](https://badgen.net/github/license/Marc-JB/TextToSpeechKt)](https://github.com/Marc-JB/TextToSpeechKt/blob/main/LICENSE)
 
 </div>
@@ -25,14 +25,16 @@
 ### :space_invader: Tech Stack
 Uses Kotlin Multiplatform with support for the following targets:
 
-| Platform            | Language      | Support                    |
-|---------------------|---------------|----------------------------|
-| Android             | Kotlin/JVM    | ✅                          |
-| Browser             | Kotlin/JS     | ✅                          |
-| Browser             | JS, TS        | ❌ _Support ended in v2.0_  |
-| Desktop             | Kotlin/JVM    | ⚠️ _Experimental support_  |
-| iOS                 | Kotlin/Native | ❌                          |
-| Other Kotlin/Native | Kotlin/Native | ❌                          |
+| Platform            | Language      | Support                   |
+|---------------------|---------------|---------------------------|
+| Android             | Kotlin/JVM    | ✅                         |
+| Browser             | Kotlin/JS     | ✅                         |
+| Browser             | Kotlin/Wasm   | ❌                         |
+| Browser             | JS, TS        | ❌ _Support ended in v2.0_ |
+| Desktop             | Kotlin/JVM    | ⚠️ _Experimental support_ |
+| iOS                 | Kotlin/Native | ❌                         |
+| Other Kotlin/Native | Kotlin/Native | ❌                         |
+
 
 ### :dart: Features
 - Create the engine with Kotlin Coroutines
@@ -61,10 +63,10 @@ A build tool like Gradle or Maven.
   ```Kotlin
   dependencies {
       implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-      implementation("nl.marc-apps:tts:1.0.0")
+      implementation("nl.marc-apps:tts:2.0.0")
 
       // Optional: Extensions for Compose
-      implementation("nl.marc-apps:tts-compose:1.0.0")
+      implementation("nl.marc-apps:tts-compose:2.0.0")
   }
   ```  
 
@@ -76,10 +78,10 @@ A build tool like Gradle or Maven.
           val commonMain by getting {
               dependencies {
                   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-                  implementation("nl.marc-apps:tts:1.0.0")
+                  implementation("nl.marc-apps:tts:2.0.0")
 
                   // Optional: Extensions for Compose
-                  implementation("nl.marc-apps:tts-compose:1.0.0")
+                  implementation("nl.marc-apps:tts-compose:2.0.0")
               }
           }
       }
@@ -87,8 +89,7 @@ A build tool like Gradle or Maven.
   ```
 
   > [!IMPORTANT]  
-  > Make sure to configure the latest stable version:   
-  > [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://search.maven.org/search?q=g:%22nl.marc-apps%22%20AND%20a:%22tts%22)   
+  > Make sure to configure the latest stable version: [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://central.sonatype.com/search?smo=true&namespace=nl.marc-apps)   
 
 </details>
 
@@ -98,15 +99,25 @@ A build tool like Gradle or Maven.
   Add the library to your dependencies:  
   ```XML
   <dependency>
+      <groupId>org.jetbrains.kotlinx</groupId>
+      <artifactId>kotlinx-coroutines-core</artifactId>
+      <version>1.7.3</version>
+  </dependency>
+  <dependency>
       <groupId>nl.marc-apps</groupId>
       <artifactId>tts</artifactId>
-      <version>1.0.0</version>
+      <version>2.0.0</version>
+  </dependency>
+  <!-- Optional: Extensions for Compose -->
+  <dependency>
+      <groupId>nl.marc-apps</groupId>
+      <artifactId>tts-compose</artifactId>
+      <version>2.0.0</version>
   </dependency>
   ```  
 
   > [!IMPORTANT]  
-  > Make sure to configure the latest stable version:   
-  > [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://search.maven.org/search?q=g:%22nl.marc-apps%22%20AND%20a:%22tts%22)
+  > Make sure to configure the latest stable version: [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://central.sonatype.com/search?smo=true&namespace=nl.marc-apps)
 
 </details>
 
