@@ -10,7 +10,7 @@ actual fun rememberTextToSpeechOrNull(requestedEngine: TextToSpeechEngine): Text
     var textToSpeech by remember { mutableStateOf<TextToSpeechInstance?>(null) }
 
     LaunchedEffect(Unit) {
-        textToSpeech = TextToSpeechFactory(context, requestedEngine.androidPackage).createOrNull()
+        textToSpeech = TextToSpeechFactory(context, requestedEngine).createOrNull()
     }
 
     DisposableEffect(Unit) {
