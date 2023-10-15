@@ -63,7 +63,7 @@ actual class TextToSpeechFactory(
     }
 
     companion object {
-        const val ENGINE_SPEECH_SERVICES_BY_GOOGLE = "com.google.android.tts"
+        val ENGINE_SPEECH_SERVICES_BY_GOOGLE = TextToSpeechEngine.Google.androidPackage
 
         @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.DONUT)
         val isSupported: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT
