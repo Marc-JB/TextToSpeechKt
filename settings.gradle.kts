@@ -19,11 +19,6 @@ rootProject.name = "TextToSpeechKt"
 
 include(":tts")
 include(":tts-compose")
-
-val includeDemoProjects = true
-
-if (includeDemoProjects) {
-    include(":demo:compose-multiplatform")
-    include(":demo:android-xml")
-    include(":demo:browser-html-dom")
-}
+include(":demo:compose-multiplatform")
+include(":demo:android-xml")
+include(":demo:browser-html-dom")

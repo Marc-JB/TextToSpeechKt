@@ -31,10 +31,6 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # Exclude demo projects
-      - name: Exclude demo projects
-        run: sed -i 's/val includeDemoProjects = true/val includeDemoProjects = false/g' settings.gradle.kts
-
       # Build & Deploy
       - name: Build & Deploy with Gradle
         run: ./gradlew :tts:publish :tts-compose:publish
@@ -85,10 +81,6 @@ jobs:
         with:
           ref: 'dokka-version-archive'
           path: './build/dokka/html_version_archive/'
-
-      # Exclude demo projects
-      - name: Exclude demo projects
-        run: sed -i 's/val includeDemoProjects = true/val includeDemoProjects = false/g' settings.gradle.kts
 
       # Generate docs
       - name: Generate docs with Gradle & Dokka
