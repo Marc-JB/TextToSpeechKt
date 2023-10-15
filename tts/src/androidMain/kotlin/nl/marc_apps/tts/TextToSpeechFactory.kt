@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.speech.tts.TextToSpeech
 import androidx.annotation.ChecksSdkIntAtLeast
-import nl.marc_apps.tts.TextToSpeechFactory.Companion
 import nl.marc_apps.tts.errors.TextToSpeechNotSupportedError
 import nl.marc_apps.tts.errors.UnknownTextToSpeechInitialisationError
 import nl.marc_apps.tts.utils.ErrorCodes
@@ -14,13 +13,22 @@ import kotlin.coroutines.suspendCoroutine
 
 /**
  * Factory class to create a Text-to-Speech instance.
- * Use [defaultSpeechEngine] to set the package name of the default engine.
- * Setting this to [Companion.ENGINE_SPEECH_SERVICES_BY_GOOGLE] is recommended.
+ * Use [defaultEngine] to set the package name of the default engine.
+ * Setting this to [TextToSpeechEngine.Google] is recommended.
  */
 actual class TextToSpeechFactory(
     private val context: Context,
-    private val defaultSpeechEngine: String? = null
+    private val defaultEngine: TextToSpeechEngine = TextToSpeechEngine.SystemDefault
 ) {
+    /**
+     * Factory class to create a Text-to-Speech instance.
+     * Use [defaultSpeechEngine] to set the package name of the default engine.
+     * Setting this to [TextToSpeechEngine.Google.androidPackage] is recommended.
+     */
+    @Deprecated("Replaced by constructor with TextToSpeechEngine class")
+    constructor(context: Context, defaultSpeechEngine: String? = null) : this(context,
+        defaultSpeechEngine?.let { TextToSpeechEngine.Custom(it) } ?: TextToSpeechEngine.SystemDefault)
+
     @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.DONUT)
     actual val isSupported: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT
 
@@ -47,7 +55,7 @@ actual class TextToSpeechFactory(
                     }
 
                     obj = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                        TextToSpeech(context, initListener, defaultSpeechEngine)
+                        TextToSpeech(context, initListener, defaultEngine.androidPackage)
                     } else {
                         TextToSpeech(context, initListener)
                     }
@@ -63,6 +71,7 @@ actual class TextToSpeechFactory(
     }
 
     companion object {
+        @Deprecated("Replaced by TextToSpeechEngine.Google.androidPackage", ReplaceWith("TextToSpeechEngine.Google.androidPackage"))
         val ENGINE_SPEECH_SERVICES_BY_GOOGLE = TextToSpeechEngine.Google.androidPackage
 
         @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.DONUT)

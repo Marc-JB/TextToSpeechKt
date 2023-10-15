@@ -25,7 +25,7 @@ dependencies {
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
 }
 
-val currentVersion = "2.0"
+val currentVersion = "2.1"
 val dokkaWorkingDir = project.rootProject.buildDir.resolve("dokka")
 val versionArchiveDirectory = dokkaWorkingDir.resolve("html_version_archive")
 val currentVersionDir = versionArchiveDirectory.resolve(currentVersion)

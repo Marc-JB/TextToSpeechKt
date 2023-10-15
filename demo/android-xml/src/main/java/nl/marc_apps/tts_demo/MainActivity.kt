@@ -5,6 +5,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import nl.marc_apps.tts.TextToSpeechEngine
 import nl.marc_apps.tts.TextToSpeechFactory
 import nl.marc_apps.tts.TextToSpeechInstance
 import nl.marc_apps.tts_demo.databinding.ActivityMainBinding
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun initTextToSpeech() {
-        val textToSpeechFactory = TextToSpeechFactory(applicationContext, TextToSpeechFactory.ENGINE_SPEECH_SERVICES_BY_GOOGLE)
+        val textToSpeechFactory = TextToSpeechFactory(applicationContext, TextToSpeechEngine.Google)
 
         ttsInstance = textToSpeechFactory.createOrNull()
         binding.loadingIndicator.visibility = View.GONE

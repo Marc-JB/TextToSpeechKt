@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import nl.marc_apps.tts.TextToSpeechEngine
 import nl.marc_apps.tts.rememberTextToSpeechOrNull
 
 class MainActivity : ComponentActivity() {
@@ -17,7 +18,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val textToSpeech = rememberTextToSpeechOrNull()
+            val textToSpeech = rememberTextToSpeechOrNull(TextToSpeechEngine.Google)
 
             val darkTheme = isSystemInDarkTheme()
             val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
