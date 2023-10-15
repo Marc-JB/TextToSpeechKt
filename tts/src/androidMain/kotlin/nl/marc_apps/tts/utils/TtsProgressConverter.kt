@@ -7,6 +7,9 @@ import nl.marc_apps.tts.errors.TextToSpeechSynthesisInterruptedError
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import java.util.*
 
+/**
+ * @hide
+ */
 @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
 class TtsProgressConverter(
     val onStart: (UUID) -> Unit,
