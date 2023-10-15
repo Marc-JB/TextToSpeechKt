@@ -18,35 +18,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val textToSpeech = rememberTextToSpeechOrNull(TextToSpeechEngine.Google)
-
-            val darkTheme = isSystemInDarkTheme()
-            val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-            val colorScheme = when {
-                dynamicColor && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
-                dynamicColor && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
-                darkTheme -> darkColorScheme()
-                else -> lightColorScheme()
-            }
-
-            MaterialTheme(
-                colorScheme = colorScheme
-            ) {
-                Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            title = {
-                                Text(stringResource(id = R.string.app_name))
-                            },
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
-                            )
+            TtsDemoApp(
+                topAppBar = {
+                    TopAppBar(
+                        title = {
+                            Text(stringResource(id = R.string.app_name))
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
                         )
-                    }
-                ) {
-                    TtsDemoView(textToSpeech = textToSpeech, paddingValues = it)
+                    )
                 }
-            }
+            )
         }
     }
 }
