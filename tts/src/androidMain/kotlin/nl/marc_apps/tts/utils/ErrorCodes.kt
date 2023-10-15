@@ -2,6 +2,9 @@ package nl.marc_apps.tts.utils
 
 import nl.marc_apps.tts.errors.*
 
+/**
+ * @hide
+ */
 object ErrorCodes {
     /** Denotes a failure of a TTS engine to synthesize the given input. */
     const val ERROR_SYNTHESIS = -3

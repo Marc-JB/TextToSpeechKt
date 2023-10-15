@@ -22,7 +22,7 @@ object ProjectInfo {
 
     const val NAME = "TextToSpeechKt"
 
-    val version = Revision(2, 0)
+    val version = Revision(2, 1)
 
     val mavenVersion = "${version.major}.${version.minor}.${version.micro}${if (version.isPreview) "-SNAPSHOT" else ""}"
 
@@ -274,31 +274,17 @@ class Config {
 
 // TODO: Remove when this is fixed.
 afterEvaluate {
-    tasks.named("publishAndroidPublicationToOSSRHRepository").configure { mustRunAfter("signBrowserPublication") }
-    tasks.named("publishAndroidPublicationToGitHubPackagesRepository").configure { mustRunAfter("signBrowserPublication") }
-    tasks.named("publishAndroidPublicationToOSSRHRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
-    tasks.named("publishAndroidPublicationToGitHubPackagesRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
-    tasks.named("publishAndroidPublicationToOSSRHRepository").configure { mustRunAfter("signDesktopPublication") }
-    tasks.named("publishAndroidPublicationToGitHubPackagesRepository").configure { mustRunAfter("signDesktopPublication") }
-
-    tasks.named("publishBrowserPublicationToOSSRHRepository").configure { mustRunAfter("signAndroidPublication") }
-    tasks.named("publishBrowserPublicationToGitHubPackagesRepository").configure { mustRunAfter("signAndroidPublication") }
-    tasks.named("publishBrowserPublicationToOSSRHRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
-    tasks.named("publishBrowserPublicationToGitHubPackagesRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
-    tasks.named("publishBrowserPublicationToOSSRHRepository").configure { mustRunAfter("signDesktopPublication") }
-    tasks.named("publishBrowserPublicationToGitHubPackagesRepository").configure { mustRunAfter("signDesktopPublication") }
-
-    tasks.named("publishKotlinMultiplatformPublicationToOSSRHRepository").configure { mustRunAfter("signAndroidPublication") }
-    tasks.named("publishKotlinMultiplatformPublicationToGitHubPackagesRepository").configure { mustRunAfter("signAndroidPublication") }
-    tasks.named("publishKotlinMultiplatformPublicationToOSSRHRepository").configure { mustRunAfter("signBrowserPublication") }
-    tasks.named("publishKotlinMultiplatformPublicationToGitHubPackagesRepository").configure { mustRunAfter("signBrowserPublication") }
-    tasks.named("publishKotlinMultiplatformPublicationToOSSRHRepository").configure { mustRunAfter("signDesktopPublication") }
-    tasks.named("publishKotlinMultiplatformPublicationToGitHubPackagesRepository").configure { mustRunAfter("signDesktopPublication") }
-
-    tasks.named("publishDesktopPublicationToOSSRHRepository").configure { mustRunAfter("signAndroidPublication") }
-    tasks.named("publishDesktopPublicationToGitHubPackagesRepository").configure { mustRunAfter("signAndroidPublication") }
-    tasks.named("publishDesktopPublicationToOSSRHRepository").configure { mustRunAfter("signBrowserPublication") }
-    tasks.named("publishDesktopPublicationToGitHubPackagesRepository").configure { mustRunAfter("signBrowserPublication") }
-    tasks.named("publishDesktopPublicationToOSSRHRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
-    tasks.named("publishDesktopPublicationToGitHubPackagesRepository").configure { mustRunAfter("signKotlinMultiplatformPublication") }
+    val projects = listOf("KotlinMultiplatform", "Android", "Browser", "Desktop")
+    val repositories = listOf("OSSRH", "GitHubPackages")
+    for (currentProject in projects) {
+        for (repository in repositories) {
+            for (otherProject in projects) {
+                if (currentProject != otherProject) {
+                    tasks.named("publish${currentProject}PublicationTo${repository}Repository").configure {
+                        mustRunAfter("sign${otherProject}Publication")
+                    }
+                }
+            }
+        }
+    }
 }
