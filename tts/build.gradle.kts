@@ -2,6 +2,7 @@
 
 import com.android.repository.Revision
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
@@ -15,6 +16,8 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
+val useWasmTarget = false
+
 object ProjectInfo {
     const val GROUP_ID = "nl.marc-apps"
 
@@ -24,7 +27,7 @@ object ProjectInfo {
 
     val version = Revision(2, 2)
 
-    val mavenVersion = "${version.major}.${version.minor}.${version.micro}${if (version.isPreview) "-SNAPSHOT" else ""}"
+    val mavenVersion = "${version.major}.${version.minor}.${version.micro}${if (useWasmTarget) "-wasm" else ""}${if (version.isPreview) "-SNAPSHOT" else ""}"
 
     object Developer {
         const val ORG_NAME = "Marc Apps & Software"
@@ -51,10 +54,17 @@ group = ProjectInfo.GROUP_ID
 version = ProjectInfo.mavenVersion
 
 kotlin {
-    js("browser", IR) {
+    js("browserJs", IR) {
         browser()
-
         binaries.executable()
+    }
+
+    if (useWasmTarget) {
+        @OptIn(ExperimentalWasmDsl::class)
+        wasm("browserWasm") {
+            browser()
+            binaries.executable()
+        }
     }
 
     androidTarget {
@@ -71,7 +81,11 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                if (useWasmTarget) {
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2-wasm0")
+                } else {
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                }
             }
         }
         val androidMain by getting {
@@ -82,6 +96,22 @@ kotlin {
         val desktopMain by getting {
             dependencies {
                 implementation("net.sf.sociaal:freetts:1.2.2")
+            }
+        }
+        val browserJsMain by getting {}
+        if (useWasmTarget) {
+            val browserWasmMain by getting {}
+            val browserMain by creating {
+                dependsOn(commonMain)
+                browserJsMain.dependsOn(this)
+                if (useWasmTarget) {
+                    browserWasmMain.dependsOn(this)
+                }
+            }
+        } else {
+            val browserMain by creating {
+                dependsOn(commonMain)
+                browserJsMain.dependsOn(this)
             }
         }
     }
@@ -122,6 +152,8 @@ tasks.withType<DokkaTaskPartial>().configureEach {
             "commonMain" -> "common"
             "androidMain" -> "android"
             "browserMain" -> "browser"
+            "browserJsMain" -> "browserJs"
+            "browserWasmMain" -> "browserWasm"
             "desktopMain" -> "desktop"
             else -> null
         }
@@ -200,6 +232,8 @@ fun MavenPublication.configurePublication() {
     artifactId = ProjectInfo.ID + when {
         artifactId.endsWith("-android") || name == "android" -> "-android"
         artifactId.endsWith("-browser") -> "-browser"
+        artifactId.endsWith("-browserJs") -> "-browser-js"
+        artifactId.endsWith("-browserWasm") -> "-browser-wasm"
         artifactId.endsWith("-desktop") -> "-desktop"
         else -> ""
     }
@@ -274,7 +308,12 @@ class Config {
 
 // TODO: Remove when this is fixed.
 afterEvaluate {
-    val projects = listOf("KotlinMultiplatform", "Android", "Browser", "Desktop")
+    val projects = mutableListOf("KotlinMultiplatform", "Android", "BrowserJs", "Desktop")
+
+    if (useWasmTarget) {
+        projects += "BrowserWasm"
+    }
+
     val repositories = listOf("OSSRH", "GitHubPackages")
     for (currentProject in projects) {
         for (repository in repositories) {
