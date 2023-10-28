@@ -16,40 +16,44 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
-object ProjectInfo {
-    const val GROUP_ID = "nl.marc-apps"
+class ProjectInfo {
+    val groupId = "nl.marc-apps"
 
-    const val ID = "tts-compose"
+    val id = "tts-compose"
 
-    const val NAME = "TextToSpeechKt"
+    val name = "TextToSpeechKt"
 
     val version = Revision(2, 2)
 
     val mavenVersion = "${version.major}.${version.minor}.${version.micro}${if (version.isPreview) "-SNAPSHOT" else ""}"
 
-    object Developer {
-        const val ORG_NAME = "Marc Apps & Software"
+    val developer = Developer()
 
-        const val WEBSITE = "https://marc-apps.nl"
+    class Developer {
+        val orgName = "Marc Apps & Software"
 
-        const val NAME = "Marc"
+        val website = "https://marc-apps.nl"
 
-        const val EMAIL = "16156117+Marc-JB@users.noreply.github.com"
+        val name = "Marc"
 
-        const val GITHUB_NAME = "Marc-JB"
+        val email = "16156117+Marc-JB@users.noreply.github.com"
+
+        val githubName = "Marc-JB"
     }
 
-    const val LOCATION = "github.com/${Developer.GITHUB_NAME}/TextToSpeechKt"
+    val repoLocation = "github.com/${developer.githubName}/TextToSpeechKt"
 
-    const val LOCATION_HTTP = "https://$LOCATION"
+    val repoLocationHttp = "https://$repoLocation"
 
-    const val DOCUMENTATION_URL = "https://marc-jb.github.io/TextToSpeechKt"
+    val documentationUrl = "https://marc-jb.github.io/TextToSpeechKt"
 }
+
+val projectInfo = ProjectInfo()
 
 val config by lazy { Config() }
 
-group = ProjectInfo.GROUP_ID
-version = ProjectInfo.mavenVersion
+group = projectInfo.groupId
+version = projectInfo.mavenVersion
 
 kotlin {
     js("browser", IR) {
@@ -94,7 +98,7 @@ android {
     defaultConfig {
         minSdk = 21
 
-        setProperty("archivesBaseName", ProjectInfo.ID)
+        setProperty("archivesBaseName", projectInfo.id)
     }
 
     compileOptions {
@@ -135,13 +139,13 @@ tasks.withType<DokkaTaskPartial>().configureEach {
         if (platform != null) {
             sourceLink {
                 localDirectory.set(file("src/${platform}Main/kotlin"))
-                remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/${ProjectInfo.ID}/src/${platform}Main/kotlin"))
+                remoteUrl.set(URL("${projectInfo.repoLocationHttp}/blob/main/${projectInfo.id}/src/${platform}Main/kotlin"))
                 remoteLineSuffix.set("#L")
             }
 
             externalDocumentationLink {
-                url.set(URL(ProjectInfo.DOCUMENTATION_URL))
-                packageListUrl.set(URL("${ProjectInfo.DOCUMENTATION_URL}/package-list"))
+                url.set(URL(projectInfo.documentationUrl))
+                packageListUrl.set(URL("${projectInfo.documentationUrl}/package-list"))
             }
 
             jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
@@ -160,7 +164,7 @@ publishing {
         maven {
             name = "OSSRH"
             url = uri(
-                if(ProjectInfo.version.isPreview) {
+                if(projectInfo.version.isPreview) {
                     "https://s01.oss.sonatype.org/content/repositories/snapshots/"
                 } else {
                     "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -201,9 +205,9 @@ signing {
 }
 
 fun MavenPublication.configurePublication() {
-    groupId = ProjectInfo.GROUP_ID
+    groupId = projectInfo.groupId
 
-    artifactId = ProjectInfo.ID + when {
+    artifactId = projectInfo.id + when {
         artifactId.endsWith("-android") || name == "android" -> "-android"
         artifactId.endsWith("-browser") -> "-browser"
         artifactId.endsWith("-desktop") -> "-desktop"
@@ -213,12 +217,12 @@ fun MavenPublication.configurePublication() {
     artifact(javadocJar.get())
 
     pom {
-        name.set(ProjectInfo.NAME)
+        name.set(projectInfo.name)
         description.set(
             "Multiplatform Text-to-Speech library for Android and Browser (JS). " +
                     "This library will enable you to use Text-to-Speech in multiplatform Kotlin projects."
         )
-        url.set(ProjectInfo.LOCATION_HTTP)
+        url.set(projectInfo.repoLocationHttp)
         inceptionYear.set("2020")
 
         licenses {
@@ -229,33 +233,33 @@ fun MavenPublication.configurePublication() {
         }
 
         organization {
-            name.set(ProjectInfo.Developer.ORG_NAME)
-            url.set(ProjectInfo.Developer.WEBSITE)
+            name.set(projectInfo.developer.orgName)
+            url.set(projectInfo.developer.website)
         }
 
         developers {
             developer {
-                id.set(ProjectInfo.Developer.GITHUB_NAME)
-                name.set(ProjectInfo.Developer.NAME)
-                email.set(ProjectInfo.Developer.EMAIL)
-                url.set(ProjectInfo.Developer.WEBSITE)
-                organization.set(ProjectInfo.Developer.ORG_NAME)
-                organizationUrl.set(ProjectInfo.Developer.WEBSITE)
+                id.set(projectInfo.developer.githubName)
+                name.set(projectInfo.developer.name)
+                email.set(projectInfo.developer.email)
+                url.set(projectInfo.developer.website)
+                organization.set(projectInfo.developer.orgName)
+                organizationUrl.set(projectInfo.developer.website)
             }
         }
 
         issueManagement {
-            url.set("${ProjectInfo.LOCATION_HTTP}/issues")
+            url.set("${projectInfo.repoLocationHttp}/issues")
         }
 
         ciManagement {
-            url.set("${ProjectInfo.LOCATION_HTTP}/actions")
+            url.set("${projectInfo.repoLocationHttp}/actions")
         }
 
         scm {
-            connection.set("scm:git:git://${ProjectInfo.LOCATION}.git")
-            developerConnection.set("scm:git:ssh://${ProjectInfo.LOCATION}.git")
-            url.set(ProjectInfo.LOCATION_HTTP)
+            connection.set("scm:git:git://${projectInfo.repoLocation}.git")
+            developerConnection.set("scm:git:ssh://${projectInfo.repoLocation}.git")
+            url.set(projectInfo.repoLocationHttp)
         }
     }
 }
