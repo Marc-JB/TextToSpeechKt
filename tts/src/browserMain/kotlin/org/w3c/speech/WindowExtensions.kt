@@ -1,6 +1,7 @@
 package org.w3c.speech
 
-import org.w3c.dom.Window
+expect abstract class Window
 
-inline val Window.speechSynthesis: SpeechSynthesis
-    get() = asDynamic().speechSynthesis as SpeechSynthesis
+expect fun getWindow(): Window
+
+expect fun getSynthesis(window: Window): SpeechSynthesisCommon

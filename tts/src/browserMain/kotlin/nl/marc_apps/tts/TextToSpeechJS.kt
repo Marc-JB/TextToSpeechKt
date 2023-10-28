@@ -2,28 +2,23 @@
 
 package nl.marc_apps.tts
 
-import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
-import org.w3c.dom.Window
-import org.w3c.speech.SpeechSynthesis
-import org.w3c.speech.SpeechSynthesisUtterance
-import org.w3c.speech.speechSynthesis
+import org.w3c.speech.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-import kotlin.js.Promise
 
 /** A TTS instance. Should be [close]d when no longer in use. */
-internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
+internal class TextToSpeechJS(context: Window = getWindow()) : TextToSpeechInstance {
     override val isSynthesizing = MutableStateFlow(false)
 
     override val isWarmingUp = MutableStateFlow(false)
 
     private var hasSpoken = false
 
-    private val speechSynthesis: SpeechSynthesis = context.speechSynthesis
+    private val speechSynthesis: SpeechSynthesisCommon = getSynthesis(context)
 
     private var speechSynthesisUtterance = SpeechSynthesisUtterance()
 
@@ -159,24 +154,6 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
                 } else if (it.isFailure) {
                     val error = it.exceptionOrNull() ?: UnknownTextToSpeechSynthesisError()
                     cont.resumeWithException(error)
-                }
-            }
-        }
-    }
-
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    @Deprecated("Use suspend fun say(text)")
-    fun sayJsPromise(
-        text: String,
-        clearQueue: Boolean
-    ): Promise<Unit> {
-        return Promise { success, failure ->
-            say(text, clearQueue) {
-                if (it.isSuccess) {
-                    success(it.getOrThrow())
-                } else if (it.isFailure) {
-                    val error = it.exceptionOrNull() ?: UnknownTextToSpeechSynthesisError()
-                    failure(error)
                 }
             }
         }
