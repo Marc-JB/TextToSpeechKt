@@ -1,35 +1,54 @@
 package org.w3c.speech
 
-/**
- * The SpeechSynthesis interface of the Web Speech API is the controller interface for the speech service;
- * this can be used to retrieve information about the synthesis voices available on the device,
- * start and pause speech, and other commands besides.
- */
-actual external interface SpeechSynthesis {
-    /** A [Boolean] that returns true if the SpeechSynthesis object is in a paused state. */
+import js_interop.Event
+import js_interop.EventListener
+import js_interop.EventTargetCommon
+
+actual class SpeechSynthesis : EventTargetCommon() {
+    private val actualImplementation = getBrowserSynthesis()
+
     actual val paused: Boolean
+        get() = actualImplementation.paused
 
-    /** A [Boolean] that returns true if the utterance queue contains as-yet-unspoken utterances. */
     actual val pending: Boolean
+        get() = actualImplementation.pending
 
-    /**
-     * A [Boolean] that returns true if an utterance is currently
-     * in the process of being spoken — even if SpeechSynthesis is in a paused state.
-     */
     actual val speaking: Boolean
+        get() = actualImplementation.speaking
 
-    /** Removes all utterances from the utterance queue. */
-    actual fun cancel()
+    actual fun cancel(){
+        actualImplementation.cancel()
+    }
 
-    /** Puts the SpeechSynthesis object into a paused state. */
-    actual fun pause()
+    actual fun getVoices(): Array<SpeechSynthesisVoice> {
+        val list = mutableListOf<SpeechSynthesisVoice>()
+        val voices = getBrowserSynthesisVoices()
+        do {
+            val iteration = voices.next()
+            list += iteration.value
+        } while (!iteration.done)
+        return list.toTypedArray()
+    }
 
-    /** Puts the SpeechSynthesis object into a non-paused state: resumes it if it was already paused. */
-    actual fun resume()
+    actual fun pause(){
+        actualImplementation.pause()
+    }
 
-    /**
-     * Adds an [utterance] to the utterance queue;
-     * it will be spoken when any other utterances queued before it have been spoken.
-     */
-    actual fun speak(utterance: SpeechSynthesisUtterance)
+    actual fun resume(){
+        actualImplementation.resume()
+    }
+
+    actual fun speak(utterance: SpeechSynthesisUtterance) {
+        actualImplementation.speak(utterance)
+    }
+
+    actual var voiceschanged: ((event: Event?) -> Unit)? = null
+
+    override fun addEventListener(type: String, callback: EventListener?) {
+        actualImplementation.addEventListener(type, callback)
+    }
+
+    override fun removeEventListener(type: String, callback: EventListener?) {
+        actualImplementation.removeEventListener(type, callback)
+    }
 }

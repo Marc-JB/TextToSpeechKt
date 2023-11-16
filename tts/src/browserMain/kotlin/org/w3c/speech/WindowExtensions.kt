@@ -4,4 +4,4 @@ expect abstract class Window
 
 expect fun getWindow(): Window
 
-expect fun getSynthesis(window: Window): SpeechSynthesisCommon
+expect fun getSynthesis(window: Window): SpeechSynthesis

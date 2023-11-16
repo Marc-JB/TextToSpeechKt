@@ -1,13 +1,13 @@
 package org.w3c.speech
 
-import org.w3c.dom.events.EventTarget
+import js_interop.EventTargetCommon
 
 /**
  * The SpeechSynthesis interface of the Web Speech API is the controller interface for the speech service;
  * this can be used to retrieve information about the synthesis voices available on the device,
  * start and pause speech, and other commands besides.
  */
-actual external interface SpeechSynthesis : EventTarget {
+actual external class SpeechSynthesis : EventTargetCommon {
     /** A [Boolean] that returns true if the SpeechSynthesis object is in a paused state. */
     actual val paused: Boolean
 
@@ -24,7 +24,7 @@ actual external interface SpeechSynthesis : EventTarget {
     actual fun cancel()
 
     /** Returns a list of [SpeechSynthesisVoice] objects representing all the available voices on the current device. */
-    fun getVoices(): Array<SpeechSynthesisVoice>
+    actual fun getVoices(): Array<SpeechSynthesisVoice>
 
     /** Puts the SpeechSynthesis object into a paused state. */
     actual fun pause()
@@ -41,5 +41,5 @@ actual external interface SpeechSynthesis : EventTarget {
     /**
      * Fired when the list of [SpeechSynthesisVoice] objects that would be returned by the [getVoices] method has changed.
      */
-    var voiceschanged: ((event: Event?) -> Unit)?
+    actual var voiceschanged: ((event: Event?) -> Unit)?
 }

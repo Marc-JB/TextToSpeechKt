@@ -8,5 +8,5 @@ actual fun getWindow() = window
 
 actual fun getSynthesis(window: Window) = window.speechSynthesis
 
-inline val Window.speechSynthesis: SpeechSynthesisCommon
-    get() = asDynamic().speechSynthesis as SpeechSynthesisCommon
+inline val Window.speechSynthesis: SpeechSynthesis
+    get() = asDynamic().speechSynthesis as SpeechSynthesis

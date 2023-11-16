@@ -1,13 +1,13 @@
-package org.w3c.speech
+package js_interop
 
-expect class Event
+import org.w3c.speech.SpeechSynthesisUtterance
 
 /**
  * The SpeechSynthesis interface of the Web Speech API is the controller interface for the speech service;
  * this can be used to retrieve information about the synthesis voices available on the device,
  * start and pause speech, and other commands besides.
  */
-expect interface SpeechSynthesisCommon {
+external class SpeechSynthesis : EventTarget {
     /** A [Boolean] that returns true if the SpeechSynthesis object is in a paused state. */
     val paused: Boolean
 
@@ -23,9 +23,6 @@ expect interface SpeechSynthesisCommon {
     /** Removes all utterances from the utterance queue. */
     fun cancel()
 
-    /** Returns a list of [SpeechSynthesisVoice] objects representing all the available voices on the current device. */
-    fun getVoices(): Array<SpeechSynthesisVoice>
-
     /** Puts the SpeechSynthesis object into a paused state. */
     fun pause()
 
@@ -37,11 +34,4 @@ expect interface SpeechSynthesisCommon {
      * it will be spoken when any other utterances queued before it have been spoken.
      */
     fun speak(utterance: SpeechSynthesisUtterance)
-
-    /**
-     * Fired when the list of [SpeechSynthesisVoice] objects that would be returned by the [getVoices] method has changed.
-     */
-    var voiceschanged: ((event: Event?) -> Unit)?
-
-    fun addEventHandler(eventName: String, eventHandler: (event: Event?) -> Unit)
 }

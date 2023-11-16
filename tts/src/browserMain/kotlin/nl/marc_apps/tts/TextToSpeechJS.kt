@@ -18,7 +18,7 @@ internal class TextToSpeechJS(context: Window = getWindow()) : TextToSpeechInsta
 
     private var hasSpoken = false
 
-    private val speechSynthesis: SpeechSynthesisCommon = getSynthesis(context)
+    private val speechSynthesis: SpeechSynthesis = getSynthesis(context)
 
     private var speechSynthesisUtterance = SpeechSynthesisUtterance()
 
