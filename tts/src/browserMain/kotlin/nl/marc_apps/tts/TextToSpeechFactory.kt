@@ -17,7 +17,7 @@ actual class TextToSpeechFactory(
 
     actual suspend fun create(): Result<TextToSpeechInstance> {
         return if (isSupported) {
-            Result.success(TextToSpeechJS(context))
+            Result.success(TextToSpeechBrowser(context))
         } else {
             Result.failure(TextToSpeechNotSupportedError())
         }

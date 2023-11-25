@@ -16,7 +16,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 /** A TTS instance. Should be [close]d when no longer in use. */
-internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
+internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInstance {
     override val isSynthesizing = MutableStateFlow(false)
 
     override val isWarmingUp = MutableStateFlow(false)
