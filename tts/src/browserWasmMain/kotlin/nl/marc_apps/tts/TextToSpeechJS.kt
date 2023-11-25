@@ -2,6 +2,7 @@
 
 package nl.marc_apps.tts
 
+import iterator
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
@@ -67,14 +68,8 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
             speechSynthesisUtterance.rate = value
         }
 
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     private fun getVoiceList(): Array<SpeechSynthesisVoice> {
-        val voices = speechSynthesis.getVoices()
-        val list = mutableListOf<SpeechSynthesisVoice>()
-        for (i in 0..voices.length) {
-            list.add(voices[i] as SpeechSynthesisVoice)
-        }
-        return list.toTypedArray()
+       return speechSynthesis.getVoices().iterator().asSequence().filterNotNull().toList().toTypedArray()
     }
 
     /**
