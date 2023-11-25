@@ -6,4 +6,5 @@ expect abstract class Window
 
 expect val window: Window
 
+/** @hide */
 expect fun getSpeechSynthesis(window: Window): SpeechSynthesis
