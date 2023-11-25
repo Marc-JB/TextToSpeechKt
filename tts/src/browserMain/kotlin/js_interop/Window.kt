@@ -8,3 +8,6 @@ expect val window: Window
 
 /** @hide */
 expect fun getSpeechSynthesis(window: Window): SpeechSynthesis
+
+/** @hide */
+expect val isSpeechSynthesisSupported: Boolean
