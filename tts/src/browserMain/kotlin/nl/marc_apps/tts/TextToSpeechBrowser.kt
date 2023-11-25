@@ -67,7 +67,9 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
             speechSynthesisUtterance.rate = value
         }
 
-    private val voiceList = getVoiceList(speechSynthesis)
+    private val voiceList by lazy {
+        getVoiceList(speechSynthesis)
+    }
 
     /**
      * Returns a BCP 47 language tag of the selected voice on supported platforms.

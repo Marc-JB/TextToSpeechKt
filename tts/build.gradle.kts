@@ -65,7 +65,7 @@ kotlin {
 
     if (useWasmTarget) {
         @OptIn(ExperimentalWasmDsl::class)
-        wasm("browserWasm") {
+        wasmJs("browserWasm") {
             browser()
             binaries.executable()
         }
@@ -108,9 +108,7 @@ kotlin {
             val browserMain by creating {
                 dependsOn(commonMain)
                 browserJsMain.dependsOn(this)
-                if (useWasmTarget) {
-                    browserWasmMain.dependsOn(this)
-                }
+                browserWasmMain.dependsOn(this)
             }
         } else {
             val browserMain by creating {
@@ -247,7 +245,7 @@ fun MavenPublication.configurePublication() {
     pom {
         name.set(projectInfo.name)
         description.set(
-            "Multiplatform Text-to-Speech library for Android and Browser (JS). " +
+            "Kotlin Multiplatform Text-to-Speech library for Android and browser (Kotlin/JS & Kotlin/Wasm). " +
                     "This library will enable you to use Text-to-Speech in multiplatform Kotlin projects."
         )
         url.set(projectInfo.repoLocationHttp)

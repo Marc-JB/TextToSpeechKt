@@ -2,6 +2,7 @@
 
 import com.android.repository.Revision
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
@@ -16,6 +17,8 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
+val useWasmTarget = true
+
 class ProjectInfo {
     val groupId = "nl.marc-apps"
 
@@ -25,7 +28,7 @@ class ProjectInfo {
 
     val version = Revision(2, 2)
 
-    val mavenVersion = "${version.major}.${version.minor}.${version.micro}${if (version.isPreview) "-SNAPSHOT" else ""}"
+    val mavenVersion = "${version.major}.${version.minor}.${version.micro}${if (useWasmTarget) "-wasm0" else ""}${if (version.isPreview) "-SNAPSHOT" else ""}"
 
     val developer = Developer()
 
@@ -56,10 +59,17 @@ group = projectInfo.groupId
 version = projectInfo.mavenVersion
 
 kotlin {
-    js("browser", IR) {
+    js("browserJs", IR) {
         browser()
-
         binaries.executable()
+    }
+
+    if (useWasmTarget) {
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmJs("browserWasm") {
+            browser()
+            binaries.executable()
+        }
     }
 
     androidTarget {
@@ -77,13 +87,31 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(compose.runtime)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                if (useWasmTarget) {
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2-wasm0")
+                } else {
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                }
                 api(project(":tts"))
             }
         }
         val androidMain by getting {
             dependencies {
                 implementation(compose.foundation)
+            }
+        }
+        val browserJsMain by getting {}
+        if (useWasmTarget) {
+            val browserWasmMain by getting {}
+            val browserMain by creating {
+                dependsOn(commonMain)
+                browserJsMain.dependsOn(this)
+                browserWasmMain.dependsOn(this)
+            }
+        } else {
+            val browserMain by creating {
+                dependsOn(commonMain)
+                browserJsMain.dependsOn(this)
             }
         }
     }
@@ -132,6 +160,8 @@ tasks.withType<DokkaTaskPartial>().configureEach {
             "commonMain" -> "common"
             "androidMain" -> "android"
             "browserMain" -> "browser"
+            "browserJsMain" -> "browserJs"
+            "browserWasmMain" -> "browserWasm"
             "desktopMain" -> "desktop"
             else -> null
         }
@@ -210,6 +240,8 @@ fun MavenPublication.configurePublication() {
     artifactId = projectInfo.id + when {
         artifactId.endsWith("-android") || name == "android" -> "-android"
         artifactId.endsWith("-browser") -> "-browser"
+        artifactId.endsWith("-browserJs") -> "-browser-js"
+        artifactId.endsWith("-browserWasm") -> "-browser-wasm"
         artifactId.endsWith("-desktop") -> "-desktop"
         else -> ""
     }
@@ -219,7 +251,7 @@ fun MavenPublication.configurePublication() {
     pom {
         name.set(projectInfo.name)
         description.set(
-            "Multiplatform Text-to-Speech library for Android and Browser (JS). " +
+            "Kotlin Multiplatform Text-to-Speech library for Android and browser (Kotlin/JS & Kotlin/Wasm). " +
                     "This library will enable you to use Text-to-Speech in multiplatform Kotlin projects."
         )
         url.set(projectInfo.repoLocationHttp)
@@ -284,7 +316,12 @@ class Config {
 
 // TODO: Remove when this is fixed.
 afterEvaluate {
-    val projects = listOf("KotlinMultiplatform", "Android", "Browser", "Desktop")
+    val projects = mutableListOf("KotlinMultiplatform", "Android", "BrowserJs", "Desktop")
+
+    if (useWasmTarget) {
+        projects += "BrowserWasm"
+    }
+
     val repositories = listOf("OSSRH", "GitHubPackages")
     for (currentProject in projects) {
         for (repository in repositories) {

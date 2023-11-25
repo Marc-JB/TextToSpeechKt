@@ -1,6 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -11,13 +13,28 @@ plugins {
     id("com.android.application")
 }
 
+val useWasmTarget = true
+
 kotlin {
     androidTarget()
 
-    js("browser", IR) {
+    js("browserJs", IR) {
+        moduleName = "compose-multiplatform"
         browser()
-
         binaries.executable()
+    }
+
+    if (useWasmTarget) {
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmJs("browserWasm") {
+            moduleName = "compose-multiplatform"
+            browser {
+                commonWebpackConfig {
+                    devServer = devServer ?: KotlinWebpackConfig.DevServer()
+                }
+            }
+            binaries.executable()
+        }
     }
 
     jvm("desktop") {
@@ -34,7 +51,11 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.material3)
                 implementation(compose.materialIconsExtended)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                if (useWasmTarget) {
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2-wasm0")
+                } else {
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                }
                 implementation(project(":tts-compose"))
             }
         }
@@ -43,8 +64,8 @@ kotlin {
             dependencies {
                 implementation(compose.preview)
                 implementation(compose.uiTooling)
-                implementation("androidx.navigation:navigation-compose:2.7.4")
-                implementation("androidx.activity:activity-compose:1.8.0")
+                implementation("androidx.navigation:navigation-compose:2.7.5")
+                implementation("androidx.activity:activity-compose:1.8.1")
             }
         }
 
@@ -53,6 +74,21 @@ kotlin {
                 implementation(compose.preview)
                 implementation(compose.uiTooling)
                 implementation(compose.desktop.currentOs)
+            }
+        }
+
+        val browserJsMain by getting {}
+        if (useWasmTarget) {
+            val browserWasmMain by getting {}
+            val browserMain by creating {
+                dependsOn(commonMain)
+                browserJsMain.dependsOn(this)
+                browserWasmMain.dependsOn(this)
+            }
+        } else {
+            val browserMain by creating {
+                dependsOn(commonMain)
+                browserJsMain.dependsOn(this)
             }
         }
     }

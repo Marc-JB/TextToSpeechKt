@@ -1,7 +1,7 @@
 <div align="center">
 
   # TextToSpeechKt
-  Multiplatform Text-to-Speech library for Android and Browser (JS).
+  Multiplatform Text-to-Speech library for Android and Browser (Kotlin/JS & Kotlin/Wasm).
 
   [![Gradle deployment](https://github.com/Marc-JB/TextToSpeechKt/actions/workflows/deployment.yml/badge.svg)](https://github.com/Marc-JB/TextToSpeechKt/actions) 
   [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Marc-JB_TextToSpeechKt&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Marc-JB_TextToSpeechKt) 
@@ -25,15 +25,15 @@
 ### :space_invader: Tech Stack
 Uses Kotlin Multiplatform with support for the following targets:
 
-| Platform            | Language      | Support                   |
-|---------------------|---------------|---------------------------|
-| Android             | Kotlin/JVM    | ✅                         |
-| Browser             | Kotlin/JS     | ✅                         |
-| Browser             | Kotlin/Wasm   | ❌                         |
-| Browser             | JS, TS        | ❌ _Support ended in v2.0_ |
-| Desktop             | Kotlin/JVM    | ⚠️ _Experimental support_ |
-| iOS                 | Kotlin/Native | ❌                         |
-| Other Kotlin/Native | Kotlin/Native | ❌                         |
+| Platform            | Language      | Support                                |
+|---------------------|---------------|----------------------------------------|
+| Android             | Kotlin/JVM    | ✅                                      |
+| Browser             | Kotlin/JS     | ✅                                      |
+| Browser             | Kotlin/Wasm   | ✅ _Use `-wasm0` version number suffix_ |
+| Browser             | JS, TS        | ❌ _Support ended in v2.0_              |
+| Desktop             | Kotlin/JVM    | ⚠️ _Experimental support_              |
+| iOS                 | Kotlin/Native | ❌                                      |
+| Other Kotlin/Native | Kotlin/Native | ❌                                      |
 
 
 ### :dart: Features
@@ -64,9 +64,11 @@ A build tool like Gradle or Maven.
   dependencies {
       implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
       implementation("nl.marc-apps:tts:2.0.0")
+      // Or if you use Kotlin/Wasm: implementation("nl.marc-apps:tts:2.0.0-wasm0")
 
       // Optional: Extensions for Compose
       implementation("nl.marc-apps:tts-compose:2.0.0")
+      // Or if you use Kotlin/Wasm: implementation("nl.marc-apps:tts-compose:2.0.0-wasm0")
   }
   ```  
 

@@ -14,5 +14,9 @@ external fun getBrowserSynthesis(): SpeechSynthesis
 actual fun getSpeechSynthesis(window: Window): SpeechSynthesis = getBrowserSynthesis()
 
 /** @hide */
+@JsFun("function getIsSpeechSynthesisSupported() { return \"speechSynthesis\" in window; }")
+external fun getIsSpeechSynthesisSupported(): Boolean
+
+/** @hide */
 actual val isSpeechSynthesisSupported: Boolean
-    get() = js("\"speechSynthesis\" in window")
+    get() = getIsSpeechSynthesisSupported()

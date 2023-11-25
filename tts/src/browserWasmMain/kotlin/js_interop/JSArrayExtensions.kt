@@ -2,7 +2,7 @@ package js_interop
 
 fun <T : JsAny?> JsArray<T>.iterator(): Iterator<T?> {
     return object : Iterator<T?> {
-        private var currentIndex = 0
+        private var currentIndex = -1
 
         override fun hasNext() = currentIndex < this@iterator.length
 

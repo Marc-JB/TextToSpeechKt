@@ -8,7 +8,7 @@ import js_interop.JsAny
  * It contains the content the speech service should read and
  * information about how to read it (e.g. language, pitch and volume.)
  */
-expect class SpeechSynthesisUtterance : EventTarget {
+expect class SpeechSynthesisUtterance {
     constructor()
 
     constructor(text: String)

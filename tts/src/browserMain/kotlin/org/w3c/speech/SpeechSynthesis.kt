@@ -8,7 +8,7 @@ import js_interop.JsAny
  * this can be used to retrieve information about the synthesis voices available on the device,
  * start and pause speech, and other commands besides.
  */
-expect abstract class SpeechSynthesis : EventTarget {
+expect abstract class SpeechSynthesis {
     /** A [Boolean] that returns true if the SpeechSynthesis object is in a paused state. */
     val paused: Boolean
 
