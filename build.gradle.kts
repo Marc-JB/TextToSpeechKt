@@ -9,20 +9,20 @@ plugins {
     id("com.android.library") version androidVersion apply false
 
     kotlin("multiplatform") version kotlinVersion apply false
-    id("org.jetbrains.dokka") version "1.9.0"
+    id("org.jetbrains.dokka") version "1.9.10"
 
     id("org.jetbrains.compose") version "1.5.2" apply false
 }
 
 buildscript {
     dependencies {
-        classpath("org.jetbrains.dokka:versioning-plugin:1.9.0")
+        classpath("org.jetbrains.dokka:versioning-plugin:1.9.10")
     }
 }
 
 dependencies {
-    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:1.9.0")
-    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
+    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:1.9.10")
+    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.10")
 }
 
 val currentVersion = "2.2"

@@ -27,7 +27,7 @@ class ProjectInfo {
 
     val version = Revision(2, 2)
 
-    val mavenVersion = "${version.major}.${version.minor}.${version.micro}${if (useWasmTarget) "-wasm" else ""}${if (version.isPreview) "-SNAPSHOT" else ""}"
+    val mavenVersion = "${version.major}.${version.minor}.${version.micro}${if (useWasmTarget) "-wasm0" else ""}${if (version.isPreview) "-SNAPSHOT" else ""}"
 
     val developer = Developer()
 
@@ -146,8 +146,8 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:1.9.0")
-    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
+    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:1.9.10")
+    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.10")
 }
 
 tasks.withType<DokkaTaskPartial>().configureEach {
