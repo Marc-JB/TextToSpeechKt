@@ -13,7 +13,6 @@ import org.w3c.speech.speechSynthesis
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-import kotlin.js.Promise
 
 /** A TTS instance. Should be [close]d when no longer in use. */
 internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {

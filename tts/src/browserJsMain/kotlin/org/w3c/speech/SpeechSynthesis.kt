@@ -1,5 +1,6 @@
 package org.w3c.speech
 
+import js_interop.JsAny
 import org.w3c.dom.events.EventTarget
 
 /**
@@ -41,5 +42,5 @@ abstract external class SpeechSynthesis : EventTarget {
     /**
      * Fired when the list of [SpeechSynthesisVoice] objects that would be returned by the [getVoices] method has changed.
      */
-    var voiceschanged: ((event: dynamic) -> Unit)?
+    var voiceschanged: ((event: JsAny?) -> Unit)?
 }

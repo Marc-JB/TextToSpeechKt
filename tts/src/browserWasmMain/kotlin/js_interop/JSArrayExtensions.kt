@@ -1,3 +1,5 @@
+package js_interop
+
 fun <T : JsAny?> JsArray<T>.iterator(): Iterator<T?> {
     return object : Iterator<T?> {
         private var currentIndex = 0

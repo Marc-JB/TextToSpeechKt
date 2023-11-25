@@ -2,7 +2,7 @@
 
 package nl.marc_apps.tts
 
-import iterator
+import js_interop.iterator
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError

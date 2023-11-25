@@ -1,5 +1,6 @@
 package org.w3c.speech
 
+import js_interop.JsAny
 import org.w3c.dom.events.EventTarget
 
 /**
@@ -7,26 +8,30 @@ import org.w3c.dom.events.EventTarget
  * It contains the content the speech service should read and
  * information about how to read it (e.g. language, pitch and volume.)
  */
-external class SpeechSynthesisUtterance(text: String = definedExternally) : EventTarget {
+actual external class SpeechSynthesisUtterance : EventTarget {
+    actual constructor()
+
+    actual constructor(text: String)
+
     /** Gets and sets the language of the utterance. */
-    var lang: String
+    actual var lang: String
 
     /** Gets and sets the pitch at which the utterance will be spoken at. */
-    var pitch: Float
+    actual var pitch: Float
 
     /** Gets and sets the speed at which the utterance will be spoken at. */
-    var rate: Float
+    actual var rate: Float
 
     /** Gets and sets the text that will be synthesised when the utterance is spoken. */
-    var text: String
+    actual var text: String
 
     /** Gets and sets the voice that will be used to speak the utterance. */
-    var voice: SpeechSynthesisVoice?
+    actual var voice: SpeechSynthesisVoice?
 
     /** Gets and sets the volume that the utterance will be spoken at. */
-    var volume: Float
+    actual var volume: Float
 
-    var onstart: ((event: dynamic) -> Unit)?
+    actual var onstart: ((event: JsAny?) -> Unit)?
 
-    var onend: ((event: dynamic) -> Unit)?
+    actual var onend: ((event: JsAny?) -> Unit)?
 }
