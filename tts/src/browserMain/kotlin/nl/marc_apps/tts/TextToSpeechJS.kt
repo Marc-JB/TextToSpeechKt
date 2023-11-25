@@ -2,14 +2,15 @@
 
 package nl.marc_apps.tts
 
-import kotlinx.browser.window
+import js_interop.Window
+import js_interop.getSpeechSynthesis
+import js_interop.getVoiceList
+import js_interop.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
-import org.w3c.dom.Window
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
-import org.w3c.speech.speechSynthesis
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -22,7 +23,7 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
 
     private var hasSpoken = false
 
-    private val speechSynthesis: SpeechSynthesis = context.speechSynthesis
+    private val speechSynthesis: SpeechSynthesis = getSpeechSynthesis(context)
 
     private var speechSynthesisUtterance = SpeechSynthesisUtterance()
 
@@ -66,6 +67,8 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
             speechSynthesisUtterance.rate = value
         }
 
+    private val voiceList = getVoiceList(speechSynthesis)
+
     /**
      * Returns a BCP 47 language tag of the selected voice on supported platforms.
      * May return the language code as ISO 639 on older platforms.
@@ -74,14 +77,14 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
         get() {
             val reportedLanguage = speechSynthesisUtterance.voice?.lang ?: speechSynthesisUtterance.lang
             return reportedLanguage.ifBlank {
-                val defaultLanguage = speechSynthesis.getVoices().find { it.default }?.lang
+                val defaultLanguage = voiceList.find { it.default }?.lang
                 if (defaultLanguage.isNullOrBlank()) "Unknown" else defaultLanguage
             }
         }
 
     @ExperimentalVoiceApi
     private val defaultVoice by lazy {
-        speechSynthesis.getVoices().find { it.default }?.let { BrowserVoice(it) }
+        voiceList.find { it.default }?.let { BrowserVoice(it) }
     }
 
     @ExperimentalVoiceApi
@@ -96,7 +99,7 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
 
     @ExperimentalVoiceApi
     override val voices: Sequence<Voice> by lazy {
-        speechSynthesis.getVoices().asSequence().map { BrowserVoice(it) }
+        voiceList.asSequence().map { BrowserVoice(it) }
     }
 
     @OptIn(ExperimentalVoiceApi::class)
