@@ -2,23 +2,28 @@
 
 package nl.marc_apps.tts
 
+import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
-import org.w3c.speech.*
+import org.w3c.dom.Window
+import org.w3c.speech.SpeechSynthesis
+import org.w3c.speech.SpeechSynthesisUtterance
+import org.w3c.speech.speechSynthesis
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.js.Promise
 
 /** A TTS instance. Should be [close]d when no longer in use. */
-internal class TextToSpeechJS(context: Window = getWindow()) : TextToSpeechInstance {
+internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
     override val isSynthesizing = MutableStateFlow(false)
 
     override val isWarmingUp = MutableStateFlow(false)
 
     private var hasSpoken = false
 
-    private val speechSynthesis: SpeechSynthesis = getSynthesis(context)
+    private val speechSynthesis: SpeechSynthesis = context.speechSynthesis
 
     private var speechSynthesisUtterance = SpeechSynthesisUtterance()
 

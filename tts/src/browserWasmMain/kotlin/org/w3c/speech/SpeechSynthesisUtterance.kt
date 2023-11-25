@@ -1,18 +1,13 @@
 package org.w3c.speech
 
-import js_interop.Event
-import js_interop.EventTargetCommon
+import org.w3c.dom.events.EventTarget
 
 /**
  * The SpeechSynthesisUtterance interface of the Web Speech API represents a speech request.
  * It contains the content the speech service should read and
  * information about how to read it (e.g. language, pitch and volume.)
  */
-expect class SpeechSynthesisUtterance : EventTargetCommon {
-    constructor()
-
-    constructor(text: String)
-
+external class SpeechSynthesisUtterance(text: String = definedExternally) : EventTarget {
     /** Gets and sets the language of the utterance. */
     var lang: String
 
@@ -31,7 +26,7 @@ expect class SpeechSynthesisUtterance : EventTargetCommon {
     /** Gets and sets the volume that the utterance will be spoken at. */
     var volume: Float
 
-    var onstart: ((event: Event?) -> Unit)?
+    var onstart: ((event: JsAny?) -> Unit)?
 
-    var onend: ((event: Event?) -> Unit)?
+    var onend: ((event: JsAny?) -> Unit)?
 }

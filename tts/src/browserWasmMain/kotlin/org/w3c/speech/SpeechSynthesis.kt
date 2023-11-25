@@ -1,54 +1,45 @@
 package org.w3c.speech
 
-import js_interop.Event
-import js_interop.EventListener
-import js_interop.EventTargetCommon
+import org.w3c.dom.events.EventTarget
 
-actual class SpeechSynthesis : EventTargetCommon() {
-    private val actualImplementation = getBrowserSynthesis()
+/**
+ * The SpeechSynthesis interface of the Web Speech API is the controller interface for the speech service;
+ * this can be used to retrieve information about the synthesis voices available on the device,
+ * start and pause speech, and other commands besides.
+ */
+external class SpeechSynthesis : EventTarget {
+    /** A [Boolean] that returns true if the SpeechSynthesis object is in a paused state. */
+    val paused: Boolean
 
-    actual val paused: Boolean
-        get() = actualImplementation.paused
+    /** A [Boolean] that returns true if the utterance queue contains as-yet-unspoken utterances. */
+    val pending: Boolean
 
-    actual val pending: Boolean
-        get() = actualImplementation.pending
+    /**
+     * A [Boolean] that returns true if an utterance is currently
+     * in the process of being spoken — even if SpeechSynthesis is in a paused state.
+     */
+    val speaking: Boolean
 
-    actual val speaking: Boolean
-        get() = actualImplementation.speaking
+    /** Removes all utterances from the utterance queue. */
+    fun cancel()
 
-    actual fun cancel(){
-        actualImplementation.cancel()
-    }
+    /** Returns a list of [SpeechSynthesisVoice] objects representing all the available voices on the current device. */
+    fun getVoices(): JsArray<SpeechSynthesisVoice>
 
-    actual fun getVoices(): Array<SpeechSynthesisVoice> {
-        val list = mutableListOf<SpeechSynthesisVoice>()
-        val voices = getBrowserSynthesisVoices()
-        do {
-            val iteration = voices.next()
-            list += iteration.value
-        } while (!iteration.done)
-        return list.toTypedArray()
-    }
+    /** Puts the SpeechSynthesis object into a paused state. */
+    fun pause()
 
-    actual fun pause(){
-        actualImplementation.pause()
-    }
+    /** Puts the SpeechSynthesis object into a non-paused state: resumes it if it was already paused. */
+    fun resume()
 
-    actual fun resume(){
-        actualImplementation.resume()
-    }
+    /**
+     * Adds an [utterance] to the utterance queue;
+     * it will be spoken when any other utterances queued before it have been spoken.
+     */
+    fun speak(utterance: SpeechSynthesisUtterance)
 
-    actual fun speak(utterance: SpeechSynthesisUtterance) {
-        actualImplementation.speak(utterance)
-    }
-
-    actual var voiceschanged: ((event: Event?) -> Unit)? = null
-
-    override fun addEventListener(type: String, callback: EventListener?) {
-        actualImplementation.addEventListener(type, callback)
-    }
-
-    override fun removeEventListener(type: String, callback: EventListener?) {
-        actualImplementation.removeEventListener(type, callback)
-    }
+    /**
+     * Fired when the list of [SpeechSynthesisVoice] objects that would be returned by the [getVoices] method has changed.
+     */
+    var voiceschanged: ((event: JsAny?) -> Unit)?
 }
