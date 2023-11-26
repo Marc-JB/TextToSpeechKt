@@ -6,6 +6,6 @@ import java.io.Serializable
 import java.util.*
 
 @ExperimentalVoiceApi
-actual interface Voice : CommonVoice, Parcelable, Serializable{
+actual interface Voice : CommonVoice, Parcelable, Serializable {
     val locale: Locale
 }

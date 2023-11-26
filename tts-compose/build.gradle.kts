@@ -1,20 +1,22 @@
 @file:Suppress("UnstableApiUsage")
 
-import com.android.repository.Revision
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.net.URL
 
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.library)
     `maven-publish`
     signing
     id("org.jetbrains.compose")
-    id("org.jetbrains.dokka")
+    alias(libs.plugins.dokka)
 }
+
+val useWasmTarget = "wasm" in libs.versions.tts.get()
 
 class ProjectInfo {
     val groupId = "nl.marc-apps"
@@ -22,10 +24,6 @@ class ProjectInfo {
     val id = "tts-compose"
 
     val name = "TextToSpeechKt"
-
-    val version = Revision(2, 2)
-
-    val mavenVersion = "${version.major}.${version.minor}.${version.micro}${if (version.isPreview) "-SNAPSHOT" else ""}"
 
     val developer = Developer()
 
@@ -53,13 +51,20 @@ val projectInfo = ProjectInfo()
 val config by lazy { Config() }
 
 group = projectInfo.groupId
-version = projectInfo.mavenVersion
+version = libs.versions.tts
 
 kotlin {
-    js("browser", IR) {
+    js("browserJs", IR) {
         browser()
-
         binaries.executable()
+    }
+
+    if (useWasmTarget) {
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmJs("browserWasm") {
+            browser()
+            binaries.executable()
+        }
     }
 
     androidTarget {
@@ -77,7 +82,11 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(compose.runtime)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                if (useWasmTarget) {
+                    implementation(libs.kotlin.coroutines.wasm)
+                } else {
+                    implementation(libs.kotlin.coroutines)
+                }
                 api(project(":tts"))
             }
         }
@@ -86,12 +95,26 @@ kotlin {
                 implementation(compose.foundation)
             }
         }
+        val browserJsMain by getting {}
+        if (useWasmTarget) {
+            val browserWasmMain by getting {}
+            val browserMain by creating {
+                dependsOn(commonMain)
+                browserJsMain.dependsOn(this)
+                browserWasmMain.dependsOn(this)
+            }
+        } else {
+            val browserMain by creating {
+                dependsOn(commonMain)
+                browserJsMain.dependsOn(this)
+            }
+        }
     }
 }
 
 android {
-    compileSdk = 34
-    buildToolsVersion = "34.0.0"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    buildToolsVersion = libs.versions.android.buildTools.get()
 
     namespace = "nl.marc_apps.tts_compose"
 
@@ -111,7 +134,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = libs.versions.kotlin.compiler.extensions.get()
     }
 }
 
@@ -122,8 +145,8 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:1.9.0")
-    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
+    dokkaPlugin(libs.dokka.plugins.androidDocs)
+    dokkaPlugin(libs.dokka.plugins.versioning)
 }
 
 tasks.withType<DokkaTaskPartial>().configureEach {
@@ -132,6 +155,8 @@ tasks.withType<DokkaTaskPartial>().configureEach {
             "commonMain" -> "common"
             "androidMain" -> "android"
             "browserMain" -> "browser"
+            "browserJsMain" -> "browserJs"
+            "browserWasmMain" -> "browserWasm"
             "desktopMain" -> "desktop"
             else -> null
         }
@@ -164,7 +189,7 @@ publishing {
         maven {
             name = "OSSRH"
             url = uri(
-                if(projectInfo.version.isPreview) {
+                if("SNAPSHOT" in libs.versions.tts.get()) {
                     "https://s01.oss.sonatype.org/content/repositories/snapshots/"
                 } else {
                     "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -210,6 +235,8 @@ fun MavenPublication.configurePublication() {
     artifactId = projectInfo.id + when {
         artifactId.endsWith("-android") || name == "android" -> "-android"
         artifactId.endsWith("-browser") -> "-browser"
+        artifactId.endsWith("-browserJs") -> "-browser-js"
+        artifactId.endsWith("-browserWasm") -> "-browser-wasm"
         artifactId.endsWith("-desktop") -> "-desktop"
         else -> ""
     }
@@ -219,7 +246,7 @@ fun MavenPublication.configurePublication() {
     pom {
         name.set(projectInfo.name)
         description.set(
-            "Multiplatform Text-to-Speech library for Android and Browser (JS). " +
+            "Kotlin Multiplatform Text-to-Speech library for Android and browser (Kotlin/JS & Kotlin/Wasm). " +
                     "This library will enable you to use Text-to-Speech in multiplatform Kotlin projects."
         )
         url.set(projectInfo.repoLocationHttp)
@@ -284,7 +311,12 @@ class Config {
 
 // TODO: Remove when this is fixed.
 afterEvaluate {
-    val projects = listOf("KotlinMultiplatform", "Android", "Browser", "Desktop")
+    val projects = mutableListOf("KotlinMultiplatform", "Android", "BrowserJs", "Desktop")
+
+    if (useWasmTarget) {
+        projects += "BrowserWasm"
+    }
+
     val repositories = listOf("OSSRH", "GitHubPackages")
     for (currentProject in projects) {
         for (repository in repositories) {
