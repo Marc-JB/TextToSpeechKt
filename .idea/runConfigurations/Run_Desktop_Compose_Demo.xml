@@ -1,21 +1,21 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run Compose MP Browser Demo" type="GradleRunConfiguration" factoryName="Gradle" folderName="Demo">
+  <configuration default="false" name="Run Desktop Compose Demo" type="GradleRunConfiguration" factoryName="Gradle" folderName="Demo">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$/demo/compose-multiplatform" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="" />
+      <option name="scriptParameters" value="-DmainClass=MainKt --quiet" />
       <option name="taskDescriptions">
         <list />
       </option>
       <option name="taskNames">
         <list>
-          <option value="browserJsRun" />
+          <option value="desktopRun" />
         </list>
       </option>
       <option name="vmOptions" />
     </ExternalSystemSettings>
-    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
     <RunAsTest>false</RunAsTest>

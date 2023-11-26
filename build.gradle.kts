@@ -15,6 +15,8 @@ plugins {
     } else {
         alias(libs.plugins.compose) apply false
     }
+
+    alias(libs.plugins.versioncheck)
 }
 
 buildscript {
@@ -48,5 +50,11 @@ tasks.dokkaHtmlMultiModule {
             into(dokkaWorkingDir.resolve("html"))
         }
         currentVersionDir.resolve("older").deleteRecursively()
+    }
+}
+
+tasks.dependencyUpdates {
+    rejectVersionIf {
+        arrayOf("alpha", "beta", "rc").any { it in candidate.version.lowercase() } || (("wasm" in candidate.version) xor ("wasm" in currentVersion))
     }
 }

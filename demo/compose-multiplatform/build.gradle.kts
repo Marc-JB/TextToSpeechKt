@@ -206,7 +206,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "TTS Demo"
-            packageVersion = libs.versions.tts.get()
+            packageVersion = libs.versions.tts.get().substringBefore("-")
             windows {
                 perUserInstall = true
             }
