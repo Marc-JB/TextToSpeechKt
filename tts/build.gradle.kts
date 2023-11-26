@@ -50,7 +50,7 @@ val projectInfo = ProjectInfo()
 val config by lazy { Config() }
 
 group = projectInfo.groupId
-version = libs.versions.tts
+version = libs.versions.tts.get()
 
 kotlin {
     js("browserJs", IR) {
