@@ -1,0 +1,34 @@
+html, body {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+body > canvas {
+    outline: none;
+}
+
+#warning {
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    max-width: 830px;
+    z-index: 100;
+    background-color: white;
+    font-size: initial;
+    display: none;
+}
+#warning li {
+    padding-bottom: 15px;
+}
+
+#warning span.code {
+    font-family: monospace;
+}
+
+ul {
+    margin-top: 0;
+    margin-bottom: 15px;
+}

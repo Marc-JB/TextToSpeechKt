@@ -2,30 +2,36 @@ import org.jetbrains.dokka.versioning.VersioningConfiguration
 import org.jetbrains.dokka.versioning.VersioningPlugin
 
 plugins {
-    val androidVersion = "8.1.0"
-    val kotlinVersion = "1.9.10"
+    val useWasmTarget = "wasm" in libs.versions.tts.get()
 
-    id("com.android.application") version androidVersion apply false
-    id("com.android.library") version androidVersion apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
 
-    kotlin("multiplatform") version kotlinVersion apply false
-    id("org.jetbrains.dokka") version "1.9.0"
+    alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.dokka)
 
-    id("org.jetbrains.compose") version "1.5.2" apply false
+    if (useWasmTarget) {
+        alias(libs.plugins.compose.wasm) apply false
+    } else {
+        alias(libs.plugins.compose) apply false
+    }
+
+    alias(libs.plugins.versioncheck)
 }
 
 buildscript {
     dependencies {
-        classpath("org.jetbrains.dokka:versioning-plugin:1.9.0")
+        classpath(libs.dokka.plugins.versioning)
     }
 }
 
 dependencies {
-    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:1.9.0")
-    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
+    dokkaPlugin(libs.dokka.plugins.androidDocs)
+    dokkaPlugin(libs.dokka.plugins.versioning)
 }
 
-val currentVersion = "2.2"
+val rawVersion = libs.versions.tts.get()
+val currentVersion = rawVersion.substring(0, rawVersion.indexOf('.', rawVersion.indexOf('.') + 1))
 val dokkaWorkingDir = project.rootProject.buildDir.resolve("dokka")
 val versionArchiveDirectory = dokkaWorkingDir.resolve("html_version_archive")
 val currentVersionDir = versionArchiveDirectory.resolve(currentVersion)
@@ -44,5 +50,11 @@ tasks.dokkaHtmlMultiModule {
             into(dokkaWorkingDir.resolve("html"))
         }
         currentVersionDir.resolve("older").deleteRecursively()
+    }
+}
+
+tasks.dependencyUpdates {
+    rejectVersionIf {
+        arrayOf("alpha", "beta", "rc").any { it in candidate.version.lowercase() } || (("wasm" in candidate.version) xor ("wasm" in currentVersion))
     }
 }

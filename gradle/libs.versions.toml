@@ -1,0 +1,45 @@
+[versions]
+android-buildTools = "34.0.0"
+android-compileSdk = "34"
+android-gradlePlugin = "8.1.0"
+androidx-annotation = "1.7.0"
+
+compose = "1.5.10"
+compose-wasm = "1.5.10-dev-wasm03"
+
+dokka = "1.9.10"
+
+freetts = "1.2.2"
+
+kotlin = "1.9.20"
+kotlin-compiler-extensions = "1.5.3"
+kotlin-coroutines = "1.7.3"
+kotlin-coroutines-wasm = "1.7.2-wasm0"
+
+tts = "2.3.0"
+
+versioncheck = "0.50.0"
+
+[libraries]
+androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
+
+dokka-plugins-androidDocs = { module = "org.jetbrains.dokka:android-documentation-plugin", version.ref = "dokka" }
+dokka-plugins-versioning = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
+
+freetts = { module = "net.sf.sociaal:freetts", version.ref = "freetts" }
+
+kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+kotlin-coroutines-wasm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines-wasm" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "android-gradlePlugin" }
+android-library = { id = "com.android.library", version.ref = "android-gradlePlugin" }
+
+compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+compose-wasm = { id = "org.jetbrains.compose", version.ref = "compose-wasm" }
+
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+
+versioncheck = { id = "com.github.ben-manes.versions", version.ref = "versioncheck" }

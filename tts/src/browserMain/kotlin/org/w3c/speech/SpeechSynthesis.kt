@@ -1,11 +1,13 @@
 package org.w3c.speech
 
+import js_interop.JsAny
+
 /**
  * The SpeechSynthesis interface of the Web Speech API is the controller interface for the speech service;
  * this can be used to retrieve information about the synthesis voices available on the device,
  * start and pause speech, and other commands besides.
  */
-external interface SpeechSynthesis {
+expect abstract class SpeechSynthesis {
     /** A [Boolean] that returns true if the SpeechSynthesis object is in a paused state. */
     val paused: Boolean
 
@@ -20,9 +22,6 @@ external interface SpeechSynthesis {
 
     /** Removes all utterances from the utterance queue. */
     fun cancel()
-
-    /** Returns a list of [SpeechSynthesisVoice] objects representing all the available voices on the current device. */
-    fun getVoices(): Array<SpeechSynthesisVoice>
 
     /** Puts the SpeechSynthesis object into a paused state. */
     fun pause()
@@ -39,5 +38,5 @@ external interface SpeechSynthesis {
     /**
      * Fired when the list of [SpeechSynthesisVoice] objects that would be returned by the [getVoices] method has changed.
      */
-    var voiceschanged: ((event: dynamic) -> Unit)?
+    var voiceschanged: ((event: JsAny?) -> Unit)?
 }

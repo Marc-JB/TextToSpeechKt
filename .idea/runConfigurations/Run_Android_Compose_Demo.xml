@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run Compose MP Android Demo" type="AndroidRunConfigurationType" factoryName="Android App">
+  <configuration default="false" name="Run Android Compose Demo" type="AndroidRunConfigurationType" factoryName="Android App">
     <module name="TextToSpeechKt.demo.compose-multiplatform.main" />
     <option name="DEPLOY" value="true" />
     <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />

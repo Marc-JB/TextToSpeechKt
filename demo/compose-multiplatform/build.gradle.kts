@@ -1,23 +1,38 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("multiplatform")
-
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.application)
     id("org.jetbrains.compose")
-
-    id("com.android.application")
 }
+
+val useWasmTarget = "wasm" in libs.versions.tts.get()
 
 kotlin {
     androidTarget()
 
-    js("browser", IR) {
+    js("browserJs", IR) {
+        moduleName = "compose-multiplatform"
         browser()
-
         binaries.executable()
+    }
+
+    if (useWasmTarget) {
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmJs("browserWasm") {
+            moduleName = "compose-multiplatform"
+            browser {
+                commonWebpackConfig {
+                    devServer = devServer ?: KotlinWebpackConfig.DevServer()
+                }
+            }
+            binaries.executable()
+        }
     }
 
     jvm("desktop") {
@@ -34,7 +49,11 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.material3)
                 implementation(compose.materialIconsExtended)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                if (useWasmTarget) {
+                    implementation(libs.kotlin.coroutines.wasm)
+                } else {
+                    implementation(libs.kotlin.coroutines)
+                }
                 implementation(project(":tts-compose"))
             }
         }
@@ -43,8 +62,8 @@ kotlin {
             dependencies {
                 implementation(compose.preview)
                 implementation(compose.uiTooling)
-                implementation("androidx.navigation:navigation-compose:2.7.4")
-                implementation("androidx.activity:activity-compose:1.8.0")
+                implementation("androidx.navigation:navigation-compose:2.7.5")
+                implementation("androidx.activity:activity-compose:1.8.1")
             }
         }
 
@@ -55,6 +74,21 @@ kotlin {
                 implementation(compose.desktop.currentOs)
             }
         }
+
+        val browserJsMain by getting {}
+        if (useWasmTarget) {
+            val browserWasmMain by getting {}
+            val browserMain by creating {
+                dependsOn(commonMain)
+                browserJsMain.dependsOn(this)
+                browserWasmMain.dependsOn(this)
+            }
+        } else {
+            val browserMain by creating {
+                dependsOn(commonMain)
+                browserJsMain.dependsOn(this)
+            }
+        }
     }
 }
 
@@ -63,8 +97,8 @@ dependencies {
 }
 
 android {
-    compileSdk = 34
-    buildToolsVersion = "34.0.0"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    buildToolsVersion = libs.versions.android.buildTools.get()
 
     namespace = "nl.marc_apps.tts_demo"
 
@@ -93,10 +127,10 @@ android {
         applicationId = "nl.marc_apps.tts_demo"
 
         minSdk = 21
-        targetSdk = 34
+        targetSdk = libs.versions.android.compileSdk.get().toInt()
 
         versionCode = 1
-        versionName = "1.0"
+        versionName = libs.versions.tts.get()
 
         testBuildType = "debug"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -138,7 +172,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = libs.versions.kotlin.compiler.extensions.get()
     }
 
     testOptions {
@@ -172,7 +206,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "TTS Demo"
-            packageVersion = "1.0.0"
+            packageVersion = libs.versions.tts.get().substringBefore("-")
             windows {
                 perUserInstall = true
             }

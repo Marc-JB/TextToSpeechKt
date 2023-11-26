@@ -1,8 +1,9 @@
 package nl.marc_apps.tts
 
-import kotlinx.browser.window
+import js_interop.Window
+import js_interop.isSpeechSynthesisSupported
+import js_interop.window
 import nl.marc_apps.tts.errors.TextToSpeechNotSupportedError
-import org.w3c.dom.Window
 
 /**
  * Factory class to create a Text-to-Speech instance.
@@ -10,13 +11,13 @@ import org.w3c.dom.Window
 actual class TextToSpeechFactory(
     private val context: Window = window
 ) {
-    actual val isSupported = js("\"speechSynthesis\" in window") as Boolean
+    actual val isSupported = isSpeechSynthesisSupported
 
     actual val canChangeVolume = true
 
     actual suspend fun create(): Result<TextToSpeechInstance> {
         return if (isSupported) {
-            Result.success(TextToSpeechJS(context))
+            Result.success(TextToSpeechBrowser(context))
         } else {
             Result.failure(TextToSpeechNotSupportedError())
         }

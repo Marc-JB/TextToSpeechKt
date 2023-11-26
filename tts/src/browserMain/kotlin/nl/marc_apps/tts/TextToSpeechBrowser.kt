@@ -2,28 +2,28 @@
 
 package nl.marc_apps.tts
 
-import kotlinx.browser.window
+import js_interop.Window
+import js_interop.getSpeechSynthesis
+import js_interop.getVoiceList
+import js_interop.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
-import org.w3c.dom.Window
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
-import org.w3c.speech.speechSynthesis
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-import kotlin.js.Promise
 
 /** A TTS instance. Should be [close]d when no longer in use. */
-internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
+internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInstance {
     override val isSynthesizing = MutableStateFlow(false)
 
     override val isWarmingUp = MutableStateFlow(false)
 
     private var hasSpoken = false
 
-    private val speechSynthesis: SpeechSynthesis = context.speechSynthesis
+    private val speechSynthesis: SpeechSynthesis = getSpeechSynthesis(context)
 
     private var speechSynthesisUtterance = SpeechSynthesisUtterance()
 
@@ -67,6 +67,10 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
             speechSynthesisUtterance.rate = value
         }
 
+    private val voiceList by lazy {
+        getVoiceList(speechSynthesis)
+    }
+
     /**
      * Returns a BCP 47 language tag of the selected voice on supported platforms.
      * May return the language code as ISO 639 on older platforms.
@@ -75,14 +79,14 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
         get() {
             val reportedLanguage = speechSynthesisUtterance.voice?.lang ?: speechSynthesisUtterance.lang
             return reportedLanguage.ifBlank {
-                val defaultLanguage = speechSynthesis.getVoices().find { it.default }?.lang
+                val defaultLanguage = voiceList.find { it.default }?.lang
                 if (defaultLanguage.isNullOrBlank()) "Unknown" else defaultLanguage
             }
         }
 
     @ExperimentalVoiceApi
     private val defaultVoice by lazy {
-        speechSynthesis.getVoices().find { it.default }?.let { BrowserVoice(it) }
+        voiceList.find { it.default }?.let { BrowserVoice(it) }
     }
 
     @ExperimentalVoiceApi
@@ -97,7 +101,7 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
 
     @ExperimentalVoiceApi
     override val voices: Sequence<Voice> by lazy {
-        speechSynthesis.getVoices().asSequence().map { BrowserVoice(it) }
+        voiceList.asSequence().map { BrowserVoice(it) }
     }
 
     @OptIn(ExperimentalVoiceApi::class)
@@ -159,24 +163,6 @@ internal class TextToSpeechJS(context: Window = window) : TextToSpeechInstance {
                 } else if (it.isFailure) {
                     val error = it.exceptionOrNull() ?: UnknownTextToSpeechSynthesisError()
                     cont.resumeWithException(error)
-                }
-            }
-        }
-    }
-
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    @Deprecated("Use suspend fun say(text)")
-    fun sayJsPromise(
-        text: String,
-        clearQueue: Boolean
-    ): Promise<Unit> {
-        return Promise { success, failure ->
-            say(text, clearQueue) {
-                if (it.isSuccess) {
-                    success(it.getOrThrow())
-                } else if (it.isFailure) {
-                    val error = it.exceptionOrNull() ?: UnknownTextToSpeechSynthesisError()
-                    failure(error)
                 }
             }
         }

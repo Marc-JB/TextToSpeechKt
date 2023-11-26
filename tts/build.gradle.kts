@@ -1,60 +1,69 @@
 @file:Suppress("UnstableApiUsage")
 
-import com.android.repository.Revision
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.net.URL
 
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.library)
     `maven-publish`
     signing
-    id("org.jetbrains.dokka")
+    alias(libs.plugins.dokka)
 }
 
-object ProjectInfo {
-    const val GROUP_ID = "nl.marc-apps"
+val useWasmTarget = "wasm" in libs.versions.tts.get()
 
-    const val ID = "tts"
+class ProjectInfo {
+    val groupId = "nl.marc-apps"
 
-    const val NAME = "TextToSpeechKt"
+    val id = "tts"
 
-    val version = Revision(2, 2)
+    val name = "TextToSpeechKt"
 
-    val mavenVersion = "${version.major}.${version.minor}.${version.micro}${if (version.isPreview) "-SNAPSHOT" else ""}"
+    val developer = Developer()
 
-    object Developer {
-        const val ORG_NAME = "Marc Apps & Software"
+    class Developer {
+        val orgName = "Marc Apps & Software"
 
-        const val WEBSITE = "https://marc-apps.nl"
+        val website = "https://marc-apps.nl"
 
-        const val NAME = "Marc"
+        val name = "Marc"
 
-        const val EMAIL = "16156117+Marc-JB@users.noreply.github.com"
+        val email = "16156117+Marc-JB@users.noreply.github.com"
 
-        const val GITHUB_NAME = "Marc-JB"
+        val githubName = "Marc-JB"
     }
 
-    const val LOCATION = "github.com/${Developer.GITHUB_NAME}/TextToSpeechKt"
+    val repoLocation = "github.com/${developer.githubName}/TextToSpeechKt"
 
-    const val LOCATION_HTTP = "https://$LOCATION"
+    val repoLocationHttp = "https://$repoLocation"
 
-    const val DOCUMENTATION_URL = "https://marc-jb.github.io/TextToSpeechKt"
+    val documentationUrl = "https://marc-jb.github.io/TextToSpeechKt"
 }
+
+val projectInfo = ProjectInfo()
 
 val config by lazy { Config() }
 
-group = ProjectInfo.GROUP_ID
-version = ProjectInfo.mavenVersion
+group = projectInfo.groupId
+version = libs.versions.tts
 
 kotlin {
-    js("browser", IR) {
+    js("browserJs", IR) {
         browser()
-
         binaries.executable()
+    }
+
+    if (useWasmTarget) {
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmJs("browserWasm") {
+            browser()
+            binaries.executable()
+        }
     }
 
     androidTarget {
@@ -71,32 +80,50 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                if (useWasmTarget) {
+                    implementation(libs.kotlin.coroutines.wasm)
+                } else {
+                    implementation(libs.kotlin.coroutines)
+                }
             }
         }
         val androidMain by getting {
             dependencies {
-                implementation("androidx.annotation:annotation:1.7.0")
+                implementation(libs.androidx.annotation)
             }
         }
         val desktopMain by getting {
             dependencies {
-                implementation("net.sf.sociaal:freetts:1.2.2")
+                implementation(libs.freetts)
+            }
+        }
+        val browserJsMain by getting {}
+        if (useWasmTarget) {
+            val browserWasmMain by getting {}
+            val browserMain by creating {
+                dependsOn(commonMain)
+                browserJsMain.dependsOn(this)
+                browserWasmMain.dependsOn(this)
+            }
+        } else {
+            val browserMain by creating {
+                dependsOn(commonMain)
+                browserJsMain.dependsOn(this)
             }
         }
     }
 }
 
 android {
-    compileSdk = 34
-    buildToolsVersion = "34.0.0"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    buildToolsVersion = libs.versions.android.buildTools.get()
 
     namespace = "nl.marc_apps.tts"
 
     defaultConfig {
         minSdk = 1
 
-        setProperty("archivesBaseName", ProjectInfo.ID)
+        setProperty("archivesBaseName", projectInfo.id)
     }
 
     compileOptions {
@@ -112,8 +139,8 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:1.9.0")
-    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.0")
+    dokkaPlugin(libs.dokka.plugins.androidDocs)
+    dokkaPlugin(libs.dokka.plugins.versioning)
 }
 
 tasks.withType<DokkaTaskPartial>().configureEach {
@@ -122,6 +149,8 @@ tasks.withType<DokkaTaskPartial>().configureEach {
             "commonMain" -> "common"
             "androidMain" -> "android"
             "browserMain" -> "browser"
+            "browserJsMain" -> "browserJs"
+            "browserWasmMain" -> "browserWasm"
             "desktopMain" -> "desktop"
             else -> null
         }
@@ -129,13 +158,13 @@ tasks.withType<DokkaTaskPartial>().configureEach {
         if (platform != null) {
             sourceLink {
                 localDirectory.set(file("src/${platform}Main/kotlin"))
-                remoteUrl.set(URL("${ProjectInfo.LOCATION_HTTP}/blob/main/${ProjectInfo.ID}/src/${platform}Main/kotlin"))
+                remoteUrl.set(URL("${projectInfo.repoLocationHttp}/blob/main/${projectInfo.id}/src/${platform}Main/kotlin"))
                 remoteLineSuffix.set("#L")
             }
 
             externalDocumentationLink {
-                url.set(URL(ProjectInfo.DOCUMENTATION_URL))
-                packageListUrl.set(URL("${ProjectInfo.DOCUMENTATION_URL}/package-list"))
+                url.set(URL(projectInfo.documentationUrl))
+                packageListUrl.set(URL("${projectInfo.documentationUrl}/package-list"))
             }
 
             jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
@@ -154,7 +183,7 @@ publishing {
         maven {
             name = "OSSRH"
             url = uri(
-                if(ProjectInfo.version.isPreview) {
+                if("SNAPSHOT" in libs.versions.tts.get()) {
                     "https://s01.oss.sonatype.org/content/repositories/snapshots/"
                 } else {
                     "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -195,11 +224,13 @@ signing {
 }
 
 fun MavenPublication.configurePublication() {
-    groupId = ProjectInfo.GROUP_ID
+    groupId = projectInfo.groupId
 
-    artifactId = ProjectInfo.ID + when {
+    artifactId = projectInfo.id + when {
         artifactId.endsWith("-android") || name == "android" -> "-android"
         artifactId.endsWith("-browser") -> "-browser"
+        artifactId.endsWith("-browserJs") -> "-browser-js"
+        artifactId.endsWith("-browserWasm") -> "-browser-wasm"
         artifactId.endsWith("-desktop") -> "-desktop"
         else -> ""
     }
@@ -207,12 +238,12 @@ fun MavenPublication.configurePublication() {
     artifact(javadocJar.get())
 
     pom {
-        name.set(ProjectInfo.NAME)
+        name.set(projectInfo.name)
         description.set(
-            "Multiplatform Text-to-Speech library for Android and Browser (JS). " +
+            "Kotlin Multiplatform Text-to-Speech library for Android and browser (Kotlin/JS & Kotlin/Wasm). " +
                     "This library will enable you to use Text-to-Speech in multiplatform Kotlin projects."
         )
-        url.set(ProjectInfo.LOCATION_HTTP)
+        url.set(projectInfo.repoLocationHttp)
         inceptionYear.set("2020")
 
         licenses {
@@ -223,33 +254,33 @@ fun MavenPublication.configurePublication() {
         }
 
         organization {
-            name.set(ProjectInfo.Developer.ORG_NAME)
-            url.set(ProjectInfo.Developer.WEBSITE)
+            name.set(projectInfo.developer.orgName)
+            url.set(projectInfo.developer.website)
         }
 
         developers {
             developer {
-                id.set(ProjectInfo.Developer.GITHUB_NAME)
-                name.set(ProjectInfo.Developer.NAME)
-                email.set(ProjectInfo.Developer.EMAIL)
-                url.set(ProjectInfo.Developer.WEBSITE)
-                organization.set(ProjectInfo.Developer.ORG_NAME)
-                organizationUrl.set(ProjectInfo.Developer.WEBSITE)
+                id.set(projectInfo.developer.githubName)
+                name.set(projectInfo.developer.name)
+                email.set(projectInfo.developer.email)
+                url.set(projectInfo.developer.website)
+                organization.set(projectInfo.developer.orgName)
+                organizationUrl.set(projectInfo.developer.website)
             }
         }
 
         issueManagement {
-            url.set("${ProjectInfo.LOCATION_HTTP}/issues")
+            url.set("${projectInfo.repoLocationHttp}/issues")
         }
 
         ciManagement {
-            url.set("${ProjectInfo.LOCATION_HTTP}/actions")
+            url.set("${projectInfo.repoLocationHttp}/actions")
         }
 
         scm {
-            connection.set("scm:git:git://${ProjectInfo.LOCATION}.git")
-            developerConnection.set("scm:git:ssh://${ProjectInfo.LOCATION}.git")
-            url.set(ProjectInfo.LOCATION_HTTP)
+            connection.set("scm:git:git://${projectInfo.repoLocation}.git")
+            developerConnection.set("scm:git:ssh://${projectInfo.repoLocation}.git")
+            url.set(projectInfo.repoLocationHttp)
         }
     }
 }
@@ -274,7 +305,12 @@ class Config {
 
 // TODO: Remove when this is fixed.
 afterEvaluate {
-    val projects = listOf("KotlinMultiplatform", "Android", "Browser", "Desktop")
+    val projects = mutableListOf("KotlinMultiplatform", "Android", "BrowserJs", "Desktop")
+
+    if (useWasmTarget) {
+        projects += "BrowserWasm"
+    }
+
     val repositories = listOf("OSSRH", "GitHubPackages")
     for (currentProject in projects) {
         for (repository in repositories) {
