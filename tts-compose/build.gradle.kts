@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import com.android.repository.Revision
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -9,15 +8,15 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.net.URL
 
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.library)
     `maven-publish`
     signing
     id("org.jetbrains.compose")
-    id("org.jetbrains.dokka")
+    alias(libs.plugins.dokka)
 }
 
-val useWasmTarget = true
+val useWasmTarget = "wasm" in libs.versions.tts.get()
 
 class ProjectInfo {
     val groupId = "nl.marc-apps"
@@ -25,10 +24,6 @@ class ProjectInfo {
     val id = "tts-compose"
 
     val name = "TextToSpeechKt"
-
-    val version = Revision(2, 2)
-
-    val mavenVersion = "${version.major}.${version.minor}.${version.micro}${if (useWasmTarget) "-wasm0" else ""}${if (version.isPreview) "-SNAPSHOT" else ""}"
 
     val developer = Developer()
 
@@ -56,7 +51,7 @@ val projectInfo = ProjectInfo()
 val config by lazy { Config() }
 
 group = projectInfo.groupId
-version = projectInfo.mavenVersion
+version = libs.versions.tts
 
 kotlin {
     js("browserJs", IR) {
@@ -88,9 +83,9 @@ kotlin {
             dependencies {
                 implementation(compose.runtime)
                 if (useWasmTarget) {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2-wasm0")
+                    implementation(libs.kotlin.coroutines.wasm)
                 } else {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                    implementation(libs.kotlin.coroutines)
                 }
                 api(project(":tts"))
             }
@@ -118,8 +113,8 @@ kotlin {
 }
 
 android {
-    compileSdk = 34
-    buildToolsVersion = "34.0.0"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    buildToolsVersion = libs.versions.android.buildTools.get()
 
     namespace = "nl.marc_apps.tts_compose"
 
@@ -139,7 +134,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = libs.versions.kotlin.compiler.extensions.get()
     }
 }
 
@@ -150,8 +145,8 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:1.9.10")
-    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.10")
+    dokkaPlugin(libs.dokka.plugins.androidDocs)
+    dokkaPlugin(libs.dokka.plugins.versioning)
 }
 
 tasks.withType<DokkaTaskPartial>().configureEach {
@@ -194,7 +189,7 @@ publishing {
         maven {
             name = "OSSRH"
             url = uri(
-                if(projectInfo.version.isPreview) {
+                if("SNAPSHOT" in libs.versions.tts.get()) {
                     "https://s01.oss.sonatype.org/content/repositories/snapshots/"
                 } else {
                     "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"

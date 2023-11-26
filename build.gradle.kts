@@ -2,32 +2,34 @@ import org.jetbrains.dokka.versioning.VersioningConfiguration
 import org.jetbrains.dokka.versioning.VersioningPlugin
 
 plugins {
-    val useWasmTarget = true
-    val androidVersion = "8.1.0"
-    val kotlinVersion = "1.9.20"
-    val composeVersion = if (useWasmTarget) "1.5.10-dev-wasm03" else "1.5.10"
+    val useWasmTarget = "wasm" in libs.versions.tts.get()
 
-    id("com.android.application") version androidVersion apply false
-    id("com.android.library") version androidVersion apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
 
-    kotlin("multiplatform") version kotlinVersion apply false
-    id("org.jetbrains.dokka") version "1.9.10"
+    alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.dokka)
 
-    id("org.jetbrains.compose") version composeVersion apply false
+    if (useWasmTarget) {
+        alias(libs.plugins.compose.wasm) apply false
+    } else {
+        alias(libs.plugins.compose) apply false
+    }
 }
 
 buildscript {
     dependencies {
-        classpath("org.jetbrains.dokka:versioning-plugin:1.9.10")
+        classpath(libs.dokka.plugins.versioning)
     }
 }
 
 dependencies {
-    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:1.9.10")
-    dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.9.10")
+    dokkaPlugin(libs.dokka.plugins.androidDocs)
+    dokkaPlugin(libs.dokka.plugins.versioning)
 }
 
-val currentVersion = "2.2"
+val rawVersion = libs.versions.tts.get()
+val currentVersion = rawVersion.substring(0, rawVersion.indexOf('.', rawVersion.indexOf('.') + 1))
 val dokkaWorkingDir = project.rootProject.buildDir.resolve("dokka")
 val versionArchiveDirectory = dokkaWorkingDir.resolve("html_version_archive")
 val currentVersionDir = versionArchiveDirectory.resolve(currentVersion)
