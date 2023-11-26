@@ -1,6 +1,5 @@
 package org.w3c.speech
 
-import js_interop.EventTarget
 import js_interop.JsAny
 
 /**
