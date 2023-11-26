@@ -54,9 +54,10 @@ jobs:
             ./tts-compose/build/libs/tts-compose-browser-*.klib
             ./tts-compose/build/libs/tts-compose-desktop-*.jar
 
-  deploy-docs:
+  build-and-deploy-lib-wasm:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 20
+    needs: build-and-deploy-lib
     steps:
 
       # Checkout
@@ -74,6 +75,59 @@ jobs:
       # Permissions for Gradle
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
+      # Use Kotlin/Wasm target
+      - name: Use Kotlin/Wasm target
+        run: sed 's/^\(tts = ".*\)"$/\1-wasm0"/' ./gradle/libs.versions.toml
+
+      # Build & Deploy
+      - name: Build & Deploy with Gradle
+        run: ./gradlew :tts:publish :tts-compose:publish
+        env:
+          GPR_USER: github-actions
+          GPR_KEY: ${{ secrets.GITHUB_TOKEN }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+          GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
+
+      # Upload artifacts
+      - uses: actions/upload-artifact@v3
+        with:
+          name: TextToSpeechKt (Libs)
+          path: |
+            ./tts/build/outputs/aar/tts-*.aar
+            ./tts/build/libs/tts-browser-*.klib
+            ./tts/build/libs/tts-desktop-*.jar
+            ./tts-compose/build/outputs/aar/tts-compose-*.aar
+            ./tts-compose/build/libs/tts-compose-browser-*.klib
+            ./tts-compose/build/libs/tts-compose-desktop-*.jar
+
+  deploy-docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    needs: build-and-deploy-lib
+    steps:
+
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up JDK
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'adopt'
+          cache: 'gradle'
+
+      # Permissions for Gradle
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Use Kotlin/Wasm target
+      - name: Use Kotlin/Wasm target
+        run: sed 's/^\(tts = ".*\)"$/\1-wasm0"/' ./gradle/libs.versions.toml
 
       # Copy previous versions
       - name: Copy docs of previous versions
