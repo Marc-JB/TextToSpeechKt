@@ -145,30 +145,18 @@ dependencies {
 
 tasks.withType<DokkaTaskPartial>().configureEach {
     dokkaSourceSets.configureEach {
-        val platform = when(name){
-            "commonMain" -> "common"
-            "androidMain" -> "android"
-            "browserMain" -> "browser"
-            "browserJsMain" -> "browserJs"
-            "browserWasmMain" -> "browserWasm"
-            "desktopMain" -> "desktop"
-            else -> null
+        sourceLink {
+            localDirectory.set(file("src/${name}/kotlin"))
+            remoteUrl.set(URL("${projectInfo.repoLocationHttp}/blob/main/${projectInfo.id}/src/${name}/kotlin"))
+            remoteLineSuffix.set("#L")
         }
 
-        if (platform != null) {
-            sourceLink {
-                localDirectory.set(file("src/${platform}Main/kotlin"))
-                remoteUrl.set(URL("${projectInfo.repoLocationHttp}/blob/main/${projectInfo.id}/src/${platform}Main/kotlin"))
-                remoteLineSuffix.set("#L")
-            }
-
-            externalDocumentationLink {
-                url.set(URL(projectInfo.documentationUrl))
-                packageListUrl.set(URL("${projectInfo.documentationUrl}/package-list"))
-            }
-
-            jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
+        externalDocumentationLink {
+            url.set(URL(projectInfo.documentationUrl))
+            packageListUrl.set(URL("${projectInfo.documentationUrl}/package-list"))
         }
+
+        jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
     }
 }
 
@@ -227,11 +215,11 @@ fun MavenPublication.configurePublication() {
     groupId = projectInfo.groupId
 
     artifactId = projectInfo.id + when {
-        artifactId.endsWith("-android") || name == "android" -> "-android"
-        artifactId.endsWith("-browser") -> "-browser"
-        artifactId.endsWith("-browserJs") -> "-browser-js"
-        artifactId.endsWith("-browserWasm") -> "-browser-wasm"
-        artifactId.endsWith("-desktop") -> "-desktop"
+        artifactId.endsWith("-android", ignoreCase = true) || name == "android" -> "-android"
+        artifactId.endsWith("-browser", ignoreCase = true) -> "-browser"
+        artifactId.endsWith("-browserJs", ignoreCase = true) -> "-browser-js"
+        artifactId.endsWith("-browserWasm", ignoreCase = true) -> "-browser-wasm"
+        artifactId.endsWith("-desktop", ignoreCase = true) -> "-desktop"
         else -> ""
     }
 
