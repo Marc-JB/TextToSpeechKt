@@ -190,14 +190,12 @@ publishing {
             }
         }
 
-        if (!useWasmTarget && "SNAPSHOT" !in libs.versions.tts.get()) {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/Marc-JB/TextToSpeechKt")
-                credentials {
-                    username = config["gpr", "user"]
-                    password = config["gpr", "key"]
-                }
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Marc-JB/TextToSpeechKt")
+            credentials {
+                username = config["gpr", "user"]
+                password = config["gpr", "key"]
             }
         }
     }
@@ -307,11 +305,7 @@ afterEvaluate {
         projects += "BrowserWasm"
     }
 
-    val repositories = mutableListOf("OSSRH")
-
-    if (!useWasmTarget) {
-        repositories += "GitHubPackages"
-    }
+    val repositories = listOf("OSSRH", "GitHubPackages")
 
     for (currentProject in projects) {
         for (repository in repositories) {

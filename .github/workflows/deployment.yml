@@ -78,7 +78,7 @@ jobs:
 
       # Use Kotlin/Wasm target
       - name: Use Kotlin/Wasm target
-        run: sed 's/^\(tts = ".*\)"$/\1-wasm0"/' ./gradle/libs.versions.toml
+        run: sed -i 's/^\(tts = ".*\)"$/\1-wasm0"/' ./gradle/libs.versions.toml
 
       # Build & Deploy
       - name: Build & Deploy with Gradle
@@ -127,7 +127,7 @@ jobs:
 
       # Use Kotlin/Wasm target
       - name: Use Kotlin/Wasm target
-        run: sed 's/^\(tts = ".*\)"$/\1-wasm0"/' ./gradle/libs.versions.toml
+        run: sed -i 's/^\(tts = ".*\)"$/\1-wasm0"/' ./gradle/libs.versions.toml
 
       # Copy previous versions
       - name: Copy docs of previous versions
