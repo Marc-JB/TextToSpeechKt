@@ -16,7 +16,7 @@ kotlin-compiler-extensions = "1.5.3"
 kotlin-coroutines = "1.7.3"
 kotlin-coroutines-wasm = "1.7.2-wasm0"
 
-tts = "2.3.2"
+tts = "2.3.0"
 
 versioncheck = "0.50.0"
 
