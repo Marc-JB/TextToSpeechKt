@@ -94,7 +94,7 @@ jobs:
       # Upload artifacts
       - uses: actions/upload-artifact@v3
         with:
-          name: TextToSpeechKt (Libs)
+          name: TextToSpeechKt (Libs, Wasm)
           path: |
             ./tts/build/outputs/aar/tts-*.aar
             ./tts/build/libs/tts-browser-*.klib
