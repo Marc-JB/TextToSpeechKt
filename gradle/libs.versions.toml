@@ -4,19 +4,19 @@ android-compileSdk = "34"
 android-gradlePlugin = "8.1.0"
 androidx-annotation = "1.7.0"
 
-compose = "1.5.10"
-compose-wasm = "1.5.10-dev-wasm03"
+compose = "1.5.11"
+compose-wasm = "1.6.0-alpha01"
 
 dokka = "1.9.10"
 
 freetts = "1.2.2"
 
-kotlin = "1.9.20"
-kotlin-compiler-extensions = "1.5.3"
+kotlin = "1.9.21"
+kotlin-compiler-extensions = "1.5.4"
 kotlin-coroutines = "1.7.3"
-kotlin-coroutines-wasm = "1.7.2-wasm0"
+kotlin-coroutines-wasm = "1.8.0-RC"
 
-tts = "2.3.0"
+tts = "2.3.1"
 
 versioncheck = "0.50.0"
 
