@@ -169,7 +169,7 @@ tasks.withType<DokkaTaskPartial>().configureEach {
 val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
     dependsOn(tasks.dokkaHtmlPartial)
     archiveClassifier.set("javadoc")
-    from(buildDir.toPath().resolve("dokka"))
+    from(layout.buildDirectory.asFile.get().resolve("dokka"))
 }
 
 publishing {
