@@ -5,7 +5,7 @@ android-gradlePlugin = "8.1.0"
 androidx-annotation = "1.7.0"
 
 compose = "1.5.11"
-compose-wasm = "1.6.0-alpha01"
+compose-wasm = "1.6.0-beta01"
 
 dokka = "1.9.10"
 
@@ -16,7 +16,7 @@ kotlin-compiler-extensions = "1.5.8"
 kotlin-coroutines = "1.7.3"
 kotlin-coroutines-wasm = "1.8.0-RC2"
 
-tts = "2.3.1"
+tts = "2.3.2"
 
 versioncheck = "0.50.0"
 
