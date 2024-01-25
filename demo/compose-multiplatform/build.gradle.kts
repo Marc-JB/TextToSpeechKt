@@ -109,7 +109,7 @@ android {
         }
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "kotlin/**"
             excludes += "**/*.kotlin_metadata"

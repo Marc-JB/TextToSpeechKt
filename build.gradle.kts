@@ -32,7 +32,7 @@ dependencies {
 
 val rawVersion = libs.versions.tts.get()
 val currentVersion = rawVersion.substring(0, rawVersion.indexOf('.', rawVersion.indexOf('.') + 1))
-val dokkaWorkingDir = project.rootProject.buildDir.resolve("dokka")
+val dokkaWorkingDir = project.rootProject.layout.buildDirectory.asFile.get().resolve("dokka")
 val versionArchiveDirectory = dokkaWorkingDir.resolve("html_version_archive")
 val currentVersionDir = versionArchiveDirectory.resolve(currentVersion)
 
