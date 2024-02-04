@@ -3,8 +3,6 @@
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.konan.properties.Properties
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.net.URL
 
 plugins {
@@ -16,40 +14,10 @@ plugins {
 }
 
 val useWasmTarget = "wasm" in libs.versions.tts.get()
+val projectId = "core"
+val jvmVersion = JavaVersion.VERSION_1_8
 
-class ProjectInfo {
-    val groupId = "nl.marc-apps"
-
-    val id = "tts"
-
-    val name = "TextToSpeechKt"
-
-    val developer = Developer()
-
-    class Developer {
-        val orgName = "Marc Apps & Software"
-
-        val website = "https://marc-apps.nl"
-
-        val name = "Marc"
-
-        val email = "16156117+Marc-JB@users.noreply.github.com"
-
-        val githubName = "Marc-JB"
-    }
-
-    val repoLocation = "github.com/${developer.githubName}/TextToSpeechKt"
-
-    val repoLocationHttp = "https://$repoLocation"
-
-    val documentationUrl = "https://marc-jb.github.io/TextToSpeechKt"
-}
-
-val projectInfo = ProjectInfo()
-
-val config by lazy { Config() }
-
-group = projectInfo.groupId
+group = getTtsProperty("groupId")!!
 version = libs.versions.tts.get()
 
 kotlin {
@@ -73,7 +41,7 @@ kotlin {
 
     jvm("desktop") {
         compilations.all {
-            kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+            kotlinOptions.jvmTarget = jvmVersion.toString()
         }
     }
 
@@ -118,23 +86,23 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     buildToolsVersion = libs.versions.android.buildTools.get()
 
-    namespace = "nl.marc_apps.tts"
+    namespace = getTtsScopedProperty("namespace")
 
     defaultConfig {
         minSdk = 1
 
-        setProperty("archivesBaseName", projectInfo.id)
+        setProperty("archivesBaseName", getTtsScopedProperty("artifactId"))
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = jvmVersion
+        targetCompatibility = jvmVersion
     }
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+        jvmTarget = jvmVersion.toString()
     }
 }
 
@@ -147,16 +115,16 @@ tasks.withType<DokkaTaskPartial>().configureEach {
     dokkaSourceSets.configureEach {
         sourceLink {
             localDirectory.set(file("src/${name}/kotlin"))
-            remoteUrl.set(URL("${projectInfo.repoLocationHttp}/blob/main/${projectInfo.id}/src/${name}/kotlin"))
+            remoteUrl.set(URL("https://${getTtsProperty("git", "location")}/blob/main/${getTtsScopedProperty("artifactId")}/src/${name}/kotlin"))
             remoteLineSuffix.set("#L")
         }
 
         externalDocumentationLink {
-            url.set(URL(projectInfo.documentationUrl))
-            packageListUrl.set(URL("${projectInfo.documentationUrl}/package-list"))
+            url.set(URL(getTtsProperty("documentation", "url")))
+            packageListUrl.set(URL("${getTtsProperty("documentation", "url")}/package-list"))
         }
 
-        jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
+        jdkVersion.set(jvmVersion.majorVersion.toInt())
     }
 }
 
@@ -168,35 +136,14 @@ val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
 
 publishing {
     repositories {
-        maven {
-            name = "OSSRH"
-            url = uri(
-                if("SNAPSHOT" in libs.versions.tts.get()) {
-                    "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                } else {
-                    "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-                }
-            )
+        configureOssrhRepository("SNAPSHOT" in libs.versions.tts.get(), getConfigProperty("ossrh", "username"), getConfigProperty("ossrh", "password"))
 
-            credentials {
-                username = config["ossrh", "username"]
-                password = config["ossrh", "password"]
-            }
-        }
-
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Marc-JB/TextToSpeechKt")
-            credentials {
-                username = config["gpr", "user"]
-                password = config["gpr", "key"]
-            }
-        }
+        configureGitHubPackagesRepository("Marc-JB", "TextToSpeechKt", getConfigProperty("gpr", "user"), getConfigProperty("gpr", "key"))
     }
 
     publications {
         withType<MavenPublication> {
-            configurePublication()
+            configureMavenPublication(project, this, javadocJar, getTtsScopedProperty("artifactId")!!)
         }
     }
 }
@@ -204,112 +151,11 @@ publishing {
 signing {
     isRequired = true
 
-    val signingKey = config["gpg", "signing", "key"]
-    val signingPassword = config["gpg", "signing", "password"]
+    val signingKey = getConfigProperty("gpg", "signing", "key")
+    val signingPassword = getConfigProperty("gpg", "signing", "password")
     useInMemoryPgpKeys(signingKey, signingPassword)
 
     sign(publishing.publications)
 }
 
-fun MavenPublication.configurePublication() {
-    groupId = projectInfo.groupId
-
-    artifactId = projectInfo.id + when {
-        artifactId.endsWith("-android", ignoreCase = true) || name == "android" -> "-android"
-        artifactId.endsWith("-browser", ignoreCase = true) -> "-browser"
-        artifactId.endsWith("-browserJs", ignoreCase = true) -> "-browser-js"
-        artifactId.endsWith("-browserWasm", ignoreCase = true) -> "-browser-wasm"
-        artifactId.endsWith("-desktop", ignoreCase = true) -> "-desktop"
-        else -> ""
-    }
-
-    artifact(javadocJar.get())
-
-    pom {
-        name.set(projectInfo.name)
-        description.set(
-            "Kotlin Multiplatform Text-to-Speech library for Android and browser (Kotlin/JS & Kotlin/Wasm). " +
-                    "This library will enable you to use Text-to-Speech in multiplatform Kotlin projects."
-        )
-        url.set(projectInfo.repoLocationHttp)
-        inceptionYear.set("2020")
-
-        licenses {
-            license {
-                name.set("MIT")
-                url.set("https://opensource.org/licenses/MIT")
-            }
-        }
-
-        organization {
-            name.set(projectInfo.developer.orgName)
-            url.set(projectInfo.developer.website)
-        }
-
-        developers {
-            developer {
-                id.set(projectInfo.developer.githubName)
-                name.set(projectInfo.developer.name)
-                email.set(projectInfo.developer.email)
-                url.set(projectInfo.developer.website)
-                organization.set(projectInfo.developer.orgName)
-                organizationUrl.set(projectInfo.developer.website)
-            }
-        }
-
-        issueManagement {
-            url.set("${projectInfo.repoLocationHttp}/issues")
-        }
-
-        ciManagement {
-            url.set("${projectInfo.repoLocationHttp}/actions")
-        }
-
-        scm {
-            connection.set("scm:git:git://${projectInfo.repoLocation}.git")
-            developerConnection.set("scm:git:ssh://${projectInfo.repoLocation}.git")
-            url.set(projectInfo.repoLocationHttp)
-        }
-    }
-}
-
-class Config {
-    private val localProperties by lazy {
-        Properties().also { properties ->
-            try {
-                project.rootProject.file("local.properties").inputStream().use {
-                    properties.load(it)
-                }
-            } catch (ignored: java.io.FileNotFoundException) {}
-        }
-    }
-
-    operator fun get(vararg path: String): String? {
-        return findProperty(path.joinToString("."))?.toString()
-            ?: localProperties.getProperty(path.joinToString("."))
-            ?: System.getenv(path.joinToString("_") { it.toUpperCaseAsciiOnly() })
-    }
-}
-
-// TODO: Remove when this is fixed.
-afterEvaluate {
-    val projects = mutableListOf("KotlinMultiplatform", "Android", "BrowserJs", "Desktop")
-
-    if (useWasmTarget) {
-        projects += "BrowserWasm"
-    }
-
-    val repositories = listOf("OSSRH", "GitHubPackages")
-
-    for (currentProject in projects) {
-        for (repository in repositories) {
-            for (otherProject in projects) {
-                if (currentProject != otherProject) {
-                    tasks.named("publish${currentProject}PublicationTo${repository}Repository").configure {
-                        mustRunAfter("sign${otherProject}Publication")
-                    }
-                }
-            }
-        }
-    }
-}
+private fun getTtsScopedProperty(vararg path: String) = getTtsProperty(projectId, *path)

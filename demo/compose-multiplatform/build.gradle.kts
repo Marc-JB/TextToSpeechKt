@@ -110,16 +110,23 @@ android {
     }
 
     packaging {
+        jniLibs {
+            excludes += setOf("kotlin/**")
+        }
+
         resources {
-            excludes += "kotlin/**"
-            excludes += "**/*.kotlin_metadata"
-            excludes += "DebugProbesKt.bin"
-            excludes += "META-INF/*.kotlin_module"
-            // excludes += "META-INF/*.version"
-            excludes += "META-INF/AL2.0"
-            excludes += "META-INF/LGPL2.1"
-            excludes += "build-data.properties"
-            excludes += "play-**.properties"
+            excludes += setOf(
+                "kotlin/**",
+                "**/*.kotlin_metadata",
+                "META-INF/*.kotlin_module",
+                // "META-INF/*.version",
+                "META-INF/AL2.0",
+                "META-INF/LGPL2.1",
+                "DebugProbesKt.bin",
+                "build-data.properties",
+                "play-**.properties",
+                "kotlin-tooling-metadata.json"
+            )
         }
     }
 

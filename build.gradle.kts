@@ -25,6 +25,12 @@ buildscript {
     }
 }
 
+allprojects {
+    tasks.withType<PublishToMavenRepository> {
+        dependsOn("sign")
+    }
+}
+
 dependencies {
     dokkaPlugin(libs.dokka.plugins.androidDocs)
     dokkaPlugin(libs.dokka.plugins.versioning)
