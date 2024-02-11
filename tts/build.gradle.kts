@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
@@ -45,39 +46,33 @@ kotlin {
         }
     }
 
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    applyDefaultHierarchyTemplate {
+        common {
+            group("browser") {
+                withJs()
                 if (useWasmTarget) {
-                    implementation(libs.kotlin.coroutines.wasm)
-                } else {
-                    implementation(libs.kotlin.coroutines)
+                    withWasm()
                 }
             }
         }
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.androidx.annotation)
+    }
+
+    sourceSets {
+        commonMain.dependencies {
+            if (useWasmTarget) {
+                implementation(libs.kotlin.coroutines.wasm)
+            } else {
+                implementation(libs.kotlin.coroutines)
             }
         }
-        val desktopMain by getting {
-            dependencies {
-                implementation(libs.freetts)
-            }
+
+        androidMain.dependencies {
+            implementation(libs.androidx.annotation)
         }
-        val browserJsMain by getting {}
-        if (useWasmTarget) {
-            val browserWasmMain by getting {}
-            val browserMain by creating {
-                dependsOn(commonMain)
-                browserJsMain.dependsOn(this)
-                browserWasmMain.dependsOn(this)
-            }
-        } else {
-            val browserMain by creating {
-                dependsOn(commonMain)
-                browserJsMain.dependsOn(this)
-            }
+
+        jvmMain.dependencies {
+            implementation(libs.freetts)
         }
     }
 }

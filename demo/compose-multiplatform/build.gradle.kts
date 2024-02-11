@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -12,6 +13,7 @@ plugins {
 }
 
 val useWasmTarget = "wasm" in libs.versions.tts.get()
+val jvmVersion = JavaVersion.VERSION_1_8
 
 kotlin {
     androidTarget()
@@ -37,57 +39,48 @@ kotlin {
 
     jvm("desktop") {
         compilations.all {
-            kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+            kotlinOptions.jvmTarget = jvmVersion.toString()
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    applyDefaultHierarchyTemplate {
+        common {
+            group("browser") {
+                withJs()
+                if (useWasmTarget) {
+                    withWasm()
+                }
+            }
         }
     }
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(compose.runtime)
-                implementation(compose.ui)
-                implementation(compose.foundation)
-                implementation(compose.material3)
-                implementation(compose.materialIconsExtended)
-                if (useWasmTarget) {
-                    implementation(libs.kotlin.coroutines.wasm)
-                } else {
-                    implementation(libs.kotlin.coroutines)
-                }
-                implementation(project(":tts-compose"))
+        commonMain.dependencies {
+            implementation(compose.runtime)
+            implementation(compose.ui)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
+            if (useWasmTarget) {
+                implementation(libs.kotlin.coroutines.wasm)
+            } else {
+                implementation(libs.kotlin.coroutines)
             }
+            implementation(project(":tts-compose"))
         }
 
-        val androidMain by getting {
-            dependencies {
-                implementation(compose.preview)
-                implementation(compose.uiTooling)
-                implementation("androidx.navigation:navigation-compose:2.7.5")
-                implementation("androidx.activity:activity-compose:1.8.1")
-            }
+        androidMain.dependencies {
+            implementation(compose.preview)
+            implementation(compose.uiTooling)
+            implementation("androidx.navigation:navigation-compose:2.7.5")
+            implementation("androidx.activity:activity-compose:1.8.1")
         }
 
-        val desktopMain by getting {
-            dependencies {
-                implementation(compose.preview)
-                implementation(compose.uiTooling)
-                implementation(compose.desktop.currentOs)
-            }
-        }
-
-        val browserJsMain by getting {}
-        if (useWasmTarget) {
-            val browserWasmMain by getting {}
-            val browserMain by creating {
-                dependsOn(commonMain)
-                browserJsMain.dependsOn(this)
-                browserWasmMain.dependsOn(this)
-            }
-        } else {
-            val browserMain by creating {
-                dependsOn(commonMain)
-                browserJsMain.dependsOn(this)
-            }
+        jvmMain.dependencies {
+            implementation(compose.preview)
+            implementation(compose.uiTooling)
+            implementation(compose.desktop.currentOs)
         }
     }
 }
@@ -170,8 +163,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = jvmVersion
+        targetCompatibility = jvmVersion
     }
 
     buildFeatures {
@@ -191,7 +184,7 @@ android {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+        jvmTarget = jvmVersion.toString()
     }
 }
 
