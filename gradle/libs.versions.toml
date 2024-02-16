@@ -1,22 +1,21 @@
 [versions]
 android-buildTools = "34.0.0"
 android-compileSdk = "34"
-android-gradlePlugin = "8.1.0"
-androidx-annotation = "1.7.0"
+android-gradlePlugin = "8.2.2"
+androidx-annotation = "1.7.1"
 
-compose = "1.5.11"
-compose-wasm = "1.6.0-beta01"
+compose = "1.5.12"
+compose-wasm = "1.6.0-rc01"
 
 dokka = "1.9.10"
 
 freetts = "1.2.2"
 
-kotlin = "1.9.21"
+kotlin = "1.9.22"
 kotlin-compiler-extensions = "1.5.8"
-kotlin-coroutines = "1.7.3"
-kotlin-coroutines-wasm = "1.8.0-RC2"
+kotlin-coroutines = "1.8.0"
 
-tts = "2.3.2"
+tts = "2.3.3"
 
 versioncheck = "0.50.0"
 
@@ -29,7 +28,6 @@ dokka-plugins-versioning = { module = "org.jetbrains.dokka:versioning-plugin", v
 freetts = { module = "net.sf.sociaal:freetts", version.ref = "freetts" }
 
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
-kotlin-coroutines-wasm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines-wasm" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradlePlugin" }
