@@ -62,11 +62,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(compose.runtime)
-            if (useWasmTarget) {
-                implementation(libs.kotlin.coroutines.wasm)
-            } else {
-                implementation(libs.kotlin.coroutines)
-            }
+            implementation(libs.kotlin.coroutines)
             api(project(":tts"))
         }
 

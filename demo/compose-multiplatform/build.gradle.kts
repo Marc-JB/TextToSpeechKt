@@ -62,11 +62,7 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
-            if (useWasmTarget) {
-                implementation(libs.kotlin.coroutines.wasm)
-            } else {
-                implementation(libs.kotlin.coroutines)
-            }
+            implementation(libs.kotlin.coroutines)
             implementation(project(":tts-compose"))
         }
 
