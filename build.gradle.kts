@@ -26,8 +26,10 @@ buildscript {
 }
 
 allprojects {
-    tasks.withType<PublishToMavenRepository> {
-        dependsOn(*tasks.names.filter { it.startsWith("sign") }.toTypedArray())
+    afterEvaluate {
+        tasks.withType<PublishToMavenRepository> {
+            dependsOn(*tasks.names.filter { it.startsWith("sign") && it.endsWith("Publication") }.toTypedArray())
+        }
     }
 }
 
