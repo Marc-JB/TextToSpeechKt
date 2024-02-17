@@ -73,7 +73,7 @@ kotlin {
             implementation("androidx.activity:activity-compose:1.8.1")
         }
 
-        jvmMain.dependencies {
+        getByName("desktopMain").dependencies {
             implementation(compose.preview)
             implementation(compose.uiTooling)
             implementation(compose.desktop.currentOs)

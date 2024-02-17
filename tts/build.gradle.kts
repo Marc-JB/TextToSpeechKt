@@ -62,7 +62,7 @@ kotlin {
             implementation(libs.androidx.annotation)
         }
 
-        jvmMain.dependencies {
+        getByName("desktopMain").dependencies {
             implementation(libs.freetts)
         }
     }
