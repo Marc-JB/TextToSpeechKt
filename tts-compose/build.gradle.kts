@@ -102,6 +102,10 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = jvmVersion.toString()
     }
+
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
 }
 
 dependencies {
@@ -154,6 +158,10 @@ signing {
     useInMemoryPgpKeys(signingKey, signingPassword)
 
     sign(publishing.publications)
+}
+
+tasks.withType<PublishToMavenRepository> {
+    dependsOn(*tasks.names.filter { it.startsWith("sign") && it.endsWith("Publication") }.toTypedArray())
 }
 
 private fun getTtsScopedProperty(vararg path: String) = getTtsProperty(projectId, *path)

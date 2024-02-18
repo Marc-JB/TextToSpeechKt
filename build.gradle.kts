@@ -26,18 +26,6 @@ buildscript {
     }
 }
 
-allprojects {
-    tasks.withType<PublishToMavenRepository> {
-        dependsOn(*tasks.names.filter { it.startsWith("sign") && it.endsWith("Publication") }.toTypedArray())
-    }
-
-    tasks.withType<KotlinCompile> {
-        compilerOptions {
-            freeCompilerArgs.add("-Xexpect-actual-classes")
-        }
-    }
-}
-
 dependencies {
     dokkaPlugin(libs.dokka.plugins.androidDocs)
     dokkaPlugin(libs.dokka.plugins.versioning)
