@@ -1,5 +1,6 @@
 import org.jetbrains.dokka.versioning.VersioningConfiguration
 import org.jetbrains.dokka.versioning.VersioningPlugin
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     val useWasmTarget = "wasm" in libs.versions.tts.get()
@@ -29,6 +30,12 @@ allprojects {
     afterEvaluate {
         tasks.withType<PublishToMavenRepository> {
             dependsOn(*tasks.names.filter { it.startsWith("sign") && it.endsWith("Publication") }.toTypedArray())
+        }
+
+        tasks.withType<KotlinCompile> {
+            compilerOptions {
+                freeCompilerArgs.add("-Xexpect-actual-classes")
+            }
         }
     }
 }
