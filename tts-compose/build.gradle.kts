@@ -157,8 +157,14 @@ signing {
     sign(publishing.publications)
 }
 
-tasks.withType<PublishToMavenRepository> {
-    dependsOn(*tasks.names.filter { it.startsWith("sign") && it.endsWith("Publication") }.toTypedArray())
+afterEvaluate {
+    val publicationTaskNames = tasks.names.filter { it.startsWith("publish") && "PublicationTo" in it && it.endsWith("Repository") }
+    val signTaskNames = tasks.names.filter { it.startsWith("sign") && it.endsWith("Publication") }.toTypedArray()
+    for (publicationTaskName in publicationTaskNames) {
+        tasks.getByName(publicationTaskName) {
+            dependsOn(*signTaskNames)
+        }
+    }
 }
 
 private fun getTtsScopedProperty(vararg path: String) = getTtsProperty(projectId, *path)
