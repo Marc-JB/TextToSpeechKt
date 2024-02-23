@@ -92,7 +92,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     @ExperimentalVoiceApi
     override var currentVoice: Voice? = defaultVoice
         set(value) {
-            val result = if (value is VoiceAndroidModern && VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            val result = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP && value is VoiceAndroidModern) {
                 tts?.setVoice(value.androidVoice)
             } else if (value is VoiceAndroidLegacy) {
                 tts?.setLanguage(value.locale)

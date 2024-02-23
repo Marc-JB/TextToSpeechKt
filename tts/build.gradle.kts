@@ -3,6 +3,7 @@
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 
@@ -92,6 +93,12 @@ tasks.withType<KotlinCompile> {
     }
 }
 
+tasks.withType(KotlinCompilationTask::class) {
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+}
+
 dependencies {
     dokkaPlugin(libs.dokka.plugins.androidDocs)
     dokkaPlugin(libs.dokka.plugins.versioning)
@@ -142,6 +149,10 @@ signing {
     useInMemoryPgpKeys(signingKey, signingPassword)
 
     sign(publishing.publications)
+}
+
+tasks.withType<PublishToMavenRepository> {
+    dependsOn(*tasks.names.filter { it.startsWith("sign") && it.endsWith("Publication") }.toTypedArray())
 }
 
 private fun getTtsScopedProperty(vararg path: String) = getTtsProperty(projectId, *path)

@@ -21,7 +21,7 @@ internal data class VoiceAndroidModern(
     override val locale = androidVoice.locale
 
     constructor(parcel: Parcel) : this(
-        parcel.readParcelable(android.speech.tts.Voice::class.java.classLoader)!!,
+        android.speech.tts.Voice.CREATOR.createFromParcel(parcel),
         parcel.readByte() != 0.toByte()
     )
 
@@ -38,8 +38,9 @@ internal data class VoiceAndroidModern(
     override fun equals(other: Any?) = (other as? VoiceAndroidModern)?.androidVoice == androidVoice
 
     override fun hashCode() = androidVoice.hashCode()
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeParcelable(androidVoice, flags)
+        androidVoice.writeToParcel(parcel, flags)
         parcel.writeByte(if (isDefault) 1 else 0)
     }
 

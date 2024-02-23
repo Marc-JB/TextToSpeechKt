@@ -182,6 +182,10 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = jvmVersion.toString()
     }
+
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
 }
 
 compose.experimental {
