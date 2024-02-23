@@ -91,10 +91,6 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = jvmVersion.toString()
     }
-
-    compilerOptions {
-        freeCompilerArgs.add("-Xexpect-actual-classes")
-    }
 }
 
 tasks.withType(KotlinCompilationTask::class) {

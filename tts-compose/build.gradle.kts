@@ -3,6 +3,7 @@
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 
@@ -101,10 +102,6 @@ android {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = jvmVersion.toString()
-    }
-
-    compilerOptions {
-        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 }
 
