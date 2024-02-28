@@ -3,19 +3,13 @@ import org.jetbrains.dokka.versioning.VersioningPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    val useWasmTarget = "wasm" in libs.versions.tts.get()
-
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
 
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.dokka)
 
-    if (useWasmTarget) {
-        alias(libs.plugins.compose.wasm) apply false
-    } else {
-        alias(libs.plugins.compose) apply false
-    }
+    alias(libs.plugins.compose) apply false
 
     alias(libs.plugins.versioncheck)
 }
@@ -56,6 +50,6 @@ tasks.dokkaHtmlMultiModule {
 
 tasks.dependencyUpdates {
     rejectVersionIf {
-        arrayOf("alpha", "beta", "rc").any { it in candidate.version.lowercase() } || (("wasm" in candidate.version) xor ("wasm" in currentVersion))
+        arrayOf("alpha", "beta", "rc").any { it in candidate.version.lowercase() }
     }
 }

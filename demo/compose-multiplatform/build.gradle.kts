@@ -12,7 +12,6 @@ plugins {
     id("org.jetbrains.compose")
 }
 
-val useWasmTarget = "wasm" in libs.versions.tts.get()
 val jvmVersion = JavaVersion.VERSION_1_8
 
 kotlin {
@@ -24,17 +23,15 @@ kotlin {
         binaries.executable()
     }
 
-    if (useWasmTarget) {
-        @OptIn(ExperimentalWasmDsl::class)
-        wasmJs("browserWasm") {
-            moduleName = "compose-multiplatform"
-            browser {
-                commonWebpackConfig {
-                    devServer = devServer ?: KotlinWebpackConfig.DevServer()
-                }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs("browserWasm") {
+        moduleName = "compose-multiplatform"
+        browser {
+            commonWebpackConfig {
+                devServer = devServer ?: KotlinWebpackConfig.DevServer()
             }
-            binaries.executable()
         }
+        binaries.executable()
     }
 
     jvm("desktop") {
@@ -48,9 +45,7 @@ kotlin {
         common {
             group("browser") {
                 withJs()
-                if (useWasmTarget) {
-                    withWasm()
-                }
+                withWasm()
             }
         }
     }

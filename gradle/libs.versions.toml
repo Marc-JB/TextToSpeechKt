@@ -4,8 +4,7 @@ android-compileSdk = "34"
 android-gradlePlugin = "8.2.2"
 androidx-annotation = "1.7.1"
 
-compose = "1.5.12"
-compose-wasm = "1.6.0-rc03"
+compose = "1.6.0"
 
 dokka = "1.9.10"
 
@@ -15,7 +14,7 @@ kotlin = "1.9.22"
 kotlin-compiler-extensions = "1.5.8"
 kotlin-coroutines = "1.8.0"
 
-tts = "2.4.0"
+tts = "2.5.0"
 
 versioncheck = "0.50.0"
 
@@ -34,7 +33,6 @@ android-application = { id = "com.android.application", version.ref = "android-g
 android-library = { id = "com.android.library", version.ref = "android-gradlePlugin" }
 
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
-compose-wasm = { id = "org.jetbrains.compose", version.ref = "compose-wasm" }
 
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 

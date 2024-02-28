@@ -16,7 +16,6 @@ plugins {
     alias(libs.plugins.dokka)
 }
 
-val useWasmTarget = "wasm" in libs.versions.tts.get()
 val projectId = "compose"
 val jvmVersion = JavaVersion.VERSION_1_8
 
@@ -29,12 +28,10 @@ kotlin {
         binaries.executable()
     }
 
-    if (useWasmTarget) {
-        @OptIn(ExperimentalWasmDsl::class)
-        wasmJs("browserWasm") {
-            browser()
-            binaries.executable()
-        }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs("browserWasm") {
+        browser()
+        binaries.executable()
     }
 
     androidTarget {
@@ -53,9 +50,7 @@ kotlin {
         common {
             group("browser") {
                 withJs()
-                if (useWasmTarget) {
-                    withWasm()
-                }
+                withWasm()
             }
         }
     }

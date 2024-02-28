@@ -25,15 +25,15 @@
 ### :space_invader: Tech Stack
 Uses Kotlin Multiplatform with support for the following targets:
 
-| Platform            | Language      | Support                                |
-|---------------------|---------------|----------------------------------------|
-| Android             | Kotlin/JVM    | ✅                                      |
-| Browser             | Kotlin/JS     | ✅                                      |
-| Browser             | Kotlin/Wasm   | ✅ _Use `-wasm0` version number suffix_ |
-| Browser             | JS, TS        | ❌ _Support ended in v2.0_              |
-| Desktop             | Kotlin/JVM    | ⚠️ _Experimental support_              |
-| iOS                 | Kotlin/Native | ❌                                      |
-| Other Kotlin/Native | Kotlin/Native | ❌                                      |
+| Platform            | Language      | Support                   |
+|---------------------|---------------|---------------------------|
+| Android             | Kotlin/JVM    | ✅                         |
+| Browser             | Kotlin/JS     | ✅                         |
+| Browser             | Kotlin/Wasm   | ✅                         |
+| Browser             | JS, TS        | ❌ _Support ended in v2.0_ |
+| Desktop             | Kotlin/JVM    | ⚠️ _Experimental support_ |
+| iOS                 | Kotlin/Native | ❌                         |
+| Other Kotlin/Native | Kotlin/Native | ❌                         |
 
 
 ### :dart: Features
