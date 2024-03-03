@@ -12,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import nl.marc_apps.tts.TextToSpeechInstance
+import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 
+@OptIn(ExperimentalVoiceApi::class)
 @Composable
 fun TtsDemoView(
     textToSpeech: TextToSpeechInstance?,
