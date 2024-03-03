@@ -4,6 +4,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -12,7 +13,7 @@ plugins {
     id("org.jetbrains.compose")
 }
 
-val jvmVersion = JavaVersion.VERSION_1_8
+val jvmVersion = JavaVersion.VERSION_11
 
 kotlin {
     androidTarget()
@@ -57,6 +58,8 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
+            // implementation(compose.components.uiToolingPreview)
+            implementation(compose.components.resources)
             implementation(libs.kotlin.coroutines)
             implementation(project(":tts-compose"))
         }
@@ -177,7 +180,9 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = jvmVersion.toString()
     }
+}
 
+tasks.withType(KotlinCompilationTask::class) {
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
