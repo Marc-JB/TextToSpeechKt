@@ -5,10 +5,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import nl.marc_apps.tts.TextToSpeechEngine
-import nl.marc_apps.tts.experimental.ExperimentalDesktopTarget
 import nl.marc_apps.tts.rememberTextToSpeechOrNull
 
-@OptIn(ExperimentalDesktopTarget::class)
 @Composable
 fun TtsDemoApp(topAppBar: @Composable () -> Unit = {}) {
     val textToSpeech = rememberTextToSpeechOrNull(TextToSpeechEngine.Google)

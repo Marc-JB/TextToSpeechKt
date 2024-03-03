@@ -18,11 +18,11 @@ val jvmVersion = JavaVersion.VERSION_11
 kotlin {
     androidTarget()
 
-    js("browserJs", IR) {
+    /*js("browserJs", IR) {
         moduleName = "compose-multiplatform"
         browser()
         binaries.executable()
-    }
+    }*/
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs("browserWasm") {
@@ -45,13 +45,21 @@ kotlin {
     applyDefaultHierarchyTemplate {
         common {
             group("browser") {
-                withJs()
+                //withJs()
                 withWasm()
             }
         }
     }
 
     sourceSets {
+        all {
+            languageSettings {
+                optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
+                optIn("nl.marc_apps.tts.experimental.ExperimentalVoiceApi")
+                optIn("nl.marc_apps.tts.experimental.ExperimentalDesktopTarget")
+            }
+        }
+
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.ui)

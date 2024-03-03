@@ -12,9 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import nl.marc_apps.tts.TextToSpeechInstance
-import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
+import org.jetbrains.compose.resources.stringResource
+import texttospeechkt.demo.`compose-multiplatform`.generated.resources.*
 
-@OptIn(ExperimentalVoiceApi::class)
 @Composable
 fun TtsDemoView(
     textToSpeech: TextToSpeechInstance?,
@@ -35,7 +35,7 @@ fun TtsDemoView(
                 .padding(24.dp)
         ) {
             if (textToSpeech == null) {
-                Text("Text-to-Speech is not available.")
+                Text(stringResource(Res.string.tts_not_available))
             } else {
                 var text by remember { mutableStateOf("") }
 
@@ -47,13 +47,13 @@ fun TtsDemoView(
                 ) {
                     Icon(Icons.Rounded.GraphicEq, contentDescription = null)
 
-                    Text(if (isSynthesizing) "Synthesizing" else "Not active")
+                    Text(stringResource(if (isSynthesizing) Res.string.synthesizing_status_active else Res.string.synthesizing_status_inactive))
                 }
 
                 OutlinedTextField(
                     value = text,
                     onValueChange = { text = it },
-                    label = { Text("Text") },
+                    label = { Text(stringResource(Res.string.tts_input_label)) },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -75,7 +75,7 @@ fun TtsDemoView(
 
                     Spacer(Modifier.width(16.dp))
 
-                    Text("Say!")
+                    Text(stringResource(Res.string.action_say))
                 }
             }
         }
