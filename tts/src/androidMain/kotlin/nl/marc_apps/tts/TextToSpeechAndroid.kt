@@ -18,7 +18,7 @@ import nl.marc_apps.tts.utils.getContinuationId
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
 import android.speech.tts.TextToSpeech as AndroidTTS
 
 /** A TTS instance. Should be [close]d when no longer in use. */
@@ -182,7 +182,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override suspend fun say(text: String, clearQueue: Boolean) {
+    override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean){
         suspendCancellableCoroutine { cont ->
             say(text, clearQueue) {
                 if (it.isSuccess) {
@@ -193,7 +193,9 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
                 }
             }
             cont.invokeOnCancellation {
-                stop()
+                if(clearQueueOnCancellation) {
+                    stop()
+                }
             } 
         }
     }
