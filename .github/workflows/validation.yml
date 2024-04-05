@@ -1,24 +1,23 @@
-name: Gradle validation
+name: Validation
 
 on:
   pull_request:
+    branches: main
   workflow_dispatch:
 
 concurrency:
-  group: gradle-validation-${{ github.ref }}
+  group: validation-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   validate-deploy-task:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 8
     steps:
 
-      # Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Set up JDK
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -26,11 +25,9 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      # Permissions for Gradle
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # Validate deploy task
       - name: Validate deploy task with Gradle
         run: ./gradlew :tts:publish :tts-compose:publish --dry-run
         env:
@@ -43,15 +40,13 @@ jobs:
 
   build-lib:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 8
     needs: validate-deploy-task
     steps:
 
-      # Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Set up JDK
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -59,11 +54,9 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      # Permissions for Gradle
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # Build & Deploy
       - name: Build with Gradle
         run: ./gradlew :tts:build :tts-compose:build
         env:
