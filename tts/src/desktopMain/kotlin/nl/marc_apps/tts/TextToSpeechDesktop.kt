@@ -4,9 +4,12 @@ import com.sun.speech.freetts.VoiceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import nl.marc_apps.tts.experimental.ExperimentalDesktopTarget
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 private const val VOICE_NAME = "kevin16"
 
@@ -90,11 +93,23 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
         isSynthesizing.value = false
     }
 
-    override suspend fun say(text: String, clearQueue: Boolean) {
+    override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean) {
         isSynthesizing.value = true
         coroutineScope {
             withContext(Dispatchers.Default) {
-                voice.speak(text)
+                suspendCancellableCoroutine { cont ->
+                    try {
+                        voice.speak(text)
+                        cont.resume(Unit)
+                    } catch (throwable: Throwable) {
+                        cont.resumeWithException(throwable)
+                    }
+                    cont.invokeOnCancellation {
+                        if (clearQueueOnCancellation) {
+                            stop()
+                        }
+                    }
+                }
             }
 
             isSynthesizing.value = false

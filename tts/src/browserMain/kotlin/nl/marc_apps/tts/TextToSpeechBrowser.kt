@@ -7,13 +7,13 @@ import js_interop.getSpeechSynthesis
 import js_interop.getVoiceList
 import js_interop.window
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 /** A TTS instance. Should be [close]d when no longer in use. */
 internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInstance {
@@ -155,14 +155,19 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override suspend fun say(text: String, clearQueue: Boolean) {
-        suspendCoroutine { cont ->
+    override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean) {
+        suspendCancellableCoroutine { cont ->
             say(text, clearQueue) {
                 if (it.isSuccess) {
                     cont.resume(it.getOrThrow())
                 } else if (it.isFailure) {
                     val error = it.exceptionOrNull() ?: UnknownTextToSpeechSynthesisError()
                     cont.resumeWithException(error)
+                }
+            }
+            cont.invokeOnCancellation {
+                if (clearQueueOnCancellation) {
+                    stop()
                 }
             }
         }

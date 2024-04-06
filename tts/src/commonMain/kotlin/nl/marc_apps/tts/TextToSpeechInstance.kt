@@ -50,7 +50,7 @@ interface TextToSpeechInstance : Closeable {
     fun say(text: String, clearQueue: Boolean = false, callback: (Result<Unit>) -> Unit)
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean = false)
+    suspend fun say(text: String, clearQueue: Boolean = false, clearQueueOnCancellation: Boolean = false)
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     operator fun plusAssign(text: String)
