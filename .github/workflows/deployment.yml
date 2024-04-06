@@ -40,7 +40,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Update version
-        run: sed -i 's/tts[[:space:]]*=[[:space:]]*"[^"]*"/tts = "${{ github.event.inputs.version }}"/g" ./gradle/libs.versions.toml
+        run: sed -i 's/tts[[:space:]]*=[[:space:]]*"[^"]*"/tts = "${{ github.event.inputs.version }}"/g' ./gradle/libs.versions.toml
 
       - name: Build & Deploy with Gradle
         run: ./gradlew :tts:publish :tts-compose:publish
@@ -84,7 +84,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Update version
-        run: sed -i 's/tts[[:space:]]*=[[:space:]]*"[^"]*"/tts = "${{ github.event.inputs.version }}"/g" ./gradle/libs.versions.toml
+        run: sed -i 's/tts[[:space:]]*=[[:space:]]*"[^"]*"/tts = "${{ github.event.inputs.version }}"/g' ./gradle/libs.versions.toml
 
       - name: Copy docs of previous versions
         uses: actions/checkout@v4
