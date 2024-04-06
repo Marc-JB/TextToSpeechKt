@@ -62,13 +62,11 @@ A build tool like Gradle or Maven.
   And add the library to your dependencies:  
   ```Kotlin copy
   dependencies {
-      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-      implementation("nl.marc-apps:tts:2.0.0")
-      // Or if you use Kotlin/Wasm: implementation("nl.marc-apps:tts:2.0.0-wasm0")
+      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+      implementation("nl.marc-apps:tts:2.5.0")
 
       // Optional: Extensions for Compose
-      implementation("nl.marc-apps:tts-compose:2.0.0")
-      // Or if you use Kotlin/Wasm: implementation("nl.marc-apps:tts-compose:2.0.0-wasm0")
+      implementation("nl.marc-apps:tts-compose:2.5.0")
   }
   ```  
 
@@ -77,14 +75,12 @@ A build tool like Gradle or Maven.
   ```Kotlin copy
   kotlin {
       sourceSets {
-          val commonMain by getting {
-              dependencies {
-                  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-                  implementation("nl.marc-apps:tts:2.0.0")
+          commonMain.dependencies { 
+              implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+              implementation("nl.marc-apps:tts:2.5.0")
 
-                  // Optional: Extensions for Compose
-                  implementation("nl.marc-apps:tts-compose:2.0.0")
-              }
+              // Optional: Extensions for Compose 
+              implementation("nl.marc-apps:tts-compose:2.5.0")
           }
       }
   }
@@ -102,18 +98,18 @@ A build tool like Gradle or Maven.
   <dependency>
       <groupId>org.jetbrains.kotlinx</groupId>
       <artifactId>kotlinx-coroutines-core</artifactId>
-      <version>1.7.3</version>
+      <version>1.8.0</version>
   </dependency>
   <dependency>
       <groupId>nl.marc-apps</groupId>
       <artifactId>tts</artifactId>
-      <version>2.0.0</version>
+      <version>2.5.0</version>
   </dependency>
   <!-- Optional: Extensions for Compose -->
   <dependency>
       <groupId>nl.marc-apps</groupId>
       <artifactId>tts-compose</artifactId>
-      <version>2.0.0</version>
+      <version>2.5.0</version>
   </dependency>
   ```  
 

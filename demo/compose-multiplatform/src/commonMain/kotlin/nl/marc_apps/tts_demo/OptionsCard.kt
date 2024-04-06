@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.VolumeMute
+import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -12,10 +14,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import nl.marc_apps.tts.TextToSpeechInstance
-import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
+import org.jetbrains.compose.resources.stringResource
+import texttospeechkt.demo.`compose-multiplatform`.generated.resources.Res
+import texttospeechkt.demo.`compose-multiplatform`.generated.resources.action_options_reset_all
+import texttospeechkt.demo.`compose-multiplatform`.generated.resources.options_title
+import texttospeechkt.demo.`compose-multiplatform`.generated.resources.placeholder_voice_unknown
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalVoiceApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OptionsCard(
     textToSpeech: TextToSpeechInstance
@@ -43,7 +49,7 @@ fun OptionsCard(
                 Icon(Icons.Rounded.Settings, contentDescription = null)
 
                 Text(
-                    "Options",
+                    stringResource(Res.string.options_title),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f)
                 )
@@ -55,7 +61,7 @@ fun OptionsCard(
             }
 
             if (expanded){
-                Divider()
+                HorizontalDivider()
 
                 Row (
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -64,7 +70,7 @@ fun OptionsCard(
                         .padding(16.dp, 8.dp)
                         .height(48.dp)
                 ) {
-                    Icon(Icons.Rounded.VolumeMute, contentDescription = null)
+                    Icon(Icons.AutoMirrored.Rounded.VolumeMute, contentDescription = null)
 
                     var preferredSoundLevel by remember { mutableStateOf(textToSpeech.volume.toFloat()) }
 
@@ -79,7 +85,7 @@ fun OptionsCard(
                         modifier = Modifier.weight(1f)
                     )
 
-                    Icon(Icons.Rounded.VolumeUp, contentDescription = null)
+                    Icon(Icons.AutoMirrored.Rounded.VolumeUp, contentDescription = null)
                 }
 
                 Row (
@@ -144,7 +150,7 @@ fun OptionsCard(
                     Icon(Icons.Rounded.Language, contentDescription = null)
 
                     Text(
-                        textToSpeech.currentVoice?.name ?: "Unknown",
+                        textToSpeech.currentVoice?.name ?: stringResource(Res.string.placeholder_voice_unknown),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -166,12 +172,12 @@ fun OptionsCard(
                             expanded = false
                         }
                     ) {
-                        Text("Reset")
+                        Text(stringResource(Res.string.action_options_reset_all))
                     }
                 }
 
                 if (showDialog) {
-                    AlertDialog(
+                    BasicAlertDialog(
                         onDismissRequest = {
                             showDialog = false
                         },
