@@ -8,7 +8,7 @@ compose = "1.6.0"
 
 dokka = "1.9.10"
 
-freetts = "1.2.2"
+freetts_java = "1.2.2"
 
 kotlin = "1.9.22"
 kotlin-compiler-extensions = "1.5.8"
@@ -24,7 +24,7 @@ androidx-annotation = { module = "androidx.annotation:annotation", version.ref =
 dokka-plugins-androidDocs = { module = "org.jetbrains.dokka:android-documentation-plugin", version.ref = "dokka" }
 dokka-plugins-versioning = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
 
-freetts = { module = "net.sf.sociaal:freetts", version.ref = "freetts" }
+freetts = { module = "net.sf.sociaal:freetts", version.ref = "freetts_java" }
 
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
 
