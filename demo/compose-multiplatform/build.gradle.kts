@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.application)
-    id("org.jetbrains.compose")
+    alias(libs.plugins.compose)
 }
 
 val jvmVersion = JavaVersion.VERSION_11

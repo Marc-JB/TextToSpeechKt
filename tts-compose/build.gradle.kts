@@ -12,7 +12,7 @@ plugins {
     alias(libs.plugins.android.library)
     `maven-publish`
     signing
-    id("org.jetbrains.compose")
+    alias(libs.plugins.compose)
     alias(libs.plugins.dokka)
 }
 
