@@ -18,11 +18,16 @@ val jvmVersion = JavaVersion.VERSION_11
 kotlin {
     androidTarget()
 
-    /*js("browserJs", IR) {
+    js("browserJs", IR) {
         moduleName = "compose-multiplatform"
-        browser()
+        browser {
+            commonWebpackConfig {
+                devServer = devServer ?: KotlinWebpackConfig.DevServer()
+                experiments += "topLevelAwait"
+            }
+        }
         binaries.executable()
-    }*/
+    }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs("browserWasm") {
@@ -45,7 +50,7 @@ kotlin {
     applyDefaultHierarchyTemplate {
         common {
             group("browser") {
-                //withJs()
+                withJs()
                 withWasm()
             }
         }
@@ -194,10 +199,6 @@ tasks.withType(KotlinCompilationTask::class) {
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
-}
-
-compose.experimental {
-    web.application {}
 }
 
 compose.desktop {

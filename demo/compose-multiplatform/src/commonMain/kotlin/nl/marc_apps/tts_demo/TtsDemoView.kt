@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import nl.marc_apps.tts.TextToSpeechInstance
 import org.jetbrains.compose.resources.stringResource
-import texttospeechkt.demo.`compose-multiplatform`.generated.resources.*
+import texttospeechkt.demo.compose_multiplatform.generated.resources.*
 
 @Composable
 fun TtsDemoView(
