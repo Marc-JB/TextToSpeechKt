@@ -1,5 +1,6 @@
 package nl.marc_apps.tts
 
+import com.sun.speech.freetts.FreeTTSSpeakableImpl
 import com.sun.speech.freetts.VoiceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -99,7 +100,7 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
             withContext(Dispatchers.Default) {
                 suspendCancellableCoroutine { cont ->
                     try {
-                        voice.speak(text)
+                        voice.speak(FreeTTSSpeakableImpl(text))
                         cont.resume(Unit)
                     } catch (throwable: Throwable) {
                         cont.resumeWithException(throwable)
@@ -120,7 +121,7 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
         isSynthesizing.value = true
         voice.speak(text)
         isSynthesizing.value = false
-        callback(Result.success(Unit));
+        callback(Result.success(Unit))
     }
 
     override fun plusAssign(text: String) {
