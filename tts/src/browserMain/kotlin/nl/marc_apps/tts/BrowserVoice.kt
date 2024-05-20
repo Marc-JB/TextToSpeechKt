@@ -1,9 +1,7 @@
 package nl.marc_apps.tts
 
-import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import org.w3c.speech.SpeechSynthesisVoice
 
-@ExperimentalVoiceApi
 internal data class BrowserVoice(
     val browserVoice: SpeechSynthesisVoice
 ) : Voice {

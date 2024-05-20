@@ -4,10 +4,8 @@ import android.os.Parcel
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
 import nl.marc_apps.tts.Voice
-import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import java.util.*
 
-@ExperimentalVoiceApi
 @Parcelize
 internal data class VoiceAndroidLegacy(
     override val locale: Locale,

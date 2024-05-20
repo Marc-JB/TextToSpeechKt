@@ -7,14 +7,11 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import nl.marc_apps.tts.experimental.ExperimentalDesktopTarget
-import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 private const val VOICE_NAME = "kevin16"
 
-@ExperimentalDesktopTarget
 internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechInstance {
     private var voice = voiceManager.getVoice(VOICE_NAME)
 
@@ -54,10 +51,8 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
             field = value
         }
 
-    @ExperimentalVoiceApi
     private val defaultVoice = DesktopVoice(voice, true)
 
-    @ExperimentalVoiceApi
     override var currentVoice: Voice? = defaultVoice
         set(newVoice) {
             if (newVoice is DesktopVoice) {
@@ -66,7 +61,6 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
             }
         }
 
-    @ExperimentalVoiceApi
     override val voices: Sequence<Voice> = voiceManager.voices.asSequence().map { DesktopVoice(it, it.name == defaultVoice.name) }
 
     init {

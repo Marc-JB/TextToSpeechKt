@@ -9,7 +9,6 @@ import js_interop.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
-import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
 import kotlin.coroutines.resume
@@ -87,12 +86,10 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
             }
         }
 
-    @ExperimentalVoiceApi
     private val defaultVoice by lazy {
         voiceList.find { it.default }?.let { BrowserVoice(it) }
     }
 
-    @ExperimentalVoiceApi
     override var currentVoice: Voice? = null
         get() = field ?: defaultVoice
         set(value) {
@@ -102,12 +99,10 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
             }
         }
 
-    @ExperimentalVoiceApi
     override val voices: Sequence<Voice> by lazy {
         voiceList.asSequence().map { BrowserVoice(it) }
     }
 
-    @OptIn(ExperimentalVoiceApi::class)
     private fun resetCurrentUtterance() {
         speechSynthesisUtterance = SpeechSynthesisUtterance().also {
             it.volume = internalVolume

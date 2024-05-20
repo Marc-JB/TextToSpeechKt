@@ -1,9 +1,7 @@
 package nl.marc_apps.tts
 
-import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import java.util.*
 
-@ExperimentalVoiceApi
 internal data class DesktopVoice(
     val desktopVoice: com.sun.speech.freetts.Voice,
     override val isDefault: Boolean

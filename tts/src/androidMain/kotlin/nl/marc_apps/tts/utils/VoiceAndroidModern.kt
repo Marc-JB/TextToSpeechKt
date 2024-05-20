@@ -6,9 +6,7 @@ import androidx.annotation.RequiresApi
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
 import nl.marc_apps.tts.Voice
-import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 
-@ExperimentalVoiceApi
 @Parcelize
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 internal data class VoiceAndroidModern(
