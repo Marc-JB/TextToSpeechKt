@@ -16,7 +16,7 @@ private const val VOICE_NAME = "kevin16"
 
 @ExperimentalDesktopTarget
 internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechInstance {
-    private val voice = voiceManager.getVoice(VOICE_NAME)
+    private var voice = voiceManager.getVoice(VOICE_NAME)
 
     override val isSynthesizing = MutableStateFlow(false)
 
@@ -55,33 +55,19 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
         }
 
     @ExperimentalVoiceApi
-    private val defaultVoice = object : Voice {
-        override val name = "Kevin"
-
-        override val isDefault = true
-
-        override val isOnline = false
-
-        override val languageTag = voice.locale.toLanguageTag()
-
-        override val language = voice.locale.displayLanguage
-
-        override val region = voice.locale.displayCountry
-
-        override val locale = voice.locale
-    }
+    private val defaultVoice = DesktopVoice(voice, true)
 
     @ExperimentalVoiceApi
-    @Suppress("SetterBackingFieldAssignment")
     override var currentVoice: Voice? = defaultVoice
-        set(_) {
-            // Ignored: Not supported yet
+        set(newVoice) {
+            if (newVoice is DesktopVoice) {
+                voice = newVoice.desktopVoice
+                field = newVoice
+            }
         }
 
     @ExperimentalVoiceApi
-    override val voices: Sequence<Voice> = sequence {
-        yield(defaultVoice)
-    }
+    override val voices: Sequence<Voice> = voiceManager.voices.asSequence().map { DesktopVoice(it, it.name == defaultVoice.name) }
 
     init {
         voice.allocate()

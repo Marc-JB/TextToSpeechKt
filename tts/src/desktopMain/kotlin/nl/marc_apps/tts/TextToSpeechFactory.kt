@@ -13,7 +13,7 @@ actual class TextToSpeechFactory {
 
     @ExperimentalDesktopTarget
     actual suspend fun create(): Result<TextToSpeechInstance> {
-        System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory")
+        System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory,com.sun.speech.freetts.en.us.cmu_us_awb.AlanVoiceDirectory,de.dfki.lt.freetts.en.us.MbrolaVoiceDirectory")
         val voiceManager = VoiceManager.getInstance()
         return Result.success(TextToSpeechDesktop(voiceManager))
     }

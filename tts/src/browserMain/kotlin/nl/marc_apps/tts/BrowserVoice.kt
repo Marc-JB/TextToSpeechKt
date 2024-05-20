@@ -5,21 +5,12 @@ import org.w3c.speech.SpeechSynthesisVoice
 
 @ExperimentalVoiceApi
 internal data class BrowserVoice(
-    override val name: String,
-    override val isDefault: Boolean,
-    override val isOnline: Boolean,
-    override val languageTag: String,
-    override val language: String,
-    override val region: String?,
     val browserVoice: SpeechSynthesisVoice
 ) : Voice {
-    constructor(voice: SpeechSynthesisVoice) : this(
-        voice.name,
-        voice.default,
-        !voice.localService,
-        voice.lang,
-        voice.lang.substringBefore("-"),
-        if("-" in voice.lang) voice.lang.substringAfter("-") else null,
-        voice
-    )
+    override val name: String = browserVoice.name
+    override val isDefault: Boolean = browserVoice.default
+    override val isOnline: Boolean = !browserVoice.localService
+    override val languageTag: String = browserVoice.lang
+    override val language: String = browserVoice.lang.substringBefore("-")
+    override val region: String? = if("-" in browserVoice.lang) browserVoice.lang.substringAfter("-") else null
 }
