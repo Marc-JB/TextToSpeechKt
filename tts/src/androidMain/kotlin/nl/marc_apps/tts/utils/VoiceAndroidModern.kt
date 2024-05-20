@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
 import nl.marc_apps.tts.Voice
+import java.util.*
 
 @Parcelize
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -13,7 +14,7 @@ internal data class VoiceAndroidModern(
     val androidVoice: android.speech.tts.Voice,
     override val isDefault: Boolean
 ) : Voice {
-    override val locale = androidVoice.locale
+    override val locale: Locale = androidVoice.locale
 
     override val name: String = androidVoice.locale.displayName
 

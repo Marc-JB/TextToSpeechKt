@@ -11,10 +11,7 @@ import androidx.annotation.IntRange
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
-import nl.marc_apps.tts.utils.TtsProgressConverter
-import nl.marc_apps.tts.utils.VoiceAndroidLegacy
-import nl.marc_apps.tts.utils.VoiceAndroidModern
-import nl.marc_apps.tts.utils.getContinuationId
+import nl.marc_apps.tts.utils.*
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -158,23 +155,20 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
             isWarmingUp.value = true
         }
 
+        val params = Bundle().apply {
+            putFloat(KEY_PARAM_VOLUME, internalVolume)
+            putString(KEY_PARAM_UTTERANCE_ID, utteranceId.toString())
+        }
+
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            val params = Bundle()
-            params.putFloat(KEY_PARAM_VOLUME, internalVolume)
-            params.putString(KEY_PARAM_UTTERANCE_ID, utteranceId.toString())
             tts?.speak(text, queueMode, params, utteranceId.toString())
         } else {
-            val params = hashMapOf(
-                KEY_PARAM_VOLUME to internalVolume.toString(),
-                KEY_PARAM_UTTERANCE_ID to utteranceId.toString()
-            )
-
             if (!hasModernProgressListeners) {
                 preIcsQueueSize++
                 isSynthesizing.value = true
             }
 
-            tts?.speak(text, queueMode, params)
+            tts?.speak(text, queueMode, HashMap(params.toMap().mapValues { it.toString() }))
         }
     }
 
