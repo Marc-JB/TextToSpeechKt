@@ -14,9 +14,12 @@ import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.random.Random
 
 /** A TTS instance. Should be [close]d when no longer in use. */
 internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInstance {
+    private val callbacks = mutableMapOf<Long, (Result<Unit>) -> Unit>()
+
     override val isSynthesizing = MutableStateFlow(false)
 
     override val isWarmingUp = MutableStateFlow(false)
@@ -140,15 +143,19 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
             return
         }
 
+        val utteranceId = Random.Default.nextLong()
+
+        callbacks += utteranceId to {
+            callback(it)
+            callbacks.remove(utteranceId)
+        }
+
         speechSynthesisUtterance.onstart = {
-            isWarmingUp.value = false
-            isSynthesizing.value = true
+            onTtsStarted(utteranceId)
         }
 
         speechSynthesisUtterance.onend = {
-            isWarmingUp.value = false
-            isSynthesizing.value = false
-            callback(Result.success(Unit))
+            onTtsCompleted(utteranceId, Result.success(Unit))
         }
 
         enqueue(text, clearQueue)
@@ -171,6 +178,17 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
                 }
             }
         }
+    }
+
+    private fun onTtsStarted(utteranceId: Long) {
+        isWarmingUp.value = false
+        isSynthesizing.value = true
+    }
+
+    private fun onTtsCompleted(utteranceId: Long, result: Result<Unit>) {
+        isWarmingUp.value = false
+        isSynthesizing.value = false
+        callbacks[utteranceId]?.invoke(result)
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
