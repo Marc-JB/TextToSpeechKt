@@ -1,49 +1,39 @@
 package nl.marc_apps.tts.utils
 
 import android.os.Parcel
-import android.os.Parcelable
+import kotlinx.parcelize.Parceler
+import kotlinx.parcelize.Parcelize
 import nl.marc_apps.tts.Voice
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import java.util.*
 
 @ExperimentalVoiceApi
+@Parcelize
 internal data class VoiceAndroidLegacy(
-    override val name: String,
-    override val isDefault: Boolean,
-    override val isOnline: Boolean,
-    override val languageTag: String,
-    override val language: String,
-    override val region: String?,
-    override val locale: Locale
+    override val locale: Locale,
+    override val isDefault: Boolean
 ) : Voice {
-    constructor(parcel: Parcel) : this(
-        parcel.readSerializable() as Locale,
-        parcel.readByte() != 0.toByte()
-    )
-
-    constructor(locale: Locale, isDefault: Boolean) : this(
-        locale.displayName,
-        isDefault,
-        false,
-        locale.language,
-        locale.displayLanguage,
-        locale.displayCountry,
-        locale
-    )
+    override val name: String = locale.displayName
+    override val isOnline: Boolean = false
+    override val languageTag: String = locale.language
+    override val language: String = locale.displayLanguage
+    override val region: String? = locale.displayCountry
 
     override fun equals(other: Any?) = (other as? VoiceAndroidLegacy)?.locale == locale
 
     override fun hashCode() = locale.hashCode()
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeSerializable(locale)
-        parcel.writeByte(if (isDefault) 1 else 0)
-    }
 
-    override fun describeContents() = 0
+    private companion object : Parceler<VoiceAndroidLegacy> {
+        override fun VoiceAndroidLegacy.write(parcel: Parcel, flags: Int) {
+            parcel.writeSerializable(locale)
+            parcel.writeByte(if (isDefault) 1 else 0)
+        }
 
-    companion object CREATOR : Parcelable.Creator<VoiceAndroidLegacy> {
-        override fun createFromParcel(parcel: Parcel) = VoiceAndroidLegacy(parcel)
-
-        override fun newArray(size: Int) = arrayOfNulls<VoiceAndroidLegacy>(size)
+        override fun create(parcel: Parcel): VoiceAndroidLegacy {
+            return VoiceAndroidLegacy(
+                parcel.readSerializable() as Locale,
+                parcel.readByte() != 0.toByte()
+            )
+        }
     }
 }

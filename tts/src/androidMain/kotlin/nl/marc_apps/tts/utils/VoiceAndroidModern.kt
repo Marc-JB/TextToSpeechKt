@@ -2,53 +2,43 @@ package nl.marc_apps.tts.utils
 
 import android.os.Build
 import android.os.Parcel
-import android.os.Parcelable
 import androidx.annotation.RequiresApi
+import kotlinx.parcelize.Parceler
+import kotlinx.parcelize.Parcelize
 import nl.marc_apps.tts.Voice
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 
 @ExperimentalVoiceApi
+@Parcelize
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 internal data class VoiceAndroidModern(
-    override val name: String,
-    override val isDefault: Boolean,
-    override val isOnline: Boolean,
-    override val languageTag: String,
-    override val language: String,
-    override val region: String?,
-    val androidVoice: android.speech.tts.Voice
+    val androidVoice: android.speech.tts.Voice,
+    override val isDefault: Boolean
 ) : Voice {
     override val locale = androidVoice.locale
 
-    constructor(parcel: Parcel) : this(
-        android.speech.tts.Voice.CREATOR.createFromParcel(parcel),
-        parcel.readByte() != 0.toByte()
-    )
+    override val name: String = androidVoice.locale.displayName
 
-    constructor(androidVoice: android.speech.tts.Voice, isDefault: Boolean) : this(
-        androidVoice.locale.displayName,
-        isDefault,
-        androidVoice.isNetworkConnectionRequired,
-        androidVoice.locale.toLanguageTag(),
-        androidVoice.locale.displayLanguage,
-        androidVoice.locale.displayCountry,
-        androidVoice
-    )
+    override val isOnline: Boolean = androidVoice.isNetworkConnectionRequired
+    override val languageTag: String = androidVoice.locale.toLanguageTag()
+    override val language: String = androidVoice.locale.displayLanguage
+    override val region: String? = androidVoice.locale.displayCountry
 
     override fun equals(other: Any?) = (other as? VoiceAndroidModern)?.androidVoice == androidVoice
 
     override fun hashCode() = androidVoice.hashCode()
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        androidVoice.writeToParcel(parcel, flags)
-        parcel.writeByte(if (isDefault) 1 else 0)
-    }
+    private companion object : Parceler<VoiceAndroidModern> {
+        override fun VoiceAndroidModern.write(parcel: Parcel, flags: Int) {
+            androidVoice.writeToParcel(parcel, flags)
+            parcel.writeByte(if (isDefault) 1 else 0)
+        }
 
-    override fun describeContents() = 0
-
-    companion object CREATOR : Parcelable.Creator<VoiceAndroidModern> {
-        override fun createFromParcel(parcel: Parcel) = VoiceAndroidModern(parcel)
-
-        override fun newArray(size: Int) = arrayOfNulls<VoiceAndroidModern>(size)
+        override fun create(parcel: Parcel): VoiceAndroidModern {
+            return VoiceAndroidModern(
+                android.speech.tts.Voice.CREATOR.createFromParcel(parcel),
+                parcel.readByte() != 0.toByte()
+            )
+        }
     }
 }
