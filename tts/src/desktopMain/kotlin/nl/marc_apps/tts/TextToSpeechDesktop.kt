@@ -56,8 +56,12 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
     override var currentVoice: Voice? = defaultVoice
         set(newVoice) {
             if (newVoice is DesktopVoice) {
+                isWarmingUp.value = true
+                voice.deallocate()
                 voice = newVoice.desktopVoice
                 field = newVoice
+                newVoice.desktopVoice.allocate()
+                isWarmingUp.value = false
             }
         }
 
@@ -65,7 +69,7 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
 
     init {
         voice.allocate()
-        isWarmingUp.value = false;
+        isWarmingUp.value = false
     }
 
     override fun enqueue(text: String, clearQueue: Boolean) {

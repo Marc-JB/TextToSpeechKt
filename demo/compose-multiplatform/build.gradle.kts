@@ -60,8 +60,6 @@ kotlin {
         all {
             languageSettings {
                 optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
-                optIn("nl.marc_apps.tts.experimental.ExperimentalVoiceApi")
-                optIn("nl.marc_apps.tts.experimental.ExperimentalDesktopTarget")
             }
         }
 
