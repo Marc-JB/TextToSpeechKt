@@ -19,6 +19,7 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
 
     override val isWarmingUp = MutableStateFlow(true)
 
+    @Deprecated("Use the Voice API")
     override val language = voice.locale.toLanguageTag()
 
     override var volume = 100

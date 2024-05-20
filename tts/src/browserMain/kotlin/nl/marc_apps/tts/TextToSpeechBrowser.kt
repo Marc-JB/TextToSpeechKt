@@ -77,6 +77,7 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
      * Returns a BCP 47 language tag of the selected voice on supported platforms.
      * May return the language code as ISO 639 on older platforms.
      */
+    @Deprecated("Use the Voice API")
     override val language: String
         get() {
             val reportedLanguage = speechSynthesisUtterance.voice?.lang ?: speechSynthesisUtterance.lang

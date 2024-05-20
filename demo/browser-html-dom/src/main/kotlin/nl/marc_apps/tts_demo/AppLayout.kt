@@ -88,7 +88,7 @@ fun AppLayout() {
             }
 
             Span {
-                Text(textToSpeechInstance.language)
+                Text(textToSpeechInstance.currentVoice?.language ?: "...")
             }
         }
 

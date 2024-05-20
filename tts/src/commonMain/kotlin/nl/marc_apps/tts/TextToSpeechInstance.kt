@@ -34,6 +34,7 @@ interface TextToSpeechInstance : Closeable {
      * Returns a BCP 47 language tag of the selected voice on supported platforms.
      * May return the language code as ISO 639 on older platforms.
      */
+    @Deprecated("Use the Voice API")
     val language: String
 
     var currentVoice: Voice?

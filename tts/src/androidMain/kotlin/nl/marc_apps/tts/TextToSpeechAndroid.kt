@@ -11,7 +11,6 @@ import androidx.annotation.IntRange
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
-import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import nl.marc_apps.tts.utils.TtsProgressConverter
 import nl.marc_apps.tts.utils.VoiceAndroidLegacy
 import nl.marc_apps.tts.utils.VoiceAndroidModern
@@ -79,17 +78,16 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
      * Returns a BCP 47 language tag of the selected voice on supported platforms.
      * May return the language code as ISO 639 on older platforms.
      */
+    @Deprecated("Use the Voice API")
     override val language: String
         get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) voiceLocale.toLanguageTag() else voiceLocale.language
 
-    @ExperimentalVoiceApi
     private val defaultVoice: Voice? = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP){
         (tts?.voice ?: tts?.defaultVoice)?.let { VoiceAndroidModern(it, true) }
     } else {
         tts?.language?.let { VoiceAndroidLegacy(it, true) }
     }
 
-    @ExperimentalVoiceApi
     override var currentVoice: Voice? = defaultVoice
         set(value) {
             val result = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP && value is VoiceAndroidModern) {
@@ -102,7 +100,6 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
             }
         }
 
-    @ExperimentalVoiceApi
     override val voices: Sequence<Voice> = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
         (tts?.voices ?: emptySet()).asSequence().map {
             VoiceAndroidModern(it, it == (defaultVoice as? VoiceAndroidModern)?.androidVoice)
