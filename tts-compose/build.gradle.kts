@@ -89,6 +89,10 @@ android {
     buildFeatures {
         compose = true
     }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.kotlin.compiler.extensions.get()
+    }
 }
 
 tasks.withType<KotlinCompile> {
