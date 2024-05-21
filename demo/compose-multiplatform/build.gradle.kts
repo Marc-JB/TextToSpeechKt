@@ -58,6 +58,13 @@ kotlin {
     }
 
     sourceSets {
+        all {
+            languageSettings {
+                optIn("nl.marc_apps.tts.experimental.ExperimentalVoiceApi")
+                optIn("nl.marc_apps.tts.experimental.ExperimentalDesktopTarget")
+            }
+        }
+
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.ui)
