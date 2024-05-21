@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose)
+    alias(libs.plugins.compose.compiler)
 }
 
 val jvmVersion = JavaVersion.VERSION_11
@@ -51,20 +52,12 @@ kotlin {
         common {
             group("browser") {
                 withJs()
-                withWasm()
+                withWasmJs()
             }
         }
     }
 
     sourceSets {
-        all {
-            languageSettings {
-                optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
-                optIn("nl.marc_apps.tts.experimental.ExperimentalVoiceApi")
-                optIn("nl.marc_apps.tts.experimental.ExperimentalDesktopTarget")
-            }
-        }
-
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.ui)
@@ -80,8 +73,8 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(compose.uiTooling)
-            implementation("androidx.navigation:navigation-compose:2.7.5")
-            implementation("androidx.activity:activity-compose:1.8.1")
+            implementation("androidx.navigation:navigation-compose:2.7.7")
+            implementation("androidx.activity:activity-compose:1.9.0")
         }
 
         getByName("desktopMain").dependencies {
@@ -176,10 +169,6 @@ android {
 
     buildFeatures {
         compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlin.compiler.extensions.get()
     }
 
     testOptions {

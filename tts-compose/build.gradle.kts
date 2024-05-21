@@ -13,6 +13,7 @@ plugins {
     `maven-publish`
     signing
     alias(libs.plugins.compose)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.dokka)
 }
 
@@ -50,7 +51,7 @@ kotlin {
         common {
             group("browser") {
                 withJs()
-                withWasm()
+                withWasmJs()
             }
         }
     }
@@ -87,10 +88,6 @@ android {
 
     buildFeatures {
         compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlin.compiler.extensions.get()
     }
 }
 
