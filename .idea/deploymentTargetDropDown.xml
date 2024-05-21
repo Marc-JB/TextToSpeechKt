@@ -2,6 +2,9 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="Run Android Compose Demo">
+        <State />
+      </entry>
       <entry key="demo.android-xml">
         <State />
       </entry>

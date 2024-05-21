@@ -15,10 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import nl.marc_apps.tts.TextToSpeechInstance
 import org.jetbrains.compose.resources.stringResource
-import texttospeechkt.demo.`compose-multiplatform`.generated.resources.Res
-import texttospeechkt.demo.`compose-multiplatform`.generated.resources.action_options_reset_all
-import texttospeechkt.demo.`compose-multiplatform`.generated.resources.options_title
-import texttospeechkt.demo.`compose-multiplatform`.generated.resources.placeholder_voice_unknown
+import texttospeechkt.demo.compose_multiplatform.generated.resources.Res
+import texttospeechkt.demo.compose_multiplatform.generated.resources.action_options_reset_all
+import texttospeechkt.demo.compose_multiplatform.generated.resources.options_title
+import texttospeechkt.demo.compose_multiplatform.generated.resources.placeholder_voice_unknown
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)

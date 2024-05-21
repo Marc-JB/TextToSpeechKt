@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.application)
-    id("org.jetbrains.compose")
+    alias(libs.plugins.compose)
+    // alias(libs.plugins.compose.compiler)
 }
 
 val jvmVersion = JavaVersion.VERSION_11
@@ -18,11 +19,16 @@ val jvmVersion = JavaVersion.VERSION_11
 kotlin {
     androidTarget()
 
-    /*js("browserJs", IR) {
+    js("browserJs", IR) {
         moduleName = "compose-multiplatform"
-        browser()
+        browser {
+            commonWebpackConfig {
+                devServer = devServer ?: KotlinWebpackConfig.DevServer()
+                experiments += "topLevelAwait"
+            }
+        }
         binaries.executable()
-    }*/
+    }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs("browserWasm") {
@@ -45,8 +51,9 @@ kotlin {
     applyDefaultHierarchyTemplate {
         common {
             group("browser") {
-                //withJs()
+                withJs()
                 withWasm()
+                // withWasmJs()
             }
         }
     }
@@ -54,7 +61,6 @@ kotlin {
     sourceSets {
         all {
             languageSettings {
-                optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
                 optIn("nl.marc_apps.tts.experimental.ExperimentalVoiceApi")
                 optIn("nl.marc_apps.tts.experimental.ExperimentalDesktopTarget")
             }
@@ -75,8 +81,8 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(compose.uiTooling)
-            implementation("androidx.navigation:navigation-compose:2.7.5")
-            implementation("androidx.activity:activity-compose:1.8.1")
+            implementation("androidx.navigation:navigation-compose:2.7.7")
+            implementation("androidx.activity:activity-compose:1.9.0")
         }
 
         getByName("desktopMain").dependencies {
@@ -194,10 +200,6 @@ tasks.withType(KotlinCompilationTask::class) {
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
-}
-
-compose.experimental {
-    web.application {}
 }
 
 compose.desktop {

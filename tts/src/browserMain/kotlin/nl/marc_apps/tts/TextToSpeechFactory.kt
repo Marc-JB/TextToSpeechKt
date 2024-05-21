@@ -23,6 +23,7 @@ actual class TextToSpeechFactory(
         }
     }
 
+    @Throws(RuntimeException::class)
     actual suspend fun createOrThrow(): TextToSpeechInstance {
         return create().getOrThrow()
     }

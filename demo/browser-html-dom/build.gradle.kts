@@ -8,7 +8,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.7.3")
 
-    implementation(compose.web.core)
+    implementation(compose.html.core)
     implementation(compose.runtime)
 
     testImplementation(kotlin("test"))

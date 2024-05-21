@@ -489,5 +489,6 @@ Thumbs.db
 
 !/gradle/wrapper/gradle-wrapper.jar
 
-### Kotlin/JS ###
+### Kotlin ###
 kotlin-js-store/
+.kotlin/

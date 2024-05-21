@@ -2,17 +2,17 @@
 android-buildTools = "34.0.0"
 android-compileSdk = "34"
 android-gradlePlugin = "8.2.2"
-androidx-annotation = "1.7.1"
+androidx-annotation = "1.8.0"
 
-compose = "1.6.0"
+compose = "1.6.10"
 
-dokka = "1.9.10"
+dokka = "1.9.20"
 
 freetts_java = "1.2.2"
 
-kotlin = "1.9.22"
-kotlin-compiler-extensions = "1.5.8"
-kotlin-coroutines = "1.8.0"
+kotlin = "1.9.24"
+kotlin-compiler-extensions = "1.5.14"
+kotlin-coroutines = "1.8.1"
 
 tts = "2.5.0"
 
@@ -33,6 +33,7 @@ android-application = { id = "com.android.application", version.ref = "android-g
 android-library = { id = "com.android.library", version.ref = "android-gradlePlugin" }
 
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 
