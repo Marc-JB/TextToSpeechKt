@@ -49,7 +49,8 @@ kotlin {
         common {
             group("browser") {
                 withJs()
-                withWasmJs()
+                withWasm()
+                // withWasmJs()
             }
         }
     }

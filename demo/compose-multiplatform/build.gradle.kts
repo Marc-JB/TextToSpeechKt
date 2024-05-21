@@ -11,7 +11,7 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose)
-    alias(libs.plugins.compose.compiler)
+    // alias(libs.plugins.compose.compiler)
 }
 
 val jvmVersion = JavaVersion.VERSION_11
@@ -52,7 +52,8 @@ kotlin {
         common {
             group("browser") {
                 withJs()
-                withWasmJs()
+                withWasm()
+                // withWasmJs()
             }
         }
     }

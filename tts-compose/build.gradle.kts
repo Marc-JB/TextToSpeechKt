@@ -3,7 +3,6 @@
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 
@@ -13,7 +12,7 @@ plugins {
     `maven-publish`
     signing
     alias(libs.plugins.compose)
-    alias(libs.plugins.compose.compiler)
+    // alias(libs.plugins.compose.compiler)
     alias(libs.plugins.dokka)
 }
 
@@ -51,7 +50,8 @@ kotlin {
         common {
             group("browser") {
                 withJs()
-                withWasmJs()
+                withWasm()
+                // withWasmJs()
             }
         }
     }
