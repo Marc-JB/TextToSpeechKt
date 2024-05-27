@@ -51,6 +51,7 @@ kotlin {
             group("browser") {
                 withJs()
                 withWasm()
+                // withWasmJs()
             }
         }
     }

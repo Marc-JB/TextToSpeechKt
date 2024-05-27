@@ -4,9 +4,9 @@ android-compileSdk = "34"
 android-gradlePlugin = "8.2.2"
 androidx-annotation = "1.8.0"
 
-compose = "1.6.10-rc03"
+compose = "1.6.10"
 
-dokka = "1.9.10"
+dokka = "1.9.20"
 
 freetts_java = "1.2.2"
 
@@ -33,6 +33,7 @@ android-application = { id = "com.android.application", version.ref = "android-g
 android-library = { id = "com.android.library", version.ref = "android-gradlePlugin" }
 
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 
