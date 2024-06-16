@@ -13,6 +13,10 @@ class TextToSpeechHandler(voiceManager: VoiceManager, private var voice: com.sun
         voice.speak(text)
     }
 
+    override fun clearQueue() {
+        voice.outputQueue.removeAll()
+    }
+
     override fun close() {
         voice.deallocate()
     }

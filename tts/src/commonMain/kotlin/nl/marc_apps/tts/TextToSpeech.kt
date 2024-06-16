@@ -96,7 +96,15 @@ class TextToSpeech(private val implementation: TextToSpeechHandler) : AutoClosea
         continuations.remove(utteranceId)?.resumeWith(result)
     }
 
+    fun clearQueue() {
+        callbacks.clear()
+        continuations.clear()
+        implementation.clearQueue()
+    }
+
     override fun close() {
         implementation.close()
+        callbacks.clear()
+        continuations.clear()
     }
 }

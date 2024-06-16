@@ -37,6 +37,10 @@ class TextToSpeechHandler(context: Window = window) : TextToSpeechHandler, Callb
         this.onComplete = onComplete
     }
 
+    override fun clearQueue() {
+        speechSynthesis.cancel()
+    }
+
     override fun close() {
         speechSynthesis.cancel()
     }

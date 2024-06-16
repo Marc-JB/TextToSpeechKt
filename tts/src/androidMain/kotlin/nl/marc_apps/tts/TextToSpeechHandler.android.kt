@@ -42,8 +42,17 @@ class TextToSpeechHandler(private var tts: TextToSpeech?): TextToSpeechHandler, 
         }
     }
 
-    override fun close() {
+    override fun clearQueue() {
         tts?.stop()
+    }
+
+    override fun close() {
+        if (hasModernProgressListeners) {
+            tts?.setOnUtteranceProgressListener(null)
+        } else {
+            tts?.setOnUtteranceCompletedListener(null)
+        }
+        tts?.shutdown()
         tts = null
     }
 
