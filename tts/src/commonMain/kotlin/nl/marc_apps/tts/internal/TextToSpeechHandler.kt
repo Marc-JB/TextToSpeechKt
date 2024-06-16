@@ -1,4 +1,4 @@
 package nl.marc_apps.tts.internal
 
-interface TextToSpeechHandler {
+interface TextToSpeechHandler : AutoCloseable {
 }

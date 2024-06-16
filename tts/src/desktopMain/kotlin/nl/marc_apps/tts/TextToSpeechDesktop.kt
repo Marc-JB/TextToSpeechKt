@@ -10,14 +10,10 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-private const val VOICE_NAME = "kevin16"
-
-internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechInstance {
-    private var voice = voiceManager.getVoice(VOICE_NAME)
-
+internal class TextToSpeechDesktop(voiceManager: VoiceManager, private var voice: com.sun.speech.freetts.Voice) : TextToSpeechInstance {
     override val isSynthesizing = MutableStateFlow(false)
 
-    override val isWarmingUp = MutableStateFlow(true)
+    override val isWarmingUp = MutableStateFlow(false)
 
     @Deprecated("Use the Voice API")
     override val language = voice.locale.toLanguageTag()
@@ -67,11 +63,6 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
         }
 
     override val voices: Sequence<Voice> = voiceManager.voices.asSequence().map { DesktopVoice(it, it.name == defaultVoice.name) }
-
-    init {
-        voice.allocate()
-        isWarmingUp.value = false
-    }
 
     override fun enqueue(text: String, clearQueue: Boolean) {
         isSynthesizing.value = true

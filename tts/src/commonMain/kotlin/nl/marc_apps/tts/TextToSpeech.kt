@@ -12,7 +12,7 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class TextToSpeech(private val implementation: TextToSpeechHandler) {
+class TextToSpeech(private val implementation: TextToSpeechHandler) : AutoCloseable {
     private val callbacks = mutableMapOf<Any, (Result<Unit>) -> Unit>()
     private val continuations = mutableMapOf<Any, Continuation<Unit>>()
 
@@ -32,7 +32,7 @@ class TextToSpeech(private val implementation: TextToSpeechHandler) {
 
             callbacks += utteranceId to callback
 
-            implementation.enqueue(text, clearQueue)
+            implementation.enqueue(text, clearQueue, utteranceId)
         } else if (implementation is BlockingSynthesisHandler){
             isWarmingUp.value = false
             isSynthesizing.value = true
@@ -51,7 +51,7 @@ class TextToSpeech(private val implementation: TextToSpeechHandler) {
             suspendCancellableCoroutine { cont ->
                 continuations += utteranceId to cont
 
-                implementation.enqueue(text, clearQueue)
+                implementation.enqueue(text, clearQueue, utteranceId)
 
                 cont.invokeOnCancellation {
                     // TODO
@@ -60,6 +60,7 @@ class TextToSpeech(private val implementation: TextToSpeechHandler) {
         } else if (implementation is BlockingSynthesisHandler){
             isWarmingUp.value = false
             isSynthesizing.value = true
+
             coroutineScope {
                 withContext(Dispatchers.Default) {
                     suspendCancellableCoroutine { cont ->
@@ -75,10 +76,10 @@ class TextToSpeech(private val implementation: TextToSpeechHandler) {
                         }
                     }
                 }
-
-                isWarmingUp.value = false
-                isSynthesizing.value = false
             }
+
+            isWarmingUp.value = false
+            isSynthesizing.value = false
         }
     }
 
@@ -93,5 +94,9 @@ class TextToSpeech(private val implementation: TextToSpeechHandler) {
 
         callbacks.remove(utteranceId)?.invoke(result)
         continuations.remove(utteranceId)?.resumeWith(result)
+    }
+
+    override fun close() {
+        implementation.close()
     }
 }

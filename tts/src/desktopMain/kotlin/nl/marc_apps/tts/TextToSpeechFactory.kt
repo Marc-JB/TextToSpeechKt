@@ -1,6 +1,8 @@
 package nl.marc_apps.tts
 
 import com.sun.speech.freetts.VoiceManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 actual class TextToSpeechFactory {
     private val providedVoices = arrayOf(
@@ -14,7 +16,11 @@ actual class TextToSpeechFactory {
     actual suspend fun create(): Result<TextToSpeechInstance> {
         System.setProperty("freetts.voices", providedVoices.joinToString(separator = ","))
         val voiceManager = VoiceManager.getInstance()
-        return Result.success(TextToSpeechDesktop(voiceManager))
+        val voice = voiceManager.getVoice(VOICE_NAME)
+        withContext(Dispatchers.Default) {
+            voice.allocate()
+        }
+        return Result.success(TextToSpeechDesktop(voiceManager, voice))
     }
 
     @Throws(RuntimeException::class)
@@ -24,5 +30,9 @@ actual class TextToSpeechFactory {
 
     actual suspend fun createOrNull(): TextToSpeechInstance? {
         return create().getOrNull()
+    }
+
+    companion object {
+        private const val VOICE_NAME = "kevin16"
     }
 }
