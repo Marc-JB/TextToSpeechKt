@@ -20,7 +20,7 @@ actual class TextToSpeechFactory {
         withContext(Dispatchers.Default) {
             voice.allocate()
         }
-        return Result.success(TextToSpeechDesktop(voiceManager, voice))
+        return Result.success(TextToSpeech(TextToSpeechHandler(voiceManager, voice)))
     }
 
     @Throws(RuntimeException::class)

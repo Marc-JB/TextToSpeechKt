@@ -19,26 +19,23 @@ import android.speech.tts.TextToSpeech as AndroidTTS
 
 /** A TTS instance. Should be [close]d when no longer in use. */
 @TargetApi(VERSION_CODES.DONUT)
-internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechInstance {
+internal class TextToSpeechAndroid(private var tts: AndroidTTS?) {
     private val callbacks = mutableMapOf<UUID, (Result<Unit>) -> Unit>()
 
-    override val isSynthesizing = MutableStateFlow(false)
+    val isSynthesizing = MutableStateFlow(false)
 
-    override val isWarmingUp = MutableStateFlow(false)
+    val isWarmingUp = MutableStateFlow(false)
 
     private var hasSpoken = false
 
     private var preIcsQueueSize = 0
-
-    private val internalVolume: Float
-        get() = if(!isMuted) volume / 100f else 0f
 
     /**
      * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
      * Changes only affect new calls to the [say] method.
      */
     @IntRange(from = TextToSpeechInstance.VOLUME_MIN.toLong(), to = TextToSpeechInstance.VOLUME_MAX.toLong())
-    override var volume: Int = TextToSpeechInstance.VOLUME_DEFAULT
+    var volume: Int = TextToSpeechInstance.VOLUME_DEFAULT
         set(value) {
             if(TextToSpeechFactory.canChangeVolume) {
                 field = when {
@@ -49,20 +46,13 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
             }
         }
 
-    /**
-     * Alternative to setting [volume] to zero.
-     * Setting this to true (and back to false) doesn't change the value of [volume].
-     * Changes only affect new calls to the [say] method.
-     */
-    override var isMuted: Boolean = false
-
-    override var pitch: Float = TextToSpeechInstance.VOICE_PITCH_DEFAULT
+    var pitch: Float = TextToSpeechInstance.VOICE_PITCH_DEFAULT
         set(value) {
             field = value
             tts?.setPitch(value)
         }
 
-    override var rate: Float = TextToSpeechInstance.VOICE_RATE_DEFAULT
+    var rate: Float = TextToSpeechInstance.VOICE_RATE_DEFAULT
         set(value) {
             field = value
             tts?.setSpeechRate(value)
@@ -71,21 +61,13 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     private val voiceLocale: Locale
         get() = (if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) tts?.voice?.locale else tts?.language) ?: Locale.getDefault()
 
-    /**
-     * Returns a BCP 47 language tag of the selected voice on supported platforms.
-     * May return the language code as ISO 639 on older platforms.
-     */
-    @Deprecated("Use the Voice API")
-    override val language: String
-        get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) voiceLocale.toLanguageTag() else voiceLocale.language
-
     private val defaultVoice: Voice? = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP){
         (tts?.voice ?: tts?.defaultVoice)?.let { VoiceAndroidModern(it, true) }
     } else {
         tts?.language?.let { VoiceAndroidLegacy(it, true) }
     }
 
-    override var currentVoice: Voice? = defaultVoice
+    var currentVoice: Voice? = defaultVoice
         set(value) {
             val result = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP && value is VoiceAndroidModern) {
                 tts?.setVoice(value.androidVoice)
@@ -97,7 +79,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
             }
         }
 
-    override val voices: Sequence<Voice> = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+    val voices: Sequence<Voice> = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
         (tts?.voices ?: emptySet()).asSequence().map {
             VoiceAndroidModern(it, it == (defaultVoice as? VoiceAndroidModern)?.androidVoice)
         }
@@ -130,13 +112,13 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun enqueue(text: String, clearQueue: Boolean) {
+    fun enqueue(text: String, clearQueue: Boolean) {
         say(text, clearQueue) {}
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
-        if(isMuted || internalVolume == 0f) {
+    fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
+        if(volume == 0) {
             if(clearQueue) stop()
             callback(Result.success(Unit))
             return
@@ -156,7 +138,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
 
         val params = Bundle().apply {
-            putFloat(KEY_PARAM_VOLUME, internalVolume)
+            putFloat(KEY_PARAM_VOLUME, volume / 100f)
             putString(KEY_PARAM_UTTERANCE_ID, utteranceId.toString())
         }
 
@@ -173,7 +155,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean){
+    suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean){
         suspendCancellableCoroutine { cont ->
             say(text, clearQueue) {
                 if (it.isSuccess) {
@@ -212,11 +194,8 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         callbacks[utteranceId]?.invoke(result)
     }
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun plusAssign(text: String) = enqueue(text, false)
-
     /** Clears the internal queue, but doesn't close used resources. */
-    override fun stop() {
+    fun stop() {
         tts?.stop()
 
         if (!hasModernProgressListeners) {
@@ -226,7 +205,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     }
 
     /** Clears the internal queue and closes used resources (if possible) */
-    override fun close() {
+    fun close() {
         stop()
         if (hasModernProgressListeners) {
             tts?.setOnUtteranceProgressListener(null)

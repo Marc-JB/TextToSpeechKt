@@ -10,31 +10,22 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-internal class TextToSpeechDesktop(voiceManager: VoiceManager, private var voice: com.sun.speech.freetts.Voice) : TextToSpeechInstance {
-    override val isSynthesizing = MutableStateFlow(false)
+internal class TextToSpeechDesktop(voiceManager: VoiceManager, private var voice: com.sun.speech.freetts.Voice) {
+    val isSynthesizing = MutableStateFlow(false)
 
-    override val isWarmingUp = MutableStateFlow(false)
+    val isWarmingUp = MutableStateFlow(false)
 
-    @Deprecated("Use the Voice API")
-    override val language = voice.locale.toLanguageTag()
-
-    override var volume = 100
+    var volume = 100
         set(value) {
             if (value in 0..100) {
-                voice.volume = if(isMuted) 0f else value / 100f
+                voice.volume = value / 100f
                 field = value
             }
         }
 
-    override var isMuted = false
-        set(value) {
-            voice.volume = if(value) 0f else volume / 100f
-            field = value
-        }
-
     private val defaultPitch = voice.pitch
 
-    override var pitch = 1f
+    var pitch = 1f
         set(value) {
             voice.pitch = value * defaultPitch
             field = value
@@ -42,7 +33,7 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager, private var voice
 
     private val defaultRate = voice.rate
 
-    override var rate = 1f
+    var rate = 1f
         set(value) {
             voice.rate = value * defaultRate
             field = value
@@ -50,7 +41,7 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager, private var voice
 
     private val defaultVoice = DesktopVoice(voice, true)
 
-    override var currentVoice: Voice? = defaultVoice
+    var currentVoice: Voice? = defaultVoice
         set(newVoice) {
             if (newVoice is DesktopVoice) {
                 isWarmingUp.value = true
@@ -62,15 +53,15 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager, private var voice
             }
         }
 
-    override val voices: Sequence<Voice> = voiceManager.voices.asSequence().map { DesktopVoice(it, it.name == defaultVoice.name) }
+    val voices: Sequence<Voice> = voiceManager.voices.asSequence().map { DesktopVoice(it, it.name == defaultVoice.name) }
 
-    override fun enqueue(text: String, clearQueue: Boolean) {
+    fun enqueue(text: String, clearQueue: Boolean) {
         isSynthesizing.value = true
         voice.speak(text)
         isSynthesizing.value = false
     }
 
-    override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean) {
+    suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean) {
         isSynthesizing.value = true
         coroutineScope {
             withContext(Dispatchers.Default) {
@@ -93,22 +84,18 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager, private var voice
         }
     }
 
-    override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
+    fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
         isSynthesizing.value = true
         voice.speak(text)
         isSynthesizing.value = false
         callback(Result.success(Unit))
     }
 
-    override fun plusAssign(text: String) {
-        enqueue(text)
-    }
-
-    override fun stop() {
+    fun stop() {
         voice.outputQueue.removeAll()
     }
 
-    override fun close() {
+    fun close() {
         voice.deallocate()
     }
 }

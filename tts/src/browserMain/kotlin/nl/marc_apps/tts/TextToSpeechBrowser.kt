@@ -16,12 +16,12 @@ import kotlin.coroutines.resumeWithException
 import kotlin.random.Random
 
 /** A TTS instance. Should be [close]d when no longer in use. */
-internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInstance {
+internal class TextToSpeechBrowser(context: Window = window) {
     private val callbacks = mutableMapOf<Long, (Result<Unit>) -> Unit>()
 
-    override val isSynthesizing = MutableStateFlow(false)
+    val isSynthesizing = MutableStateFlow(false)
 
-    override val isWarmingUp = MutableStateFlow(false)
+    val isWarmingUp = MutableStateFlow(false)
 
     private var hasSpoken = false
 
@@ -29,41 +29,27 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
 
     private var speechSynthesisUtterance = SpeechSynthesisUtterance()
 
-    private val internalVolume: Float
-        get() = if(!isMuted) volume / 100f else 0f
-
     /**
      * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
      * Changes only affect new calls to the [say] method.
      */
-    override var volume: Int = TextToSpeechInstance.VOLUME_DEFAULT
+    var volume: Int = TextToSpeechInstance.VOLUME_DEFAULT
         set(value) {
             field = when {
                 value < TextToSpeechInstance.VOLUME_MIN -> TextToSpeechInstance.VOLUME_MIN
                 value > TextToSpeechInstance.VOLUME_MAX -> TextToSpeechInstance.VOLUME_MAX
                 else -> value
             }
-            speechSynthesisUtterance.volume = internalVolume
+            speechSynthesisUtterance.volume = volume / 100f
         }
 
-    /**
-     * Alternative to setting [volume] to zero.
-     * Setting this to true (and back to false) doesn't change the value of [volume].
-     * Changes only affect new calls to the [say] method.
-     */
-    override var isMuted = false
-        set(value) {
-            field = value
-            speechSynthesisUtterance.volume = internalVolume
-        }
-
-    override var pitch = TextToSpeechInstance.VOICE_PITCH_DEFAULT
+    var pitch = TextToSpeechInstance.VOICE_PITCH_DEFAULT
         set(value) {
             field = value
             speechSynthesisUtterance.pitch = value
         }
 
-    override var rate = TextToSpeechInstance.VOICE_RATE_DEFAULT
+    var rate = TextToSpeechInstance.VOICE_RATE_DEFAULT
         set(value) {
             field = value
             speechSynthesisUtterance.rate = value
@@ -73,25 +59,11 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
         getVoiceList(speechSynthesis)
     }
 
-    /**
-     * Returns a BCP 47 language tag of the selected voice on supported platforms.
-     * May return the language code as ISO 639 on older platforms.
-     */
-    @Deprecated("Use the Voice API")
-    override val language: String
-        get() {
-            val reportedLanguage = speechSynthesisUtterance.voice?.lang ?: speechSynthesisUtterance.lang
-            return reportedLanguage.ifBlank {
-                val defaultLanguage = voiceList.find { it.default }?.lang
-                if (defaultLanguage.isNullOrBlank()) "Unknown" else defaultLanguage
-            }
-        }
-
     private val defaultVoice by lazy {
         voiceList.find { it.default }?.let { BrowserVoice(it) }
     }
 
-    override var currentVoice: Voice? = null
+    var currentVoice: Voice? = null
         get() = field ?: defaultVoice
         set(value) {
             if (value is BrowserVoice) {
@@ -100,13 +72,13 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
             }
         }
 
-    override val voices: Sequence<Voice> by lazy {
+    val voices: Sequence<Voice> by lazy {
         voiceList.asSequence().map { BrowserVoice(it) }
     }
 
     private fun resetCurrentUtterance() {
         speechSynthesisUtterance = SpeechSynthesisUtterance().also {
-            it.volume = internalVolume
+            it.volume = volume / 100f
             it.pitch = pitch
             it.rate = rate
             it.voice = (currentVoice as? BrowserVoice)?.browserVoice
@@ -114,8 +86,8 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun enqueue(text: String, clearQueue: Boolean) {
-        if(isMuted || internalVolume == 0f) {
+    fun enqueue(text: String, clearQueue: Boolean) {
+        if(volume == 0) {
             if(clearQueue) stop()
             return
         }
@@ -132,8 +104,8 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
-        if(isMuted || internalVolume == 0f) {
+    fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
+        if(volume == 0) {
             if(clearQueue) stop()
             callback(Result.success(Unit))
             return
@@ -158,7 +130,7 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean) {
+    suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean) {
         suspendCancellableCoroutine { cont ->
             say(text, clearQueue) {
                 if (it.isSuccess) {
@@ -187,18 +159,13 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
         callbacks[utteranceId]?.invoke(result)
     }
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun plusAssign(text: String) {
-        enqueue(text, false)
-    }
-
     /** Clears the internal queue, but doesn't close used resources. */
-    override fun stop() {
+    fun stop() {
         speechSynthesis.cancel()
     }
 
     /** Clears the internal queue and closes used resources (if possible) */
-    override fun close() {
+    fun close() {
         speechSynthesis.cancel()
     }
 }

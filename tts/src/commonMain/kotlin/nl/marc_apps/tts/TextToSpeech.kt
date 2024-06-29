@@ -3,6 +3,7 @@ package nl.marc_apps.tts
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import nl.marc_apps.tts.internal.BlockingSynthesisHandler
@@ -12,13 +13,22 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class TextToSpeech(private val implementation: TextToSpeechHandler) : AutoCloseable {
+class TextToSpeech(private val implementation: TextToSpeechHandler) : TextToSpeechInstance {
     private val callbacks = mutableMapOf<Any, (Result<Unit>) -> Unit>()
     private val continuations = mutableMapOf<Any, Continuation<Unit>>()
 
-    val isSynthesizing = MutableStateFlow(false)
+    override val currentState = MutableStateFlow(TextToSpeechInstance.State.QUEUE_EMPTY)
 
-    val isWarmingUp = MutableStateFlow(false)
+    override val volume: MutableStateFlow<Int>
+        get() = TODO("Not yet implemented")
+    override val pitch: MutableStateFlow<Float>
+        get() = TODO("Not yet implemented")
+    override val rate: MutableStateFlow<Float>
+        get() = TODO("Not yet implemented")
+    override val currentVoice: StateFlow<Voice?>
+        get() = TODO("Not yet implemented")
+    override val voices: Sequence<Voice>
+        get() = TODO("Not yet implemented")
 
     init {
         if (implementation is CallbackQueueHandler){
@@ -26,46 +36,43 @@ class TextToSpeech(private val implementation: TextToSpeechHandler) : AutoClosea
         }
     }
 
-    fun enqueue(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit){
+    override fun say(text: String, callback: (Result<Unit>) -> Unit){
         if (implementation is CallbackQueueHandler){
             val utteranceId = implementation.createUtteranceId()
 
             callbacks += utteranceId to callback
 
-            implementation.enqueue(text, clearQueue, utteranceId)
+            implementation.enqueue(text, false, utteranceId)
         } else if (implementation is BlockingSynthesisHandler){
-            isWarmingUp.value = false
-            isSynthesizing.value = true
+            currentState.value = TextToSpeechInstance.State.SYNTHESIZING
 
-            implementation.enqueue(text, clearQueue)
+            implementation.enqueue(text, false)
 
-            isWarmingUp.value = false
-            isSynthesizing.value = false
+            currentState.value = TextToSpeechInstance.State.QUEUE_EMPTY
         }
     }
 
-    suspend fun enqueue(text: String, clearQueue: Boolean){
+    override suspend fun say(text: String){
         if (implementation is CallbackQueueHandler){
             val utteranceId = implementation.createUtteranceId()
 
             suspendCancellableCoroutine { cont ->
                 continuations += utteranceId to cont
 
-                implementation.enqueue(text, clearQueue, utteranceId)
+                implementation.enqueue(text, false, utteranceId)
 
                 cont.invokeOnCancellation {
                     // TODO
                 }
             }
         } else if (implementation is BlockingSynthesisHandler){
-            isWarmingUp.value = false
-            isSynthesizing.value = true
+            currentState.value = TextToSpeechInstance.State.SYNTHESIZING
 
             coroutineScope {
                 withContext(Dispatchers.Default) {
                     suspendCancellableCoroutine { cont ->
                         try {
-                            implementation.enqueue(text, clearQueue)
+                            implementation.enqueue(text, false)
                             cont.resume(Unit)
                         } catch (throwable: Throwable) {
                             cont.resumeWithException(throwable)
@@ -78,25 +85,30 @@ class TextToSpeech(private val implementation: TextToSpeechHandler) : AutoClosea
                 }
             }
 
-            isWarmingUp.value = false
-            isSynthesizing.value = false
+            currentState.value = TextToSpeechInstance.State.QUEUE_EMPTY
         }
     }
 
+    override fun enqueue(text: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun plusAssign(text: String) {
+        TODO("Not yet implemented")
+    }
+
     private fun onTtsStarted(utteranceId: Any) {
-        isWarmingUp.value = false
-        isSynthesizing.value = true
+        currentState.value = TextToSpeechInstance.State.SYNTHESIZING
     }
 
     private fun onTtsCompleted(utteranceId: Any, result: Result<Unit>) {
-        isWarmingUp.value = false
-        isSynthesizing.value = false
+        currentState.value = TextToSpeechInstance.State.QUEUE_EMPTY
 
         callbacks.remove(utteranceId)?.invoke(result)
         continuations.remove(utteranceId)?.resumeWith(result)
     }
 
-    fun clearQueue() {
+    override fun stop() {
         callbacks.clear()
         continuations.clear()
         implementation.clearQueue()

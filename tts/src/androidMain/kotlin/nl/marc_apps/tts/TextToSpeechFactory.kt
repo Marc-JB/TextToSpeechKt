@@ -32,18 +32,17 @@ actual class TextToSpeechFactory(
 
     @Throws(RuntimeException::class)
     actual suspend fun createOrThrow(): TextToSpeechInstance {
-        return suspendCoroutine { continuation ->
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.DONUT) {
-                continuation.resumeWithException(TextToSpeechNotSupportedError())
-                return@suspendCoroutine
-            }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.DONUT) {
+            throw TextToSpeechNotSupportedError()
+        }
 
+        return suspendCoroutine { continuation ->
             lateinit var obj: TextToSpeech
 
             try {
                 val initListener = TextToSpeech.OnInitListener { responseCode ->
                     if (responseCode == TextToSpeech.SUCCESS) {
-                        continuation.resume(TextToSpeechAndroid(obj))
+                        continuation.resume(TextToSpeech(TextToSpeechHandler(obj)))
                     } else {
                         continuation.resumeWithException(ErrorCodes.mapToThrowable(responseCode))
                     }

@@ -1,56 +1,36 @@
 package nl.marc_apps.tts
 
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /** A TTS instance. Should be [close]d when no longer in use. */
-interface TextToSpeechInstance : Closeable {
-    val isSynthesizing: StateFlow<Boolean>
-
-    /**
-     * Value indicating if the engine is warming up.
-     * Is true after [enqueue] or [say] has been called the first time,
-     * but before [isSynthesizing] is true. Is false otherwise.
-     */
-    val isWarmingUp: StateFlow<Boolean>
+interface TextToSpeechInstance : AutoCloseable {
+    val currentState: StateFlow<State>
 
     /**
      * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
      * Changes only affect new calls to the [say] method.
      */
-    var volume: Int
+    val volume: MutableStateFlow<Int>
 
-    /**
-     * Alternative to setting [volume] to zero.
-     * Setting this to true (and back to false) doesn't change the value of [volume].
-     * Changes only affect new calls to the [say] method.
-     */
-    var isMuted: Boolean
+    val pitch: MutableStateFlow<Float>
 
-    var pitch: Float
+    val rate: MutableStateFlow<Float>
 
-    var rate: Float
-
-    /**
-     * Returns a BCP 47 language tag of the selected voice on supported platforms.
-     * May return the language code as ISO 639 on older platforms.
-     */
-    @Deprecated("Use the Voice API")
-    val language: String
-
-    var currentVoice: Voice?
+    val currentVoice: StateFlow<Voice?>
 
     val voices: Sequence<Voice>
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    fun enqueue(text: String, clearQueue: Boolean = false)
+    /** Adds the given [text] to the internal queue. */
+    fun enqueue(text: String)
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    fun say(text: String, clearQueue: Boolean = false, callback: (Result<Unit>) -> Unit)
+    /** Adds the given [text] to the internal queue. */
+    fun say(text: String, callback: (Result<Unit>) -> Unit)
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    suspend fun say(text: String, clearQueue: Boolean = false, clearQueueOnCancellation: Boolean = false)
+    /** Adds the given [text] to the internal queue. */
+    suspend fun say(text: String)
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
+    /** Adds the given [text] to the internal queue. */
     operator fun plusAssign(text: String)
 
     /** Clears the internal queue, but doesn't close used resources. */
@@ -58,6 +38,12 @@ interface TextToSpeechInstance : Closeable {
 
     /** Clears the internal queue and closes used resources (if possible) */
     override fun close()
+
+    enum class State {
+        LOADING,
+        SYNTHESIZING,
+        QUEUE_EMPTY
+    }
 
     companion object {
         const val VOLUME_MIN = 0
