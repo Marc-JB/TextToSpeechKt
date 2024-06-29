@@ -11,7 +11,8 @@ interface TextToSpeechInstance : AutoCloseable {
      * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
      * Changes only affect new calls to the [say] method.
      */
-    val volume: MutableStateFlow<Int>
+    var volume: Int
+    val currentVolume: StateFlow<Int>
 
     val pitch: MutableStateFlow<Float>
 

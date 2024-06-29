@@ -4,6 +4,7 @@ import js_interop.Window
 import js_interop.getSpeechSynthesis
 import js_interop.window
 import nl.marc_apps.tts.internal.CallbackQueueHandler
+import nl.marc_apps.tts.internal.EnqueueOptions
 import nl.marc_apps.tts.internal.TextToSpeechHandler
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
@@ -17,7 +18,7 @@ class TextToSpeechHandler(context: Window = window) : TextToSpeechHandler, Callb
 
     override fun createUtteranceId(): Any = Random.Default.nextLong()
 
-    override fun enqueue(text: String, clearQueue: Boolean, utteranceId: Any) {
+    override fun enqueue(text: String, utteranceId: Any, options: EnqueueOptions) {
         val speechSynthesisUtterance = SpeechSynthesisUtterance()
 
         speechSynthesisUtterance.onstart = {
@@ -29,6 +30,7 @@ class TextToSpeechHandler(context: Window = window) : TextToSpeechHandler, Callb
         }
 
         speechSynthesisUtterance.text = text
+        speechSynthesisUtterance.volume = options.volume / 100f
         speechSynthesis.speak(speechSynthesisUtterance)
     }
 

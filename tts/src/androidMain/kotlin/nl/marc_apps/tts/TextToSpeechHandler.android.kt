@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import androidx.annotation.ChecksSdkIntAtLeast
 import nl.marc_apps.tts.internal.CallbackQueueHandler
+import nl.marc_apps.tts.internal.EnqueueOptions
 import nl.marc_apps.tts.internal.TextToSpeechHandler
 import nl.marc_apps.tts.utils.TtsProgressConverter
 import nl.marc_apps.tts.utils.getContinuationId
@@ -17,10 +18,11 @@ import java.util.*
 class TextToSpeechHandler(private var tts: TextToSpeech?): TextToSpeechHandler, CallbackQueueHandler {
     override fun createUtteranceId(): Any = UUID.randomUUID()
 
-    override fun enqueue(text: String, clearQueue: Boolean, utteranceId: Any) {
-        val queueMode = if(clearQueue) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
+    override fun enqueue(text: String, utteranceId: Any, options: EnqueueOptions) {
+        val queueMode = if(options.clearQueue) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
 
         val params = Bundle().apply {
+            putFloat(KEY_PARAM_VOLUME, options.volume / 100f)
             putString(KEY_PARAM_UTTERANCE_ID, utteranceId.toString())
         }
 
@@ -57,6 +59,7 @@ class TextToSpeechHandler(private var tts: TextToSpeech?): TextToSpeechHandler, 
     }
 
     companion object {
+        private const val KEY_PARAM_VOLUME = "volume"
         private const val KEY_PARAM_UTTERANCE_ID = "utteranceId"
 
         @ChecksSdkIntAtLeast(api = VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
