@@ -45,11 +45,11 @@ class TextToSpeech(private val implementation: TextToSpeechHandler) : TextToSpee
             currentRate.value = value
         }
 
-    override val currentVoice: StateFlow<Voice?>
-        get() = TODO("Not yet implemented")
+    override val voice: Voice?
+        get() = implementation.voice
 
     override val voices: Sequence<Voice>
-        get() = TODO("Not yet implemented")
+        get() = implementation.voices
 
     init {
         if (implementation is CallbackQueueHandler){

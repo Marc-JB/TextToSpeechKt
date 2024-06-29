@@ -9,14 +9,34 @@ import androidx.annotation.ChecksSdkIntAtLeast
 import nl.marc_apps.tts.internal.CallbackQueueHandler
 import nl.marc_apps.tts.internal.EnqueueOptions
 import nl.marc_apps.tts.internal.TextToSpeechHandler
-import nl.marc_apps.tts.utils.TtsProgressConverter
-import nl.marc_apps.tts.utils.getContinuationId
-import nl.marc_apps.tts.utils.toMap
+import nl.marc_apps.tts.utils.*
+import nl.marc_apps.tts.utils.VoiceAndroidLegacy
+import nl.marc_apps.tts.utils.VoiceAndroidModern
 import java.util.*
 
 @TargetApi(VERSION_CODES.DONUT)
 class TextToSpeechHandler(private var tts: TextToSpeech?): TextToSpeechHandler, CallbackQueueHandler {
     override fun createUtteranceId(): Any = UUID.randomUUID()
+
+    private val defaultVoice: Voice? = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP){
+        (tts?.voice ?: tts?.defaultVoice)?.let { VoiceAndroidModern(it, true) }
+    } else {
+        tts?.language?.let { VoiceAndroidLegacy(it, true) }
+    }
+
+    override val voice: Voice? = defaultVoice
+
+    override val voices: Sequence<Voice> = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+        (tts?.voices ?: emptySet()).asSequence().map {
+            VoiceAndroidModern(it, it == (defaultVoice as? VoiceAndroidModern)?.androidVoice)
+        }
+    } else {
+        Locale.getAvailableLocales().asSequence().filter {
+            tts?.isLanguageAvailable(it) == TextToSpeech.LANG_AVAILABLE
+        }.map {
+            VoiceAndroidLegacy(it, it == defaultVoice?.locale)
+        }
+    }
 
     override fun enqueue(text: String, utteranceId: Any, options: EnqueueOptions) {
         val queueMode = if(options.clearQueue) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD

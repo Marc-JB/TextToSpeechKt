@@ -19,7 +19,7 @@ interface TextToSpeechInstance : AutoCloseable {
     var rate: Float
     val currentRate: StateFlow<Float>
 
-    val currentVoice: StateFlow<Voice?>
+    val voice: Voice?
 
     val voices: Sequence<Voice>
 

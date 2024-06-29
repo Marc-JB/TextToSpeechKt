@@ -2,6 +2,7 @@ package nl.marc_apps.tts
 
 import js_interop.Window
 import js_interop.getSpeechSynthesis
+import js_interop.getVoiceList
 import js_interop.window
 import nl.marc_apps.tts.internal.CallbackQueueHandler
 import nl.marc_apps.tts.internal.EnqueueOptions
@@ -15,6 +16,21 @@ class TextToSpeechHandler(context: Window = window) : TextToSpeechHandler, Callb
 
     private var onStart: ((Any) -> Unit)? = null
     private var onComplete: ((Any, Result<Unit>) -> Unit)? = null
+
+    private val voiceList by lazy {
+        getVoiceList(speechSynthesis)
+    }
+
+    private val defaultVoice by lazy {
+        voiceList.find { it.default }?.let { BrowserVoice(it) }
+    }
+
+    override val voice: Voice?
+        get() = defaultVoice
+
+    override val voices: Sequence<Voice> by lazy {
+        voiceList.asSequence().map { BrowserVoice(it) }
+    }
 
     override fun createUtteranceId(): Any = Random.Default.nextLong()
 
