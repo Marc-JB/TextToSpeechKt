@@ -31,6 +31,8 @@ class TextToSpeechHandler(context: Window = window) : TextToSpeechHandler, Callb
 
         speechSynthesisUtterance.text = text
         speechSynthesisUtterance.volume = options.volume / 100f
+        speechSynthesisUtterance.pitch = options.pitch
+        speechSynthesisUtterance.rate = options.rate
         speechSynthesis.speak(speechSynthesisUtterance)
     }
 

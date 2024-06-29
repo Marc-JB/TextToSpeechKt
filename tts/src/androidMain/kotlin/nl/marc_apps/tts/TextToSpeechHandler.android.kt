@@ -26,6 +26,9 @@ class TextToSpeechHandler(private var tts: TextToSpeech?): TextToSpeechHandler, 
             putString(KEY_PARAM_UTTERANCE_ID, utteranceId.toString())
         }
 
+        tts?.setPitch(options.pitch)
+        tts?.setSpeechRate(options.rate)
+
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             tts?.speak(text, queueMode, params, utteranceId.toString())
         } else {

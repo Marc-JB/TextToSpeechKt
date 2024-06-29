@@ -21,7 +21,6 @@ class TextToSpeech(private val implementation: TextToSpeechHandler) : TextToSpee
     override val currentState = MutableStateFlow(TextToSpeechInstance.State.QUEUE_EMPTY)
 
     override val currentVolume = MutableStateFlow(TextToSpeechInstance.VOLUME_DEFAULT)
-
     override var volume: Int
         get() = currentVolume.value
         set(value) {
@@ -32,11 +31,19 @@ class TextToSpeech(private val implementation: TextToSpeechHandler) : TextToSpee
             }
         }
 
-    override val pitch: MutableStateFlow<Float>
-        get() = TODO("Not yet implemented")
+    override val currentPitch = MutableStateFlow(TextToSpeechInstance.VOICE_PITCH_DEFAULT)
+    override var pitch: Float
+        get() = currentPitch.value
+        set(value) {
+            currentPitch.value = value
+        }
 
-    override val rate: MutableStateFlow<Float>
-        get() = TODO("Not yet implemented")
+    override val currentRate = MutableStateFlow(TextToSpeechInstance.VOICE_RATE_DEFAULT)
+    override var rate: Float
+        get() = currentRate.value
+        set(value) {
+            currentRate.value = value
+        }
 
     override val currentVoice: StateFlow<Voice?>
         get() = TODO("Not yet implemented")
@@ -50,17 +57,20 @@ class TextToSpeech(private val implementation: TextToSpeechHandler) : TextToSpee
         }
     }
 
-    override fun say(text: String, callback: (Result<Unit>) -> Unit){
+    private val currentOptions
+        get() = EnqueueOptions(volume = volume, pitch = pitch, rate = rate)
+
+    override fun say(text: String, callback: (Result<Unit>) -> Unit) {
         if (implementation is CallbackQueueHandler){
             val utteranceId = implementation.createUtteranceId()
 
             callbacks += utteranceId to callback
 
-            implementation.enqueue(text, utteranceId, EnqueueOptions(volume))
+            implementation.enqueue(text, utteranceId, currentOptions)
         } else if (implementation is BlockingSynthesisHandler){
             currentState.value = TextToSpeechInstance.State.SYNTHESIZING
 
-            implementation.enqueue(text, EnqueueOptions(volume))
+            implementation.enqueue(text, currentOptions)
 
             currentState.value = TextToSpeechInstance.State.QUEUE_EMPTY
         }
@@ -73,7 +83,7 @@ class TextToSpeech(private val implementation: TextToSpeechHandler) : TextToSpee
             suspendCancellableCoroutine { cont ->
                 continuations += utteranceId to cont
 
-                implementation.enqueue(text, utteranceId, EnqueueOptions(volume))
+                implementation.enqueue(text, utteranceId, currentOptions)
 
                 cont.invokeOnCancellation {
                     // TODO
@@ -86,7 +96,7 @@ class TextToSpeech(private val implementation: TextToSpeechHandler) : TextToSpee
                 withContext(Dispatchers.Default) {
                     suspendCancellableCoroutine { cont ->
                         try {
-                            implementation.enqueue(text, EnqueueOptions(volume))
+                            implementation.enqueue(text, currentOptions)
                             cont.resume(Unit)
                         } catch (throwable: Throwable) {
                             cont.resumeWithException(throwable)

@@ -1,6 +1,5 @@
 package nl.marc_apps.tts
 
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /** A TTS instance. Should be [close]d when no longer in use. */
@@ -14,9 +13,11 @@ interface TextToSpeechInstance : AutoCloseable {
     var volume: Int
     val currentVolume: StateFlow<Int>
 
-    val pitch: MutableStateFlow<Float>
+    var pitch: Float
+    val currentPitch: StateFlow<Float>
 
-    val rate: MutableStateFlow<Float>
+    var rate: Float
+    val currentRate: StateFlow<Float>
 
     val currentVoice: StateFlow<Voice?>
 
