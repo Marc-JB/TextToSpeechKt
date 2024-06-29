@@ -150,7 +150,7 @@ fun OptionsCard(
                     Icon(Icons.Rounded.Language, contentDescription = null)
 
                     Text(
-                        textToSpeech.currentVoice?.name ?: stringResource(Res.string.placeholder_voice_unknown),
+                        textToSpeech.voice?.name ?: stringResource(Res.string.placeholder_voice_unknown),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -168,7 +168,7 @@ fun OptionsCard(
                             textToSpeech.volume = TextToSpeechInstance.VOLUME_DEFAULT
                             textToSpeech.pitch = TextToSpeechInstance.VOICE_PITCH_DEFAULT
                             textToSpeech.rate = TextToSpeechInstance.VOICE_RATE_DEFAULT
-                            textToSpeech.currentVoice = textToSpeech.voices.firstOrNull { it.isDefault }
+                            // TODO: textToSpeech.voice = textToSpeech.voices.firstOrNull { it.isDefault }
                             expanded = false
                         }
                     ) {
@@ -193,7 +193,7 @@ fun OptionsCard(
                                         modifier = Modifier
                                             .padding(16.dp, 4.dp)
                                             .clickable {
-                                                textToSpeech.currentVoice = it
+                                                // TODO: textToSpeech.voice = it
                                                 showDialog = false
                                             }
                                     )

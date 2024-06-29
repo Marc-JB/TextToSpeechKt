@@ -56,17 +56,13 @@ class MainActivity : AppCompatActivity() {
         binding.actionSay.isEnabled = true
 
         lifecycleScope.launch {
-            ttsInstance?.isSynthesizing?.collect {
-                binding.actionSay.isEnabled = !it
-            }
-        }
-
-        lifecycleScope.launch {
-            ttsInstance?.isWarmingUp?.collect {
-                if (it) {
-                    binding.actionSay.isEnabled = false
+            ttsInstance?.currentState?.collect {
+                binding.actionSay.isEnabled = it == TextToSpeechInstance.State.QUEUE_EMPTY
+                binding.loadingIndicator.visibility = if (it == TextToSpeechInstance.State.LOADING) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
                 }
-                binding.loadingIndicator.visibility = if (it) View.VISIBLE else View.GONE
             }
         }
     }

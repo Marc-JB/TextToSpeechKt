@@ -39,7 +39,7 @@ fun TtsDemoView(
             } else {
                 var text by remember { mutableStateOf("") }
 
-                val isSynthesizing by textToSpeech.isSynthesizing.collectAsState()
+                val isSynthesizing by textToSpeech.currentState.collectAsState()
 
                 Row (
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -47,7 +47,7 @@ fun TtsDemoView(
                 ) {
                     Icon(Icons.Rounded.GraphicEq, contentDescription = null)
 
-                    Text(stringResource(if (isSynthesizing) Res.string.synthesizing_status_active else Res.string.synthesizing_status_inactive))
+                    Text(stringResource(if (isSynthesizing == TextToSpeechInstance.State.SYNTHESIZING) Res.string.synthesizing_status_active else Res.string.synthesizing_status_inactive))
                 }
 
                 OutlinedTextField(

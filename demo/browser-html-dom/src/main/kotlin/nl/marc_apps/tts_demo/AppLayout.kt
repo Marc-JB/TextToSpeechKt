@@ -64,9 +64,7 @@ fun AppLayout() {
             Text(strings.ttsLoadingText)
         }
     } else {
-        val isSynthesisRunning by textToSpeechInstance.isSynthesizing.collectAsState()
-
-        val isWarmingUp by textToSpeechInstance.isSynthesizing.collectAsState()
+        val ttsState by textToSpeechInstance.currentState.collectAsState()
 
         var ttsVolumeState by remember { mutableStateOf(textToSpeechInstance.volume) }
 
@@ -88,11 +86,11 @@ fun AppLayout() {
             }
 
             Span {
-                Text(textToSpeechInstance.currentVoice?.language ?: "...")
+                Text(textToSpeechInstance.voice?.language ?: "...")
             }
         }
 
-        SynthesiseButton(strings, isSynthesisRunning || isWarmingUp) {
+        SynthesiseButton(strings, ttsState != TextToSpeechInstance.State.QUEUE_EMPTY) {
             textToSpeechInstance.volume = ttsVolumeState
             coroutineScope.launch {
                 textToSpeechInstance.say(ttsTextState)
