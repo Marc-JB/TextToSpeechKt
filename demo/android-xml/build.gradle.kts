@@ -4,8 +4,8 @@ plugins {
 }
 
 android {
-    compileSdk = 34
-    buildToolsVersion = "34.0.0"
+    compileSdk = 35
+    buildToolsVersion = "35.0.0"
 
     namespace = "nl.marc_apps.tts_demo"
 
@@ -13,7 +13,7 @@ android {
         applicationId = "nl.marc_apps.tts_demo"
 
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
 
         versionCode = 1
         versionName = "0.1"
