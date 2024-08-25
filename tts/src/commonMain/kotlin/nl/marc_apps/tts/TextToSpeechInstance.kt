@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.StateFlow
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 
 /** A TTS instance. Should be [close]d when no longer in use. */
-interface TextToSpeechInstance : Closeable {
+interface TextToSpeechInstance : AutoCloseable {
     val isSynthesizing: StateFlow<Boolean>
 
     /**

@@ -2,22 +2,25 @@
 
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose)
-    // alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose.compiler)
 }
 
-val jvmVersion = JavaVersion.VERSION_11
-
 kotlin {
-    androidTarget()
+    androidTarget {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_1_8
+        }
+    }
 
     js("browserJs", IR) {
         moduleName = "compose-multiplatform"
@@ -42,8 +45,9 @@ kotlin {
     }
 
     jvm("desktop") {
-        compilations.all {
-            kotlinOptions.jvmTarget = jvmVersion.toString()
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_17
         }
     }
 
@@ -52,8 +56,7 @@ kotlin {
         common {
             group("browser") {
                 withJs()
-                withWasm()
-                // withWasmJs()
+                withWasmJs()
             }
         }
     }
@@ -170,29 +173,10 @@ android {
         deviceTier.enableSplit = true
     }
 
-    compileOptions {
-        sourceCompatibility = jvmVersion
-        targetCompatibility = jvmVersion
-    }
-
-    buildFeatures {
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlin.compiler.extensions.get()
-    }
-
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
         }
-    }
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = jvmVersion.toString()
     }
 }
 

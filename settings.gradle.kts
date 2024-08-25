@@ -23,7 +23,6 @@ include(":tts")
 include(":tts-compose")
 include(":demo:compose-multiplatform")
 include(":demo:android-xml")
-include(":demo:browser-html-dom")
 
 gradle.beforeProject {
     val localPropertiesFile = rootProject.file("local.properties")

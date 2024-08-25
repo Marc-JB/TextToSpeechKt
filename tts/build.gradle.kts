@@ -2,9 +2,9 @@
 
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 
 plugins {
@@ -16,7 +16,6 @@ plugins {
 }
 
 val projectId = "core"
-val jvmVersion = JavaVersion.VERSION_1_8
 
 group = getTtsProperty("groupId")!!
 version = libs.versions.tts.get()
@@ -34,13 +33,18 @@ kotlin {
     }
 
     androidTarget {
-        publishLibraryVariantsGroupedByFlavor = true
-        publishAllLibraryVariants()
+        publishLibraryVariants("release")
+
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_1_8
+        }
     }
 
     jvm("desktop") {
-        compilations.all {
-            kotlinOptions.jvmTarget = jvmVersion.toString()
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_17
         }
     }
 
@@ -49,8 +53,7 @@ kotlin {
         common {
             group("browser") {
                 withJs()
-                withWasm()
-                // withWasmJs()
+                withWasmJs()
             }
         }
     }
@@ -81,17 +84,6 @@ android {
 
         setProperty("archivesBaseName", getTtsScopedProperty("artifactId"))
     }
-
-    compileOptions {
-        sourceCompatibility = jvmVersion
-        targetCompatibility = jvmVersion
-    }
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = jvmVersion.toString()
-    }
 }
 
 tasks.withType(KotlinCompilationTask::class) {
@@ -118,7 +110,11 @@ tasks.withType<DokkaTaskPartial>().configureEach {
             packageListUrl.set(URL("${getTtsProperty("documentation", "url")}/package-list"))
         }
 
-        jdkVersion.set(jvmVersion.majorVersion.toInt())
+        if (name.startsWith("android")){
+            jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
+        } else if (name.startsWith("desktop")){
+            jdkVersion.set(JavaVersion.VERSION_21.majorVersion.toInt())
+        }
     }
 }
 
