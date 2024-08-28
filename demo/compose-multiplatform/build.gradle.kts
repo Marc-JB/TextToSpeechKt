@@ -22,15 +22,15 @@ kotlin {
         }
     }
 
-    js("browserJs", IR) {
+    js("browserJs") {
         moduleName = "compose-multiplatform"
         browser {
             commonWebpackConfig {
                 devServer = devServer ?: KotlinWebpackConfig.DevServer()
-                experiments += "topLevelAwait"
             }
         }
         binaries.executable()
+        useEsModules()
     }
 
     @OptIn(ExperimentalWasmDsl::class)
