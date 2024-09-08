@@ -42,13 +42,23 @@ kotlin {
         }
     }
 
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "tts-compose"
+    iosX64 {
+        binaries.framework {
+            baseName = "tts-compose-ios-x64"
+            isStatic = true
+        }
+    }
+
+    iosArm64 {
+        binaries.framework {
+            baseName = "tts-compose-ios-arm64"
+            isStatic = true
+        }
+    }
+
+    iosSimulatorArm64 {
+        binaries.framework {
+            baseName = "tts-compose-ios-simulator-arm64"
             isStatic = true
         }
     }

@@ -14,6 +14,9 @@ fun configureMavenPublication(project: Project, mavenPublication: MavenPublicati
                 artifactId.endsWith("-browserJs", ignoreCase = true) -> "-browser-js"
                 artifactId.endsWith("-browserWasm", ignoreCase = true) -> "-browser-wasm"
                 artifactId.endsWith("-desktop", ignoreCase = true) -> "-desktop"
+                artifactId.endsWith("-ios-x64", ignoreCase = true) -> "-ios-x64"
+                artifactId.endsWith("-ios-arm64", ignoreCase = true) -> "-ios-arm64"
+                artifactId.endsWith("-ios-simulator-arm64", ignoreCase = true) -> "-ios-simulator-arm64"
                 else -> ""
             }
 
