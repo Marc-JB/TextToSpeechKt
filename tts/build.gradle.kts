@@ -41,26 +41,9 @@ kotlin {
         }
     }
 
-    iosX64 {
-        binaries.framework {
-            baseName = "tts-ios-x64"
-            isStatic = true
-        }
-    }
-
-    iosArm64 {
-        binaries.framework {
-            baseName = "tts-ios-arm64"
-            isStatic = true
-        }
-    }
-
-    iosSimulatorArm64 {
-        binaries.framework {
-            baseName = "tts-ios-simulator-arm64"
-            isStatic = true
-        }
-    }
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     jvm("desktop") {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
