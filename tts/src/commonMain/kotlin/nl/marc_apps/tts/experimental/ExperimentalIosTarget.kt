@@ -14,4 +14,4 @@ package nl.marc_apps.tts.experimental
     AnnotationTarget.PROPERTY_GETTER,
     AnnotationTarget.PROPERTY_SETTER
 )
-annotation class ExperimentalIosTarget
+annotation class ExperimentalIOSTarget

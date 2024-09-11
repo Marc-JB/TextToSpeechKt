@@ -1,6 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.resources.ResourcesExtension
+import org.jetbrains.compose.resources.ResourcesExtension.ResourceClassGeneration
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -19,6 +21,17 @@ kotlin {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget = JvmTarget.JVM_1_8
+        }
+    }
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true
         }
     }
 
@@ -66,6 +79,7 @@ kotlin {
             languageSettings {
                 optIn("nl.marc_apps.tts.experimental.ExperimentalVoiceApi")
                 optIn("nl.marc_apps.tts.experimental.ExperimentalDesktopTarget")
+                optIn("nl.marc_apps.tts.experimental.ExperimentalIOSTarget")
             }
         }
 
@@ -178,6 +192,12 @@ android {
             isIncludeAndroidResources = true
         }
     }
+}
+
+compose.resources {
+    publicResClass = false
+    packageOfResClass = "nl.marc_apps.tts_demo.resources"
+    generateResClass = ResourceClassGeneration.Always
 }
 
 tasks.withType(KotlinCompilationTask::class) {

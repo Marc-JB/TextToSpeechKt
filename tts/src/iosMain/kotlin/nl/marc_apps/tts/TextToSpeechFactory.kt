@@ -1,28 +1,28 @@
 package nl.marc_apps.tts
 
-import nl.marc_apps.tts.errors.TextToSpeechNotSupportedError
-import nl.marc_apps.tts.experimental.ExperimentalIosTarget
+import nl.marc_apps.tts.experimental.ExperimentalIOSTarget
+import platform.AVFAudio.AVSpeechSynthesizer
 
-@ExperimentalIosTarget
+@ExperimentalIOSTarget
 actual class TextToSpeechFactory {
-    @ExperimentalIosTarget
-    actual val isSupported = false
+    @ExperimentalIOSTarget
+    actual val isSupported = true
 
-    @ExperimentalIosTarget
+    @ExperimentalIOSTarget
     actual val canChangeVolume = false
 
-    @ExperimentalIosTarget
+    @ExperimentalIOSTarget
     actual suspend fun create(): Result<TextToSpeechInstance> {
-        return Result.failure(TextToSpeechNotSupportedError())
+        return Result.success(TextToSpeechIOS(AVSpeechSynthesizer()))
     }
 
-    @ExperimentalIosTarget
+    @ExperimentalIOSTarget
     @Throws(RuntimeException::class)
     actual suspend fun createOrThrow(): TextToSpeechInstance {
         return create().getOrThrow()
     }
 
-    @ExperimentalIosTarget
+    @ExperimentalIOSTarget
     actual suspend fun createOrNull(): TextToSpeechInstance? {
         return create().getOrNull()
     }

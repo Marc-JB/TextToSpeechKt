@@ -1,19 +1,22 @@
 package nl.marc_apps.tts_demo
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.GraphicEq
 import androidx.compose.material.icons.rounded.RecordVoiceOver
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import nl.marc_apps.tts.TextToSpeechInstance
 import org.jetbrains.compose.resources.stringResource
-import texttospeechkt.demo.compose_multiplatform.generated.resources.*
+import nl.marc_apps.tts_demo.resources.*
 
 @Composable
 fun TtsDemoView(
@@ -21,29 +24,32 @@ fun TtsDemoView(
     paddingValues: PaddingValues
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
 
     Surface(
-        color = MaterialTheme.colorScheme.background
+        color = MaterialTheme.colorScheme.background,
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding()
+            .verticalScroll(scrollState)
+            .padding(paddingValues)
+            .padding(24.dp)
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
-            horizontalAlignment = Alignment.Start,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(paddingValues)
-                .padding(24.dp)
+            horizontalAlignment = Alignment.Start
         ) {
             if (textToSpeech == null) {
                 Text(stringResource(Res.string.tts_not_available))
             } else {
-                var text by remember { mutableStateOf("") }
+                val focusManager = LocalFocusManager.current
+
+                var text by rememberSaveable { mutableStateOf("") }
 
                 val isSynthesizing by textToSpeech.isSynthesizing.collectAsState()
 
                 Row (
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.padding(0.dp, 8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Icon(Icons.Rounded.GraphicEq, contentDescription = null)
 
@@ -63,6 +69,7 @@ fun TtsDemoView(
 
                 ElevatedButton(
                     onClick = {
+                        focusManager.clearFocus()
                         coroutineScope.launch {
                             textToSpeech.say(text)
                         }
