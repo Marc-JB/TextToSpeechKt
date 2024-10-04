@@ -10,8 +10,8 @@ import platform.Foundation.NSError
 
 object ErrorPointerUtils {
     @OptIn(ExperimentalForeignApi::class)
-    fun createErrorPointer() = memScoped {
-        alloc<ObjCObjectVar<NSError?>>()
+    fun <T> createErrorPointer(block: (ObjCObjectVar<NSError?>) -> T): T = memScoped {
+        block(alloc<ObjCObjectVar<NSError?>>())
     }
 }
 

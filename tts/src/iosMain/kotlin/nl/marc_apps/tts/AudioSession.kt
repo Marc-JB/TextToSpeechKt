@@ -15,17 +15,17 @@ object AudioSession {
     fun initialiseForTextToSpeech() {
         val audioSession = AVAudioSession.sharedInstance()
 
-        val errorPtr = ErrorPointerUtils.createErrorPointer()
+        ErrorPointerUtils.createErrorPointer { errorPtr ->
+            audioSession.setCategory(AVAudioSessionCategoryPlayback,
+                mode = AVAudioSessionModeDefault,
+                options = AVAudioSessionCategoryOptionDuckOthers,
+                errorPtr.ptr)
 
-        audioSession.setCategory(AVAudioSessionCategoryPlayback,
-            mode = AVAudioSessionModeDefault,
-            options = AVAudioSessionCategoryOptionDuckOthers,
-            errorPtr.ptr)
+            errorPtr.throwOnError()
 
-        errorPtr.throwOnError()
+            audioSession.setActive(true, errorPtr.ptr)
 
-        audioSession.setActive(true, errorPtr.ptr)
-
-        errorPtr.throwOnError()
+            errorPtr.throwOnError()
+        }
     }
 }
