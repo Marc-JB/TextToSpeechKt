@@ -1,7 +1,7 @@
 [versions]
 android-buildTools = "35.0.0"
 android-compileSdk = "35"
-android-gradlePlugin = "8.6.0"
+android-gradlePlugin = "8.6.1"
 androidx-annotation = "1.8.2"
 
 compose = "1.6.11"
@@ -11,11 +11,11 @@ dokka = "1.9.20"
 freetts_java = "1.2.2"
 
 kotlin = "2.0.20"
-kotlin-coroutines = "1.8.1"
+kotlin-coroutines = "1.9.0"
 
 tts = "2.5.0"
 
-versioncheck = "0.50.0"
+versioncheck = "0.51.0"
 
 [libraries]
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
