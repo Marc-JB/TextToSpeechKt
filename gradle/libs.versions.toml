@@ -1,7 +1,7 @@
 [versions]
 android-buildTools = "35.0.0"
 android-compileSdk = "35"
-android-gradlePlugin = "8.5.2"
+android-gradlePlugin = "8.6.0"
 androidx-annotation = "1.8.2"
 
 compose = "1.6.11"
