@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import java.net.URI
 import java.net.URL
 
 plugins {
@@ -105,13 +106,13 @@ tasks.withType<DokkaTaskPartial>().configureEach {
     dokkaSourceSets.configureEach {
         sourceLink {
             localDirectory.set(file("src/${name}/kotlin"))
-            remoteUrl.set(URL("https://${getTtsProperty("git", "location")}/blob/main/${getTtsScopedProperty("artifactId")}/src/${name}/kotlin"))
+            remoteUrl.set(URI.create("https://${getTtsProperty("git", "location")}/blob/main/${getTtsScopedProperty("artifactId")}/src/${name}/kotlin").toURL())
             remoteLineSuffix.set("#L")
         }
 
         externalDocumentationLink {
-            url.set(URL(getTtsProperty("documentation", "url")))
-            packageListUrl.set(URL("${getTtsProperty("documentation", "url")}/package-list"))
+            url.set(URI.create(getTtsProperty("documentation", "url")).toURL())
+            packageListUrl.set(URI.create("${getTtsProperty("documentation", "url")}/package-list").toURL())
         }
 
         if (name.startsWith("android")){
