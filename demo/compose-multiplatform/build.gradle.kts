@@ -1,7 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.compose.resources.ResourcesExtension
 import org.jetbrains.compose.resources.ResourcesExtension.ResourceClassGeneration
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -18,9 +17,12 @@ plugins {
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget = JvmTarget.JVM_1_8
+        }
+
+        dependencies {
+            debugImplementation(compose.uiTooling)
         }
     }
 
@@ -31,7 +33,6 @@ kotlin {
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
-            isStatic = true
         }
     }
 
@@ -58,7 +59,6 @@ kotlin {
     }
 
     jvm("desktop") {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget = JvmTarget.JVM_17
         }
@@ -72,6 +72,10 @@ kotlin {
                 withWasmJs()
             }
         }
+    }
+
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
     sourceSets {
@@ -102,16 +106,12 @@ kotlin {
             implementation("androidx.activity:activity-compose:1.9.0")
         }
 
-        getByName("desktopMain").dependencies {
+        named("desktopMain").dependencies {
             implementation(compose.preview)
             implementation(compose.uiTooling)
             implementation(compose.desktop.currentOs)
         }
     }
-}
-
-dependencies {
-    debugImplementation(compose.uiTooling)
 }
 
 android {
@@ -162,14 +162,14 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
+        named("release") {
             isMinifyEnabled = true
             isShrinkResources = true
 
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
 
-        getByName("debug") {
+        named("debug") {
             applicationIdSuffix = ".debug"
 
             isMinifyEnabled = false
@@ -198,12 +198,6 @@ compose.resources {
     publicResClass = false
     packageOfResClass = "nl.marc_apps.tts_demo.resources"
     generateResClass = ResourceClassGeneration.Always
-}
-
-tasks.withType(KotlinCompilationTask::class) {
-    compilerOptions {
-        freeCompilerArgs.add("-Xexpect-actual-classes")
-    }
 }
 
 compose.desktop {

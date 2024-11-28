@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import java.net.URI
-import java.net.URL
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -36,7 +35,6 @@ kotlin {
     androidTarget {
         publishLibraryVariants("release")
 
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget = JvmTarget.JVM_1_8
         }
@@ -47,7 +45,6 @@ kotlin {
     iosSimulatorArm64()
 
     jvm("desktop") {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget = JvmTarget.JVM_17
         }
@@ -63,6 +60,10 @@ kotlin {
         }
     }
 
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlin.coroutines)
@@ -72,7 +73,7 @@ kotlin {
             implementation(libs.androidx.annotation)
         }
 
-        getByName("desktopMain").dependencies {
+        named("desktopMain").dependencies {
             implementation(libs.freetts)
         }
     }
@@ -88,12 +89,6 @@ android {
         minSdk = 1
 
         setProperty("archivesBaseName", getTtsScopedProperty("artifactId"))
-    }
-}
-
-tasks.withType(KotlinCompilationTask::class) {
-    compilerOptions {
-        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 }
 
