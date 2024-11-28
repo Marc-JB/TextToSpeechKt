@@ -76,6 +76,10 @@ kotlin {
         named("desktopMain").dependencies {
             implementation(libs.freetts)
         }
+
+        named("browserWasmMain").dependencies {
+            implementation(libs.kotlin.browser)
+        }
     }
 }
 
@@ -152,7 +156,7 @@ afterEvaluate {
     val publicationTaskNames = tasks.names.filter { it.startsWith("publish") && "PublicationTo" in it && it.endsWith("Repository") }
     val signTaskNames = tasks.names.filter { it.startsWith("sign") && it.endsWith("Publication") }.toTypedArray()
     for (publicationTaskName in publicationTaskNames) {
-        tasks.getByName(publicationTaskName) {
+        tasks.named(publicationTaskName) {
             dependsOn(*signTaskNames)
         }
     }

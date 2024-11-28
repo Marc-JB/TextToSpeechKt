@@ -111,6 +111,10 @@ kotlin {
             implementation(compose.uiTooling)
             implementation(compose.desktop.currentOs)
         }
+
+        named("browserWasmMain").dependencies {
+            implementation(libs.kotlin.browser)
+        }
     }
 }
 

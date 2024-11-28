@@ -12,6 +12,7 @@ freetts_java = "1.2.2"
 
 kotlin = "2.1.0"
 kotlin-coroutines = "1.9.0"
+kotlin-browser = "0.3"
 
 tts = "2.5.0"
 
@@ -26,6 +27,7 @@ dokka-plugins-versioning = { module = "org.jetbrains.dokka:versioning-plugin", v
 freetts = { module = "net.sf.sociaal:freetts", version.ref = "freetts_java" }
 
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+kotlin-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlin-browser" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradlePlugin" }
