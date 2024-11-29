@@ -96,31 +96,39 @@ dependencies {
     dokkaPlugin(libs.dokka.plugins.versioning)
 }
 
-tasks.withType<DokkaTaskPartial>().configureEach {
-    dokkaSourceSets.configureEach {
-        sourceLink {
-            localDirectory.set(file("src/${name}/kotlin"))
-            remoteUrl.set(URI.create("https://${getTtsProperty("git", "location")}/blob/main/${getTtsScopedProperty("artifactId")}/src/${name}/kotlin").toURL())
-            remoteLineSuffix.set("#L")
-        }
+tasks {
+    withType<DokkaTaskPartial>().configureEach {
+        dokkaSourceSets.configureEach {
+            sourceLink {
+                localDirectory.set(file("src/${name}/kotlin"))
+                remoteUrl.set(URI.create("https://${getTtsProperty("git", "location")}/blob/main/${getTtsScopedProperty("artifactId")}/src/${name}/kotlin").toURL())
+                remoteLineSuffix.set("#L")
+            }
 
-        externalDocumentationLink {
-            url.set(URI.create(getTtsProperty("documentation", "url")).toURL())
-            packageListUrl.set(URI.create("${getTtsProperty("documentation", "url")}/package-list").toURL())
-        }
+            externalDocumentationLink {
+                url.set(URI.create(getTtsProperty("documentation", "url")).toURL())
+                packageListUrl.set(URI.create("${getTtsProperty("documentation", "url")}/package-list").toURL())
+            }
 
-        if (name.startsWith("android")){
-            jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
-        } else if (name.startsWith("desktop")){
-            jdkVersion.set(JavaVersion.VERSION_21.majorVersion.toInt())
+            if (name.startsWith("android")){
+                jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
+            } else if (name.startsWith("desktop")){
+                jdkVersion.set(JavaVersion.VERSION_21.majorVersion.toInt())
+            }
         }
     }
-}
 
-val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
-    dependsOn(tasks.dokkaHtmlPartial)
-    archiveClassifier.set("javadoc")
-    from(layout.buildDirectory.asFile.get().resolve("dokka"))
+    matching {
+        it.name.startsWith("publish") && "PublicationTo" in it.name && it.name.endsWith("Repository")
+    }.configureEach {
+        dependsOn(matching { it.name.startsWith("sign") && it.name.endsWith("Publication") })
+    }
+
+    val javadocJar by register<Jar>("javadocJar") {
+        dependsOn(dokkaHtmlPartial)
+        archiveClassifier.set("javadoc")
+        from(layout.buildDirectory.asFile.get().resolve("dokka"))
+    }
 }
 
 publishing {
@@ -132,7 +140,7 @@ publishing {
 
     publications {
         withType<MavenPublication> {
-            configureMavenPublication(project, this, javadocJar, getTtsScopedProperty("artifactId")!!)
+            configureMavenPublication(project, this, tasks.named<Jar>("javadocJar"), getTtsScopedProperty("artifactId")!!)
         }
     }
 }
@@ -145,16 +153,6 @@ signing {
     useInMemoryPgpKeys(signingKey, signingPassword)
 
     sign(publishing.publications)
-}
-
-afterEvaluate {
-    val publicationTaskNames = tasks.names.filter { it.startsWith("publish") && "PublicationTo" in it && it.endsWith("Repository") }
-    val signTaskNames = tasks.names.filter { it.startsWith("sign") && it.endsWith("Publication") }.toTypedArray()
-    for (publicationTaskName in publicationTaskNames) {
-        tasks.named(publicationTaskName) {
-            dependsOn(*signTaskNames)
-        }
-    }
 }
 
 private fun getTtsScopedProperty(vararg path: String) = getTtsProperty(projectId, *path)

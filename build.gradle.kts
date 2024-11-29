@@ -32,25 +32,32 @@ val dokkaWorkingDir = project.rootProject.layout.buildDirectory.asFile.get().res
 val versionArchiveDirectory = dokkaWorkingDir.resolve("html_version_archive")
 val currentVersionDir = versionArchiveDirectory.resolve(currentVersion)
 
-tasks.dokkaHtmlMultiModule {
-    outputDirectory.set(currentVersionDir)
-
-    pluginConfiguration<VersioningPlugin, VersioningConfiguration> {
-        version = currentVersion
-        olderVersionsDir = versionArchiveDirectory
+tasks {
+    val dokkaCopyDocsToOutputDir by register<Copy>("dokkaCopyDocsToOutputDir") {
+        from(currentVersionDir)
+        into(dokkaWorkingDir.resolve("html"))
     }
 
-    doLast {
-        copy {
-            from(currentVersionDir)
-            into(dokkaWorkingDir.resolve("html"))
+    val dokkaDeleteOlderVersions by register<Delete>("dokkaDeleteOlderVersions") {
+        delete(currentVersionDir.resolve("older"))
+    }
+
+    dokkaDeleteOlderVersions.mustRunAfter(dokkaCopyDocsToOutputDir)
+
+    dokkaHtmlMultiModule {
+        outputDirectory.set(currentVersionDir)
+
+        pluginConfiguration<VersioningPlugin, VersioningConfiguration> {
+            version = currentVersion
+            olderVersionsDir = versionArchiveDirectory
         }
-        currentVersionDir.resolve("older").deleteRecursively()
-    }
-}
 
-tasks.dependencyUpdates {
-    rejectVersionIf {
-        arrayOf("alpha", "beta", "rc").any { it in candidate.version.lowercase() }
+        finalizedBy(dokkaCopyDocsToOutputDir, dokkaDeleteOlderVersions)
+    }
+
+    dependencyUpdates {
+        rejectVersionIf {
+            arrayOf("alpha", "beta", "rc").any { it in candidate.version.lowercase() }
+        }
     }
 }
