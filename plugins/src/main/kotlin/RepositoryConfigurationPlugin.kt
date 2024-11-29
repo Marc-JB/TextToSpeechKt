@@ -3,6 +3,7 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.create
 import java.net.URI
 import javax.inject.Inject
 
@@ -44,11 +45,7 @@ open class GitHubPackagesConfigImpl @Inject constructor(objects: org.gradle.api.
 
 class RepositoryConfigurationPlugin : Plugin<Project> {
     override fun apply(project: Project) = with(project) {
-        val extension = extensions.create(
-            "repositoryConfig",
-            RepositoryConfigExtension::class.java,
-            objects
-        )
+        val extension = extensions.create<RepositoryConfigExtension>("repositoryConfig")
 
         configure<PublishingExtension> {
             repositories {
