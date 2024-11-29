@@ -1,6 +1,9 @@
 import java.util.*
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
+    includeBuild("plugins")
     repositories {
         gradlePluginPortal()
         google()
@@ -9,6 +12,7 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
+    @Suppress("UnstableApiUsage")
     repositories {
         google()
         mavenCentral()

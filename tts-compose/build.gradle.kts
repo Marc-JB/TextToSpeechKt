@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.ttsPlugin)
 }
 
 val projectId = "compose"
@@ -65,7 +66,7 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(libs.kotlin.coroutines)
-            api(project(":tts"))
+            api(projects.tts)
         }
 
         androidMain.dependencies {
@@ -131,13 +132,23 @@ tasks {
     }
 }
 
-publishing {
-    repositories {
-        configureOssrhRepository("SNAPSHOT" in libs.versions.tts.get(), getConfigProperty("ossrh", "username"), getConfigProperty("ossrh", "password"))
+publishingRepositories {
+    isSnapshot = "SNAPSHOT" in libs.versions.tts.get()
 
-        // configureGitHubPackagesRepository("Marc-JB", "TextToSpeechKt", getConfigProperty("gpr", "user"), getConfigProperty("gpr", "key"))
+    ossrh {
+        username = getConfigProperty("ossrh", "username")
+        token = getConfigProperty("ossrh", "password")
     }
 
+    /*githubPackages {
+        organization = "Marc-JB"
+        project = "TextToSpeechKt"
+        username = getConfigProperty("gpr", "user")
+        token = getConfigProperty("gpr", "key")
+    }*/
+}
+
+publishing {
     publications {
         withType<MavenPublication> {
             configureMavenPublication(project, this, tasks.named<Jar>("javadocJar"), getTtsScopedProperty("artifactId")!!)

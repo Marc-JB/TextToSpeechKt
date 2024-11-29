@@ -44,7 +44,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":tts"))
+    implementation(projects.tts)
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 

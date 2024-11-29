@@ -96,7 +96,7 @@ kotlin {
             // implementation(compose.components.uiToolingPreview)
             implementation(compose.components.resources)
             implementation(libs.kotlin.coroutines)
-            implementation(project(":tts-compose"))
+            implementation(projects.ttsCompose)
         }
 
         androidMain.dependencies {
