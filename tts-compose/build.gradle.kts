@@ -15,6 +15,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.dokka)
     alias(libs.plugins.mavenRepositoryConfiguration)
+    alias(libs.plugins.ttsPublication)
 }
 
 val projectId = "compose"
@@ -148,12 +149,8 @@ publishingRepositories {
     }*/
 }
 
-publishing {
-    publications {
-        withType<MavenPublication> {
-            configureMavenPublication(project, this, tasks.named<Jar>("javadocJar"), getTtsScopedProperty("artifactId")!!)
-        }
-    }
+configureTtsPublication {
+    javadocJarTask.set(tasks.named<Jar>("javadocJar").get())
 }
 
 signing {
