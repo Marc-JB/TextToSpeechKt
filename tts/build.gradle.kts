@@ -133,7 +133,7 @@ tasks {
         dependsOn(matching { it.name.startsWith("sign") && it.name.endsWith("Publication") })
     }
 
-    val javadocJar by register<Jar>("javadocJar") {
+    register<Jar>("javadocJar") {
         dependsOn(dokkaHtmlPartial)
         archiveClassifier.set("javadoc")
         from(layout.buildDirectory.asFile.get().resolve("dokka"))
