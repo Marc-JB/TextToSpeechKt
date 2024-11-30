@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.android.build.gradle.internal.profile.PROPERTY_VARIANT_NAME_KEY
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -18,9 +19,12 @@ plugins {
     alias(libs.plugins.ttsPublication)
 }
 
-val projectId = "compose"
+object Project {
+    const val artifactId = "tts-compose"
+    const val namespace = "nl.marc_apps.tts_compose"
+}
 
-group = getTtsProperty("groupId")!!
+group = "nl.marc-apps"
 version = libs.versions.tts.get()
 
 kotlin {
@@ -84,12 +88,12 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     buildToolsVersion = libs.versions.android.buildTools.get()
 
-    namespace = getTtsScopedProperty("namespace")
+    namespace = Project.namespace
 
     defaultConfig {
         minSdk = 21
 
-        setProperty("archivesBaseName", getTtsScopedProperty("artifactId"))
+        setProperty("archivesBaseName", Project.artifactId)
     }
 }
 
@@ -103,13 +107,13 @@ tasks {
         dokkaSourceSets.configureEach {
             sourceLink {
                 localDirectory.set(file("src/${name}/kotlin"))
-                remoteUrl.set(URI.create("https://${getTtsProperty("git", "location")}/blob/main/${getTtsScopedProperty("artifactId")}/src/${name}/kotlin").toURL())
+                remoteUrl.set(URI.create("https://github.com/Marc-JB/TextToSpeechKt/blob/main/${Project.artifactId}/src/${name}/kotlin").toURL())
                 remoteLineSuffix.set("#L")
             }
 
             externalDocumentationLink {
-                url.set(URI.create(getTtsProperty("documentation", "url")).toURL())
-                packageListUrl.set(URI.create("${getTtsProperty("documentation", "url")}/package-list").toURL())
+                url.set(URI.create("https://marc-jb.github.io/TextToSpeechKt").toURL())
+                packageListUrl.set(URI.create("https://marc-jb.github.io/TextToSpeechKt/package-list").toURL())
             }
 
             if (name.startsWith("android")){
@@ -163,4 +167,7 @@ signing {
     sign(publishing.publications)
 }
 
-private fun getTtsScopedProperty(vararg path: String) = getTtsProperty(projectId, *path)
+fun getConfigProperty(vararg path: String): String? {
+    return findProperty(path.joinToString(".")) as? String
+        ?: System.getenv(path.joinToString("_") { it.uppercase() })
+}
