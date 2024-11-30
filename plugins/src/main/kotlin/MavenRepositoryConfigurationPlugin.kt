@@ -43,7 +43,7 @@ open class GitHubPackagesConfigImpl @Inject constructor(objects: org.gradle.api.
     override val token: Property<String> = objects.property(String::class.java)
 }
 
-class RepositoryConfigurationPlugin : Plugin<Project> {
+class MavenRepositoryConfigurationPlugin : Plugin<Project> {
     override fun apply(project: Project) = with(project) {
         val extension = extensions.create<RepositoryConfigExtension>("repositoryConfig")
 

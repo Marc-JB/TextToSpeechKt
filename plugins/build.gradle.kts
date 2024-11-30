@@ -4,9 +4,9 @@ plugins {
 
 gradlePlugin {
     plugins {
-        create("nl.marc-apps.tts-plugin") {
-            id = "nl.marc-apps.tts-plugin"
-            implementationClass = "RepositoryConfigurationPlugin"
+        create("nl.marc-apps.maven-repository-configuration-plugin") {
+            id = "nl.marc-apps.maven-repository-configuration-plugin"
+            implementationClass = "MavenRepositoryConfigurationPlugin"
         }
     }
 }

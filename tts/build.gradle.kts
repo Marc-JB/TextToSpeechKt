@@ -12,7 +12,7 @@ plugins {
     `maven-publish`
     signing
     alias(libs.plugins.dokka)
-    alias(libs.plugins.ttsPlugin)
+    alias(libs.plugins.mavenRepositoryConfiguration)
 }
 
 val projectId = "core"

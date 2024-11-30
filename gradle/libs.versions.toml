@@ -40,6 +40,6 @@ dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 
-ttsPlugin = { id = "nl.marc-apps.tts-plugin" }
+mavenRepositoryConfiguration = { id = "nl.marc-apps.maven-repository-configuration-plugin" }
 
 versioncheck = { id = "com.github.ben-manes.versions", version.ref = "versioncheck" }
