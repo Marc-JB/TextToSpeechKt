@@ -1,9 +1,6 @@
 package nl.marc_apps.tts.experimental
 
-@RequiresOptIn(
-    message = "This API is experimental. It may be changed in the future without notice.",
-    level = RequiresOptIn.Level.ERROR
-)
+@Deprecated("The wasm text-to-speech target is no longer experimental. You cna remove this annotation.")
 @Retention(AnnotationRetention.BINARY)
 @Target(
     AnnotationTarget.CLASS,
