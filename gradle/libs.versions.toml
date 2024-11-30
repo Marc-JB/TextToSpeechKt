@@ -39,6 +39,7 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 mavenRepositoryConfiguration = { id = "nl.marc-apps.maven-repository-configuration-plugin" }
 ttsPublication = { id = "nl.marc-apps.tts-publication-plugin" }
