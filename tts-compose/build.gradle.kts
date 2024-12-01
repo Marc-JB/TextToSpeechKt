@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import com.android.build.gradle.internal.profile.PROPERTY_VARIANT_NAME_KEY
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -28,13 +27,13 @@ group = "nl.marc-apps"
 version = libs.versions.tts.get()
 
 kotlin {
-    js("browserJs", IR) {
+    js {
         browser()
         binaries.executable()
     }
 
     @OptIn(ExperimentalWasmDsl::class)
-    wasmJs("browserWasm") {
+    wasmJs {
         browser()
         binaries.executable()
     }
@@ -51,7 +50,7 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
-    jvm("desktop") {
+    jvm {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_17
         }
@@ -60,7 +59,7 @@ kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     applyDefaultHierarchyTemplate {
         common {
-            group("browser") {
+            group("webCommonW3C") {
                 withJs()
                 withWasmJs()
             }
@@ -78,7 +77,7 @@ kotlin {
             implementation(compose.foundation)
         }
 
-        named("browserWasmMain").dependencies {
+        wasmJsMain.dependencies {
             implementation(libs.kotlin.browser)
         }
     }
@@ -118,7 +117,7 @@ tasks {
 
             if (name.startsWith("android")){
                 jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
-            } else if (name.startsWith("desktop")){
+            } else if (name.startsWith("jvm")){
                 jdkVersion.set(JavaVersion.VERSION_21.majorVersion.toInt())
             }
         }
