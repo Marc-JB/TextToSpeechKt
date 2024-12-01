@@ -1,6 +1,6 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
-$dokka.location:org.w3c.speech/SpeechSynthesis/getVoices/#/PointingToDeclaration/tts/org.w3c.speech/-speech-synthesis/[browser-wasm]get-voices.html
+
 module:tts
 js_interop
 nl.marc_apps.tts
