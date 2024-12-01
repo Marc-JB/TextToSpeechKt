@@ -10,7 +10,6 @@ import platform.AVFAudio.AVSpeechSynthesisVoice
 import platform.AVFAudio.AVSpeechSynthesizer
 import platform.AVFAudio.AVSpeechUtterance
 import platform.AVFAudio.AVSpeechUtteranceDefaultSpeechRate
-import platform.Foundation.mutableArrayValueForKeyPath
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 

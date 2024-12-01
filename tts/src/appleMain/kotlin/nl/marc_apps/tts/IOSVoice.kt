@@ -6,7 +6,7 @@ import platform.AVFAudio.AVSpeechSynthesisVoice
 
 @ExperimentalVoiceApi
 @ExperimentalIOSTarget
-internal data class IOSVoice constructor(
+internal data class IOSVoice(
     override val name: String,
     override val isDefault: Boolean,
     override val isOnline: Boolean,
