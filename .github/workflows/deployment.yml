@@ -44,7 +44,7 @@ jobs:
         run: sed -i '' 's/tts[[:space:]]*=[[:space:]]*"[^"]*"/tts = "${{ github.event.inputs.version }}"/g' ./gradle/libs.versions.toml
 
       - name: Build & Deploy with Gradle
-        run: ./gradlew clean :tts:publish :tts-compose:publish --info
+        run: ./gradlew :tts:build :tts-compose:build :tts:publish :tts-compose:publish --info
         env:
           GPR_USER: github-actions
           GPR_KEY: ${{ secrets.GITHUB_TOKEN }}

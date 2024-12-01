@@ -163,7 +163,7 @@ signing {
     val signingPassword = getConfigProperty("gpg", "signing", "password")
     useInMemoryPgpKeys(signingKey, signingPassword)
 
-    sign(publishing.publications)
+    sign(publishing.publications.matching { it is MavenPublication })
 }
 
 fun getConfigProperty(vararg path: String): String? {

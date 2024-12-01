@@ -64,6 +64,7 @@ class MavenRepositoryConfigurationPlugin : Plugin<Project> {
                             password = extension.ossrh.token.get()
                         }
                     }
+                    println("Configured the Sonatype OSSRH repository")
                 }
 
                 if (extension.githubPackages.organization.isPresent && extension.githubPackages.project.isPresent
@@ -76,6 +77,7 @@ class MavenRepositoryConfigurationPlugin : Plugin<Project> {
                             password = extension.githubPackages.token.get()
                         }
                     }
+                    println("Configured the GitHub Packages repository")
                 }
             }
         }
