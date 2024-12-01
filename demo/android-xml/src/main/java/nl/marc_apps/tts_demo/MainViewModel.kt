@@ -1,17 +1,17 @@
 package nl.marc_apps.tts_demo
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import nl.marc_apps.tts.TextToSpeechEngine
 import nl.marc_apps.tts.TextToSpeechFactory
 import nl.marc_apps.tts.TextToSpeechInstance
+import org.koin.android.annotation.KoinViewModel
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+@KoinViewModel
+class MainViewModel(private val textToSpeechFactory: TextToSpeechFactory) : ViewModel() {
     private var ttsInstance: TextToSpeechInstance? = null
 
     private val mutableIsTextToSpeechLoaded = MutableStateFlow(false)
@@ -36,7 +36,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private suspend fun initTextToSpeech() {
-        val textToSpeechFactory = TextToSpeechFactory(getApplication<Application>().applicationContext, TextToSpeechEngine.Google)
         ttsInstance = textToSpeechFactory.createOrNull()
         mutableIsTextToSpeechLoaded.update { true }
     }

@@ -17,9 +17,14 @@ freetts_java = "1.2.2"
 
 google-material-xml = "1.12.0"
 
+koin = "4.0.0"
+koin-annotations = "2.0.0-Beta2"
+
 kotlin = "2.1.0"
 kotlin-coroutines = "1.9.0"
 kotlin-browser = "0.3"
+
+ksp = "2.0.20-1.0.25"
 
 tts = "2.5.0"
 
@@ -39,6 +44,13 @@ freetts = { module = "net.sf.sociaal:freetts", version.ref = "freetts_java" }
 
 google-material-xml = { module = "com.google.android.material:material", version.ref = "google-material-xml" }
 
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android" }
+koin-androidx-startup = { module = "io.insert-koin:koin-androidx-startup" }
+koin-annotations-bom = { module = "io.insert-koin:koin-annotations-bom", version.ref = "koin-annotations" }
+koin-annotations = { module = "io.insert-koin:koin-annotations" }
+koin-annotations-ksp = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin-annotations" }
+
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
 kotlin-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlin-browser" }
 
@@ -53,6 +65,8 @@ dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+
+ksp = { id = "com.google.devtools.ksp", version.ref="ksp" }
 
 mavenRepositoryConfiguration = { id = "nl.marc-apps.maven-repository-configuration-plugin" }
 
