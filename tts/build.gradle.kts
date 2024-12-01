@@ -17,8 +17,8 @@ plugins {
 }
 
 object Project {
-    const val artifactId = "tts"
-    const val namespace = "nl.marc_apps.tts"
+    const val ARTIFACT_ID = "tts"
+    const val NAMESPACE = "nl.marc_apps.tts"
 }
 
 group = "nl.marc-apps"
@@ -91,12 +91,12 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     buildToolsVersion = libs.versions.android.buildTools.get()
 
-    namespace = Project.namespace
+    namespace = Project.NAMESPACE
 
     defaultConfig {
         minSdk = 1
 
-        setProperty("archivesBaseName", Project.artifactId)
+        setProperty("archivesBaseName", Project.ARTIFACT_ID)
     }
 }
 
@@ -110,7 +110,7 @@ tasks {
         dokkaSourceSets.configureEach {
             sourceLink {
                 localDirectory.set(file("src/${name}/kotlin"))
-                remoteUrl.set(URI.create("https://github.com/Marc-JB/TextToSpeechKt/blob/main/${Project.artifactId}/src/${name}/kotlin").toURL())
+                remoteUrl.set(URI.create("https://github.com/Marc-JB/TextToSpeechKt/blob/main/${Project.ARTIFACT_ID}/src/${name}/kotlin").toURL())
                 remoteLineSuffix.set("#L")
             }
 

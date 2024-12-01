@@ -19,8 +19,8 @@ plugins {
 }
 
 object Project {
-    const val artifactId = "tts-compose"
-    const val namespace = "nl.marc_apps.tts_compose"
+    const val ARTIFACT_ID = "tts-compose"
+    const val NAMESPACE = "nl.marc_apps.tts_compose"
 }
 
 group = "nl.marc-apps"
@@ -87,12 +87,12 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     buildToolsVersion = libs.versions.android.buildTools.get()
 
-    namespace = Project.namespace
+    namespace = Project.NAMESPACE
 
     defaultConfig {
         minSdk = 21
 
-        setProperty("archivesBaseName", Project.artifactId)
+        setProperty("archivesBaseName", Project.ARTIFACT_ID)
     }
 }
 
@@ -106,7 +106,7 @@ tasks {
         dokkaSourceSets.configureEach {
             sourceLink {
                 localDirectory.set(file("src/${name}/kotlin"))
-                remoteUrl.set(URI.create("https://github.com/Marc-JB/TextToSpeechKt/blob/main/${Project.artifactId}/src/${name}/kotlin").toURL())
+                remoteUrl.set(URI.create("https://github.com/Marc-JB/TextToSpeechKt/blob/main/${Project.ARTIFACT_ID}/src/${name}/kotlin").toURL())
                 remoteLineSuffix.set("#L")
             }
 
