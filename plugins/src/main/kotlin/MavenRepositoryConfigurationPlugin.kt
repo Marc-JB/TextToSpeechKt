@@ -47,37 +47,37 @@ class MavenRepositoryConfigurationPlugin : Plugin<Project> {
     override fun apply(project: Project) = with(project) {
         val extension = extensions.create<RepositoryConfigExtension>("repositoryConfig")
 
-        configure<PublishingExtension> {
-            repositories {
-                if (extension.ossrh.username.isPresent && extension.ossrh.token.isPresent) {
-                    maven {
-                        name = "OSSRH"
-                        url = URI.create(
-                            if (extension.isSnapshot.getOrElse(false)) {
-                                "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                            } else {
-                                "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+        afterEvaluate {
+            configure<PublishingExtension> {
+                repositories {
+                    if (extension.ossrh.username.isPresent && extension.ossrh.token.isPresent) {
+                        maven {
+                            name = "OSSRH"
+                            url = URI.create(
+                                if (extension.isSnapshot.getOrElse(false)) {
+                                    "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                                } else {
+                                    "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                                }
+                            )
+                            credentials {
+                                username = extension.ossrh.username.get()
+                                password = extension.ossrh.token.get()
                             }
-                        )
-                        credentials {
-                            username = extension.ossrh.username.get()
-                            password = extension.ossrh.token.get()
                         }
                     }
-                    println("Configured the Sonatype OSSRH repository")
-                }
 
-                if (extension.githubPackages.organization.isPresent && extension.githubPackages.project.isPresent
-                    && extension.githubPackages.username.isPresent && extension.githubPackages.token.isPresent) {
-                    maven {
-                        name = "GitHubPackages"
-                        url = URI.create("https://maven.pkg.github.com/${extension.githubPackages.organization.get()}/${extension.githubPackages.project.get()}")
-                        credentials {
-                            username = extension.githubPackages.username.get()
-                            password = extension.githubPackages.token.get()
+                    if (extension.githubPackages.organization.isPresent && extension.githubPackages.project.isPresent
+                        && extension.githubPackages.username.isPresent && extension.githubPackages.token.isPresent) {
+                        maven {
+                            name = "GitHubPackages"
+                            url = URI.create("https://maven.pkg.github.com/${extension.githubPackages.organization.get()}/${extension.githubPackages.project.get()}")
+                            credentials {
+                                username = extension.githubPackages.username.get()
+                                password = extension.githubPackages.token.get()
+                            }
                         }
                     }
-                    println("Configured the GitHub Packages repository")
                 }
             }
         }

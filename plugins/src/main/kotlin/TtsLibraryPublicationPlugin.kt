@@ -18,42 +18,44 @@ class TtsLibraryPublicationPlugin : Plugin<Project> {
     override fun apply(project: Project) = with(project) {
         val extension = extensions.create<TtsPublicationConfiguration>("ttsPublication")
 
-        configure<PublishingExtension> {
-            publications {
-                withType<MavenPublication> {
-                    groupId = "nl.marc-apps"
+        afterEvaluate {
+            configure<PublishingExtension> {
+                publications {
+                    withType<MavenPublication> {
+                        groupId = "nl.marc-apps"
 
-                    if (extension.javadocJarTask.isPresent) {
-                        artifact(extension.javadocJarTask.get())
-                    }
-
-                    pom {
-                        name.set("TextToSpeechKt")
-                        description.set("Kotlin Multiplatform Text-to-Speech library for Android and browser (Kotlin/JS & Kotlin/Wasm). This library will enable you to use Text-to-Speech in multiplatform Kotlin projects.")
-                        url.set("https://github.com/Marc-JB/TextToSpeechKt")
-                        inceptionYear.set("2020")
-
-                        organization {
-                            name.set("Marc Apps & Software")
-                            url.set("https://marc-apps.nl")
+                        if (extension.javadocJarTask.isPresent) {
+                            artifact(extension.javadocJarTask.get())
                         }
 
-                        developers {
-                            developer {
-                                id.set("Marc-JB")
-                                name.set("Marc")
-                                email.set("16156117+Marc-JB@users.noreply.github.com")
+                        pom {
+                            name.set("TextToSpeechKt")
+                            description.set("Kotlin Multiplatform Text-to-Speech library for Android and browser (Kotlin/JS & Kotlin/Wasm). This library will enable you to use Text-to-Speech in multiplatform Kotlin projects.")
+                            url.set("https://github.com/Marc-JB/TextToSpeechKt")
+                            inceptionYear.set("2020")
+
+                            organization {
+                                name.set("Marc Apps & Software")
                                 url.set("https://marc-apps.nl")
-                                organization.set("Marc Apps & Software")
-                                organizationUrl.set("https://marc-apps.nl")
                             }
-                        }
 
-                        licenses {
-                            mitLicense()
-                        }
+                            developers {
+                                developer {
+                                    id.set("Marc-JB")
+                                    name.set("Marc")
+                                    email.set("16156117+Marc-JB@users.noreply.github.com")
+                                    url.set("https://marc-apps.nl")
+                                    organization.set("Marc Apps & Software")
+                                    organizationUrl.set("https://marc-apps.nl")
+                                }
+                            }
 
-                        configureGitHubRepository("Marc-JB", "TextToSpeechKt")
+                            licenses {
+                                mitLicense()
+                            }
+
+                            configureGitHubRepository("Marc-JB", "TextToSpeechKt")
+                        }
                     }
                 }
             }
