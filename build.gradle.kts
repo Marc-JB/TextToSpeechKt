@@ -1,7 +1,3 @@
-
-import org.jetbrains.dokka.versioning.VersioningConfiguration
-import org.jetbrains.dokka.versioning.VersioningPlugin
-
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
@@ -19,15 +15,11 @@ plugins {
     alias(libs.plugins.versioncheck)
 }
 
-buildscript {
-    dependencies {
-        classpath(libs.dokka.plugins.versioning)
-    }
-}
-
 dependencies {
     dokkaPlugin(libs.dokka.plugins.androidDocs)
     dokkaPlugin(libs.dokka.plugins.versioning)
+    dokka(projects.tts)
+    dokka(projects.ttsCompose)
 }
 
 val rawVersion = libs.versions.tts.get()
@@ -48,20 +40,26 @@ tasks {
 
     dokkaDeleteOlderVersions.mustRunAfter(dokkaCopyDocsToOutputDir)
 
-    dokkaHtmlMultiModule {
-        outputDirectory.set(currentVersionDir)
-
-        pluginConfiguration<VersioningPlugin, VersioningConfiguration> {
-            version = currentVersion
-            olderVersionsDir = versionArchiveDirectory
-        }
-
+    dokkaGenerate {
         finalizedBy(dokkaCopyDocsToOutputDir, dokkaDeleteOlderVersions)
     }
 
     dependencyUpdates {
         rejectVersionIf {
             arrayOf("alpha", "beta", "rc").any { it in candidate.version.lowercase() }
+        }
+    }
+}
+
+dokka {
+    dokkaPublications {
+        dokkaPublicationDirectory = currentVersionDir
+    }
+
+    pluginsConfiguration {
+        versioning {
+            version = currentVersion
+            olderVersionsDir = versionArchiveDirectory
         }
     }
 }
