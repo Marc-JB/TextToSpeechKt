@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -36,7 +35,7 @@ kotlin {
         }
     }
 
-    js("browserJs") {
+    js {
         moduleName = "compose-multiplatform"
         browser {
             commonWebpackConfig {
@@ -48,7 +47,7 @@ kotlin {
     }
 
     @OptIn(ExperimentalWasmDsl::class)
-    wasmJs("browserWasm") {
+    wasmJs {
         moduleName = "compose-multiplatform"
         browser {
             commonWebpackConfig {
@@ -58,7 +57,7 @@ kotlin {
         binaries.executable()
     }
 
-    jvm("desktop") {
+    jvm {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_17
         }
@@ -67,7 +66,7 @@ kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     applyDefaultHierarchyTemplate {
         common {
-            group("browser") {
+            group("webCommonW3C") {
                 withJs()
                 withWasmJs()
             }
@@ -106,13 +105,13 @@ kotlin {
             implementation("androidx.activity:activity-compose:1.9.0")
         }
 
-        named("desktopMain").dependencies {
+        jvmMain.dependencies {
             implementation(compose.preview)
             implementation(compose.uiTooling)
             implementation(compose.desktop.currentOs)
         }
 
-        named("browserWasmMain").dependencies {
+        wasmJsMain.dependencies {
             implementation(libs.kotlin.browser)
         }
     }
