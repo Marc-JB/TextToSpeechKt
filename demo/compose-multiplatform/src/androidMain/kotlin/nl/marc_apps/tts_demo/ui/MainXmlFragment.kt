@@ -1,4 +1,4 @@
-package nl.marc_apps.tts_demo
+package nl.marc_apps.tts_demo.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,20 +9,20 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
-import nl.marc_apps.tts_demo.databinding.FragmentMainBinding
+import nl.marc_apps.tts_demo.databinding.FragmentMainXmlBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainFragment : Fragment() {
-    private lateinit var binding: FragmentMainBinding
+class MainXmlFragment : Fragment() {
+    private lateinit var binding: FragmentMainXmlBinding
 
-    private val viewModel by viewModel<MainViewModel>()
+    private val viewModel by viewModel<MainXmlViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMainBinding.inflate(inflater, container, false)
+        binding = FragmentMainXmlBinding.inflate(inflater, container, false)
         return binding.root
     }
 

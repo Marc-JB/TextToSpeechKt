@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TTS Demo</string>
+    <string name="tts_not_available">Text-to-Speech is not available.</string>
+    <string name="synthesizing_status_active">Synthesising</string>
+    <string name="synthesizing_status_inactive">Not active</string>
+    <string name="tts_input_label">Text to synthesise</string>
+    <string name="action_say">Say!</string>
+    <string name="options_title">Options</string>
+    <string name="placeholder_voice_unknown">Unknown voice</string>
+    <string name="action_options_reset_all">Reset all options</string>
 </resources>

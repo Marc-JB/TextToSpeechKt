@@ -8,7 +8,7 @@ import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
 
 @Module
-@ComponentScan("nl.marc_apps.tts_demo")
+@ComponentScan("nl.marc_apps.tts_demo.ui")
 class MainModule {
     @Single
     fun textToSpeechFactory(context: Context): TextToSpeechFactory {

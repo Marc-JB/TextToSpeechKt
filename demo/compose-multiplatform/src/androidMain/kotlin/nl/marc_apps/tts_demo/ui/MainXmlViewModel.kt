@@ -1,4 +1,4 @@
-package nl.marc_apps.tts_demo
+package nl.marc_apps.tts_demo.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +11,7 @@ import nl.marc_apps.tts.TextToSpeechInstance
 import org.koin.android.annotation.KoinViewModel
 
 @KoinViewModel
-class MainViewModel(private val textToSpeechFactory: TextToSpeechFactory) : ViewModel() {
+class MainXmlViewModel(private val textToSpeechFactory: TextToSpeechFactory) : ViewModel() {
     private var ttsInstance: TextToSpeechInstance? = null
 
     private val mutableIsTextToSpeechLoaded = MutableStateFlow(false)

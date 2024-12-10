@@ -5,5 +5,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:name="nl.marc_apps.tts_demo.MainFragment"
-    tools:context=".MainActivity" />
+    android:name="nl.marc_apps.tts_demo.ui.MainXmlFragment"
+    tools:context=".MainXmlActivity" />
