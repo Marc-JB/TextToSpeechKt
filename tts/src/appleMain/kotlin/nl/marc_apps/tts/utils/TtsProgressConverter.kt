@@ -4,23 +4,36 @@ import kotlinx.cinterop.ObjCSignatureOverride
 import nl.marc_apps.tts.errors.TextToSpeechSynthesisInterruptedError
 import platform.AVFAudio.*
 import platform.darwin.NSObject
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 class TtsProgressConverter(
-    val onStart: (AVSpeechUtterance) -> Unit,
-    val onComplete: (AVSpeechUtterance, Result<Unit>) -> Unit
+    private val callbackHandler: CallbackHandler<AVSpeechUtterance>,
+    private val onStart: (Uuid) -> Unit,
+    private val onComplete: (Uuid, Result<Unit>) -> Unit
 ) : NSObject(), AVSpeechSynthesizerDelegateProtocol {
     @ObjCSignatureOverride
     override fun speechSynthesizer(synthesizer: AVSpeechSynthesizer, didStartSpeechUtterance: AVSpeechUtterance) {
-        onStart(didStartSpeechUtterance)
+        val utteranceId = callbackHandler.getUtteranceId(didStartSpeechUtterance)
+        if (utteranceId != null) {
+            onStart(utteranceId)
+        }
     }
 
     @ObjCSignatureOverride
     override fun speechSynthesizer(synthesizer: AVSpeechSynthesizer, didFinishSpeechUtterance: AVSpeechUtterance) {
-        onComplete(didFinishSpeechUtterance, Result.success(Unit))
+        val utteranceId = callbackHandler.getUtteranceId(didFinishSpeechUtterance)
+        if (utteranceId != null) {
+            onComplete(utteranceId, Result.success(Unit))
+        }
     }
 
     @ObjCSignatureOverride
     override fun speechSynthesizer(synthesizer: AVSpeechSynthesizer, didCancelSpeechUtterance: AVSpeechUtterance) {
-        onComplete(didCancelSpeechUtterance, Result.failure(TextToSpeechSynthesisInterruptedError()))
+        val utteranceId = callbackHandler.getUtteranceId(didCancelSpeechUtterance)
+        if (utteranceId != null) {
+            onComplete(utteranceId, Result.failure(TextToSpeechSynthesisInterruptedError()))
+        }
     }
 }

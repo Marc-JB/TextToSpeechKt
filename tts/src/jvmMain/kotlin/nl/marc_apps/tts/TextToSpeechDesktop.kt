@@ -17,17 +17,13 @@ private const val VOICE_NAME = "kevin16"
 
 @OptIn(ExperimentalUuidApi::class)
 @ExperimentalDesktopTarget
-internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechInstance {
+internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeech<Nothing?>() {
+    override val canDetectSynthesisStarted = false
+
     private val supervisor = SupervisorJob()
     private val synthesisScope = SynthesisScope(supervisor)
 
-    private val callbackHandler = CallbackHandler<Nothing?>()
-
     private val voice = voiceManager.getVoice(VOICE_NAME)
-
-    override val isSynthesizing = MutableStateFlow(false)
-
-    override val isWarmingUp = MutableStateFlow(true)
 
     override val language = voice.locale.toLanguageTag()
 
@@ -92,61 +88,28 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
 
     init {
         voice.allocate()
-        isWarmingUp.value = false;
+        isWarmingUp.value = false
     }
 
-    private fun enqueueInternal(text: String, clearQueue: Boolean, resultHandler: ResultHandler) {
-        if (clearQueue) {
-            stop()
-        }
-
+    override fun enqueueInternal(text: String, resultHandler: ResultHandler) {
         val utteranceId = Uuid.random()
 
         callbackHandler.add(utteranceId, null, resultHandler)
 
-        isSynthesizing.value = true
         synthesisScope.launch {
             voice.speak(text)
             onTtsCompleted(utteranceId, Result.success(Unit))
         }
     }
 
-    private fun onTtsCompleted(utteranceId: Uuid, result: Result<Unit>) {
-        isSynthesizing.value = false
-        callbackHandler.onResult(utteranceId, result)
-    }
-
-    override fun enqueue(text: String, clearQueue: Boolean) {
-        enqueueInternal(text, clearQueue, ResultHandler.Empty)
-    }
-
-    override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean) {
-        suspendCancellableCoroutine { cont ->
-            enqueueInternal(text, clearQueue, ResultHandler.ContinuationHandler(cont))
-            cont.invokeOnCancellation {
-                if (clearQueueOnCancellation) {
-                    stop()
-                }
-            }
-        }
-    }
-
-    override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
-        enqueueInternal(text, clearQueue, ResultHandler.CallbackHandler(callback))
-    }
-
-    override fun plusAssign(text: String) {
-        enqueue(text)
-    }
-
     override fun stop() {
         voice.outputQueue.removeAll()
-        callbackHandler.onStopped()
+        super.stop()
     }
 
     override fun close() {
+        super.close()
         voice.deallocate()
         supervisor.cancel()
-        callbackHandler.clear()
     }
 }

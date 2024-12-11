@@ -20,14 +20,8 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
-internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInstance {
-    private val callbackHandler = CallbackHandler<Nothing?>()
-
-    override val isSynthesizing = MutableStateFlow(false)
-
-    override val isWarmingUp = MutableStateFlow(false)
-
-    private var hasSpoken = false
+internal class TextToSpeechBrowser(context: Window = window) : TextToSpeech<Nothing?>() {
+    override val canDetectSynthesisStarted = true
 
     private val speechSynthesis: SpeechSynthesis = getSpeechSynthesis(context)
 
@@ -107,24 +101,7 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
         }
     }
 
-    override fun enqueue(text: String, clearQueue: Boolean) {
-        enqueueInternal(text, clearQueue, ResultHandler.Empty)
-    }
-
-    private fun enqueueInternal(text: String, clearQueue: Boolean, resultHandler: ResultHandler) {
-        if(isMuted || internalVolume == 0f) {
-            if(clearQueue) {
-                stop()
-            }
-            resultHandler.setResult(Result.success(Unit))
-            return
-        }
-
-        if (!hasSpoken) {
-            hasSpoken = true
-            isWarmingUp.value = true
-        }
-
+    override fun enqueueInternal(text: String, resultHandler: ResultHandler) {
         val utteranceId = Uuid.random()
 
         callbackHandler.add(utteranceId, null, resultHandler)
@@ -138,43 +115,13 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
         resetCurrentUtterance()
     }
 
-    override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
-        enqueueInternal(text, clearQueue, ResultHandler.CallbackHandler(callback))
-    }
-
-    private fun onTtsStarted(utteranceId: Uuid) {
-        isWarmingUp.value = false
-        isSynthesizing.value = true
-    }
-
-    private fun onTtsCompleted(utteranceId: Uuid, result: Result<Unit>) {
-        isWarmingUp.value = false
-        isSynthesizing.value = false
-        callbackHandler.onResult(utteranceId, result)
-    }
-
-    override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean) {
-        suspendCancellableCoroutine { cont ->
-            enqueueInternal(text, clearQueue, ResultHandler.ContinuationHandler(cont))
-            cont.invokeOnCancellation {
-                if (clearQueueOnCancellation) {
-                    stop()
-                }
-            }
-        }
-    }
-
-    override fun plusAssign(text: String) {
-        enqueue(text, false)
-    }
-
     override fun stop() {
         speechSynthesis.cancel()
-        callbackHandler.onStopped()
+        super.stop()
     }
 
     override fun close() {
-        stop()
+        super.close()
         callbackHandler.clear()
     }
 }

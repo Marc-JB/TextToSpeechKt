@@ -20,12 +20,7 @@ class CallbackHandler<TNativeUtteranceId> {
         queueSize++
     }
 
-    fun onResult(nativeObject: TNativeUtteranceId, result: Result<Unit>) {
-        val utteranceId = utteranceIds[nativeObject]
-        if (utteranceId != null) {
-            onResult(utteranceId, result)
-        }
-    }
+    fun getUtteranceId(nativeObject: TNativeUtteranceId): Uuid? = utteranceIds[nativeObject]
 
     fun onResult(utteranceId: Uuid, result: Result<Unit>) {
         if (queueSize-- < 0) {
