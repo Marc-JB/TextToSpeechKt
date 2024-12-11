@@ -132,7 +132,9 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
 
     private fun enqueueInternal(text: String, clearQueue: Boolean, resultHandler: ResultHandler) {
         if(isMuted || internalVolume == 0f) {
-            if(clearQueue) stop()
+            if(clearQueue) {
+                stop()
+            }
             resultHandler.setResult(Result.success(Unit))
             return
         }

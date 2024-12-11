@@ -88,7 +88,9 @@ internal class TextToSpeechIOS(private val synthesizer: AVSpeechSynthesizer) : T
     @OptIn(ExperimentalVoiceApi::class)
     private fun enqueueInternal(text: String, clearQueue: Boolean, resultHandler: ResultHandler) {
         if(isMuted || volume == 0) {
-            if(clearQueue) stop()
+            if(clearQueue) {
+                stop()
+            }
             resultHandler.setResult(Result.success(Unit))
             return
         }

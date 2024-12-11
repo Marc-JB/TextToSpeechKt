@@ -10,12 +10,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
+import nl.marc_apps.tts.utils.CallbackHandler
+import nl.marc_apps.tts.utils.ResultHandler
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInstance {
+    private val callbackHandler = CallbackHandler<Nothing?>()
+
     override val isSynthesizing = MutableStateFlow(false)
 
     override val isWarmingUp = MutableStateFlow(false)
@@ -101,8 +108,15 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
     }
 
     override fun enqueue(text: String, clearQueue: Boolean) {
+        enqueueInternal(text, clearQueue, ResultHandler.Empty)
+    }
+
+    private fun enqueueInternal(text: String, clearQueue: Boolean, resultHandler: ResultHandler) {
         if(isMuted || internalVolume == 0f) {
-            if(clearQueue) stop()
+            if(clearQueue) {
+                stop()
+            }
+            resultHandler.setResult(Result.success(Unit))
             return
         }
 
@@ -111,6 +125,13 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
             isWarmingUp.value = true
         }
 
+        val utteranceId = Uuid.random()
+
+        callbackHandler.add(utteranceId, null, resultHandler)
+
+        speechSynthesisUtterance.onstart = { onTtsStarted(utteranceId) }
+        speechSynthesisUtterance.onend = { onTtsCompleted(utteranceId, Result.success(Unit)) }
+
         speechSynthesisUtterance.text = text
         speechSynthesis.speak(speechSynthesisUtterance)
 
@@ -118,36 +139,23 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
     }
 
     override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
-        if(isMuted || internalVolume == 0f) {
-            if(clearQueue) stop()
-            callback(Result.success(Unit))
-            return
-        }
+        enqueueInternal(text, clearQueue, ResultHandler.CallbackHandler(callback))
+    }
 
-        speechSynthesisUtterance.onstart = {
-            isWarmingUp.value = false
-            isSynthesizing.value = true
-        }
+    private fun onTtsStarted(utteranceId: Uuid) {
+        isWarmingUp.value = false
+        isSynthesizing.value = true
+    }
 
-        speechSynthesisUtterance.onend = {
-            isWarmingUp.value = false
-            isSynthesizing.value = false
-            callback(Result.success(Unit))
-        }
-
-        enqueue(text, clearQueue)
+    private fun onTtsCompleted(utteranceId: Uuid, result: Result<Unit>) {
+        isWarmingUp.value = false
+        isSynthesizing.value = false
+        callbackHandler.onResult(utteranceId, result)
     }
 
     override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean) {
         suspendCancellableCoroutine { cont ->
-            say(text, clearQueue) {
-                if (it.isSuccess) {
-                    cont.resume(it.getOrThrow())
-                } else if (it.isFailure) {
-                    val error = it.exceptionOrNull() ?: UnknownTextToSpeechSynthesisError()
-                    cont.resumeWithException(error)
-                }
-            }
+            enqueueInternal(text, clearQueue, ResultHandler.ContinuationHandler(cont))
             cont.invokeOnCancellation {
                 if (clearQueueOnCancellation) {
                     stop()
@@ -162,9 +170,11 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
 
     override fun stop() {
         speechSynthesis.cancel()
+        callbackHandler.onStopped()
     }
 
     override fun close() {
-        speechSynthesis.cancel()
+        stop()
+        callbackHandler.clear()
     }
 }
