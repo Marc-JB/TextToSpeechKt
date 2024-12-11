@@ -4,14 +4,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import nl.marc_apps.tts.utils.CallbackHandler
+import nl.marc_apps.tts.utils.ResultHandler
 import nl.marc_apps.tts.utils.TtsProgressConverter
 import platform.AVFAudio.AVSpeechBoundary
 import platform.AVFAudio.AVSpeechSynthesisVoice
 import platform.AVFAudio.AVSpeechSynthesizer
 import platform.AVFAudio.AVSpeechUtterance
 import platform.AVFAudio.AVSpeechUtteranceDefaultSpeechRate
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -79,14 +78,18 @@ internal class TextToSpeechIOS(private val synthesizer: AVSpeechSynthesizer) : T
     }
 
     override fun enqueue(text: String, clearQueue: Boolean) {
-        say(text, clearQueue) {}
+        enqueueInternal(text, clearQueue, ResultHandler.Empty)
+    }
+
+    override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
+        enqueueInternal(text, clearQueue, ResultHandler.CallbackHandler(callback))
     }
 
     @OptIn(ExperimentalVoiceApi::class)
-    override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
+    private fun enqueueInternal(text: String, clearQueue: Boolean, resultHandler: ResultHandler) {
         if(isMuted || volume == 0) {
             if(clearQueue) stop()
-            callback(Result.success(Unit))
+            resultHandler.setResult(Result.success(Unit))
             return
         }
 
@@ -103,7 +106,7 @@ internal class TextToSpeechIOS(private val synthesizer: AVSpeechSynthesizer) : T
             utterance.voice = voice.iosVoice
         }
 
-        callbackHandler.add(Uuid.random(), utterance, callback)
+        callbackHandler.add(Uuid.random(), utterance, resultHandler)
 
         if (!hasSpoken) {
             hasSpoken = true
@@ -115,14 +118,7 @@ internal class TextToSpeechIOS(private val synthesizer: AVSpeechSynthesizer) : T
 
     override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean) {
         suspendCancellableCoroutine { cont ->
-            say(text, clearQueue) {
-                if (it.isSuccess) {
-                    cont.resume(Unit)
-                } else if (it.isFailure) {
-                    val error = it.exceptionOrNull() ?: Exception()
-                    cont.resumeWithException(error)
-                }
-            }
+            enqueueInternal(text, clearQueue, ResultHandler.ContinuationHandler(cont))
             cont.invokeOnCancellation {
                 if (clearQueueOnCancellation) {
                     stop()

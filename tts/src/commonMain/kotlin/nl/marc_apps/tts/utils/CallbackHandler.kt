@@ -5,7 +5,7 @@ import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
 class CallbackHandler<TNativeUtteranceId> {
-    private val callbacks = mutableMapOf<Uuid, (Result<Unit>) -> Unit>()
+    private val resultHandlers = mutableMapOf<Uuid, ResultHandler>()
 
     private val utteranceIds = mutableMapOf<TNativeUtteranceId, Uuid>()
 
@@ -14,8 +14,8 @@ class CallbackHandler<TNativeUtteranceId> {
     val isQueueEmpty
         get() = queueSize == 0
 
-    fun add(utteranceId: Uuid, nativeObject: TNativeUtteranceId, callback: (Result<Unit>) -> Unit) {
-        callbacks[utteranceId] = callback
+    fun add(utteranceId: Uuid, nativeObject: TNativeUtteranceId, resultHandler: ResultHandler) {
+        resultHandlers[utteranceId] = resultHandler
         utteranceIds[nativeObject] = utteranceId
         queueSize++
     }
@@ -31,8 +31,9 @@ class CallbackHandler<TNativeUtteranceId> {
         if (queueSize-- < 0) {
             queueSize = 0
         }
-        val callback = callbacks.remove(utteranceId)
-        callback?.invoke(result)
+
+        val continuation = resultHandlers.remove(utteranceId)
+        continuation?.setResult(result)
     }
 
     fun onStopped() {
@@ -40,7 +41,7 @@ class CallbackHandler<TNativeUtteranceId> {
     }
 
     fun clear() {
-        callbacks.clear()
+        resultHandlers.clear()
         queueSize = 0
     }
 }

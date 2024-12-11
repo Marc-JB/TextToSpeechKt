@@ -13,13 +13,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import nl.marc_apps.tts.utils.CallbackHandler
+import nl.marc_apps.tts.utils.ResultHandler
 import nl.marc_apps.tts.utils.TtsProgressConverter
 import nl.marc_apps.tts.utils.VoiceAndroidLegacy
 import nl.marc_apps.tts.utils.VoiceAndroidModern
 import nl.marc_apps.tts.utils.getContinuationId
 import java.util.*
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import android.speech.tts.TextToSpeech as AndroidTTS
@@ -139,14 +138,18 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override fun enqueue(text: String, clearQueue: Boolean) {
-        say(text, clearQueue) {}
+        enqueueInternal(text, clearQueue, ResultHandler.Empty)
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
+        enqueueInternal(text, clearQueue, ResultHandler.CallbackHandler(callback))
+    }
+
+    private fun enqueueInternal(text: String, clearQueue: Boolean, resultHandler: ResultHandler) {
         if(isMuted || internalVolume == 0f) {
             if(clearQueue) stop()
-            callback(Result.success(Unit))
+            resultHandler.setResult(Result.success(Unit))
             return
         }
 
@@ -154,7 +157,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         val utteranceId = Uuid.random()
         val utteranceIdString = utteranceId.toString()
 
-        callbackHandler.add(utteranceId, utteranceIdString, callback)
+        callbackHandler.add(utteranceId, utteranceIdString, resultHandler)
 
         if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1 && !hasSpoken) {
             hasSpoken = true
@@ -183,14 +186,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean){
         suspendCancellableCoroutine { cont ->
-            say(text, clearQueue) {
-                if (it.isSuccess) {
-                    cont.resume(Unit)
-                } else if (it.isFailure) {
-                    val error = it.exceptionOrNull() ?: Exception()
-                    cont.resumeWithException(error)
-                }
-            }
+            enqueueInternal(text, clearQueue, ResultHandler.ContinuationHandler(cont))
             cont.invokeOnCancellation {
                 if (clearQueueOnCancellation) {
                     stop()
