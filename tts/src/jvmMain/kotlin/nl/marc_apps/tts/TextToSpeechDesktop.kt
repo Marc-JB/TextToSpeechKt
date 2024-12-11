@@ -120,7 +120,7 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
         isSynthesizing.value = true
         voice.speak(text)
         isSynthesizing.value = false
-        callback(Result.success(Unit));
+        callback(Result.success(Unit))
     }
 
     override fun plusAssign(text: String) {

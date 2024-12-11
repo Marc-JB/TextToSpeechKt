@@ -1,6 +1,7 @@
 package nl.marc_apps.tts
 
 import kotlinx.coroutines.flow.StateFlow
+import nl.marc_apps.tts.experimental.ExperimentalTextToSpeechApi
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 
 /** A TTS instance. Should be [close]d when no longer in use. */
