@@ -87,7 +87,8 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeech<
         }
     } else {
         Locale.getAvailableLocales().asSequence().filter {
-            tts?.isLanguageAvailable(it) == AndroidTTS.LANG_AVAILABLE
+            val availability = tts?.isLanguageAvailable(it)
+            availability != AndroidTTS.LANG_NOT_SUPPORTED && availability != AndroidTTS.LANG_MISSING_DATA
         }.map {
             VoiceAndroidLegacy(it, it == defaultVoice?.locale)
         }
