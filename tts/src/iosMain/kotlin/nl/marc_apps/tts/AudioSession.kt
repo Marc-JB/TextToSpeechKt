@@ -11,7 +11,7 @@ import platform.AVFAudio.AVAudioSessionModeDefault
 import platform.AVFAudio.setActive
 
 object AudioSession {
-    @OptIn(ExperimentalForeignApi::class)
+    @ExperimentalForeignApi
     fun initialiseForTextToSpeech() {
         val audioSession = AVAudioSession.sharedInstance()
 
