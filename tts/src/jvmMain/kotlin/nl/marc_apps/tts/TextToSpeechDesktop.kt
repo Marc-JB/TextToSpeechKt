@@ -1,20 +1,28 @@
 package nl.marc_apps.tts
 
 import com.sun.speech.freetts.VoiceManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
 import nl.marc_apps.tts.experimental.ExperimentalDesktopTarget
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
+import nl.marc_apps.tts.utils.CallbackHandler
+import nl.marc_apps.tts.utils.ResultHandler
+import nl.marc_apps.tts.utils.SynthesisScope
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 private const val VOICE_NAME = "kevin16"
 
+@OptIn(ExperimentalUuidApi::class)
 @ExperimentalDesktopTarget
 internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechInstance {
+    private val supervisor = SupervisorJob()
+    private val synthesisScope = SynthesisScope(supervisor)
+
+    private val callbackHandler = CallbackHandler<Nothing?>()
+
     private val voice = voiceManager.getVoice(VOICE_NAME)
 
     override val isSynthesizing = MutableStateFlow(false)
@@ -87,40 +95,44 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
         isWarmingUp.value = false;
     }
 
-    override fun enqueue(text: String, clearQueue: Boolean) {
+    private fun enqueueInternal(text: String, clearQueue: Boolean, resultHandler: ResultHandler) {
+        if (clearQueue) {
+            stop()
+        }
+
+        val utteranceId = Uuid.random()
+
+        callbackHandler.add(utteranceId, null, resultHandler)
+
         isSynthesizing.value = true
-        voice.speak(text)
+        synthesisScope.launch {
+            voice.speak(text)
+            onTtsCompleted(utteranceId, Result.success(Unit))
+        }
+    }
+
+    private fun onTtsCompleted(utteranceId: Uuid, result: Result<Unit>) {
         isSynthesizing.value = false
+        callbackHandler.onResult(utteranceId, result)
+    }
+
+    override fun enqueue(text: String, clearQueue: Boolean) {
+        enqueueInternal(text, clearQueue, ResultHandler.Empty)
     }
 
     override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean) {
-        isSynthesizing.value = true
-        coroutineScope {
-            withContext(Dispatchers.Default) {
-                suspendCancellableCoroutine { cont ->
-                    try {
-                        voice.speak(text)
-                        cont.resume(Unit)
-                    } catch (throwable: Throwable) {
-                        cont.resumeWithException(throwable)
-                    }
-                    cont.invokeOnCancellation {
-                        if (clearQueueOnCancellation) {
-                            stop()
-                        }
-                    }
+        suspendCancellableCoroutine { cont ->
+            enqueueInternal(text, clearQueue, ResultHandler.ContinuationHandler(cont))
+            cont.invokeOnCancellation {
+                if (clearQueueOnCancellation) {
+                    stop()
                 }
             }
-
-            isSynthesizing.value = false
         }
     }
 
     override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
-        isSynthesizing.value = true
-        voice.speak(text)
-        isSynthesizing.value = false
-        callback(Result.success(Unit))
+        enqueueInternal(text, clearQueue, ResultHandler.CallbackHandler(callback))
     }
 
     override fun plusAssign(text: String) {
@@ -129,9 +141,12 @@ internal class TextToSpeechDesktop(voiceManager: VoiceManager) : TextToSpeechIns
 
     override fun stop() {
         voice.outputQueue.removeAll()
+        callbackHandler.onStopped()
     }
 
     override fun close() {
         voice.deallocate()
+        supervisor.cancel()
+        callbackHandler.clear()
     }
 }
