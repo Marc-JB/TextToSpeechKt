@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import nl.marc_apps.tts.experimental.ExperimentalIOSTarget
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
+import nl.marc_apps.tts.utils.CallbackHandler
 import nl.marc_apps.tts.utils.TtsProgressConverter
 import platform.AVFAudio.AVSpeechBoundary
 import platform.AVFAudio.AVSpeechSynthesisVoice
@@ -12,10 +13,13 @@ import platform.AVFAudio.AVSpeechUtterance
 import platform.AVFAudio.AVSpeechUtteranceDefaultSpeechRate
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 @ExperimentalIOSTarget
 internal class TextToSpeechIOS(private val synthesizer: AVSpeechSynthesizer) : TextToSpeechInstance {
-    private val callbacks = mutableMapOf<AVSpeechUtterance, (Result<Unit>) -> Unit>()
+    private val callbackHandler = CallbackHandler<AVSpeechUtterance>()
 
     override val isSynthesizing = MutableStateFlow(false)
 
@@ -73,7 +77,7 @@ internal class TextToSpeechIOS(private val synthesizer: AVSpeechSynthesizer) : T
     private fun onTtsCompleted(utterance: AVSpeechUtterance, result: Result<Unit>) {
         isWarmingUp.value = false
         isSynthesizing.value = false
-        callbacks[utterance]?.invoke(result)
+        callbackHandler.onResult(utterance, result)
     }
 
     override fun enqueue(text: String, clearQueue: Boolean) {
@@ -101,11 +105,7 @@ internal class TextToSpeechIOS(private val synthesizer: AVSpeechSynthesizer) : T
             utterance.voice = voice.iosVoice
         }
 
-        val localCallback: (Result<Unit>) -> Unit = {
-            callback(it)
-            callbacks.remove(utterance)
-        }
-        callbacks += utterance to localCallback
+        callbackHandler.add(Uuid.random(), utterance, callback)
 
         if (!hasSpoken) {
             hasSpoken = true
@@ -139,11 +139,12 @@ internal class TextToSpeechIOS(private val synthesizer: AVSpeechSynthesizer) : T
 
     override fun stop() {
         synthesizer.stopSpeakingAtBoundary(AVSpeechBoundary.AVSpeechBoundaryImmediate)
+        callbackHandler.onStopped()
     }
 
     override fun close() {
         stop()
         synthesizer.setDelegate(null)
-        callbacks.clear()
+        callbackHandler.clear()
     }
 }

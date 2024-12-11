@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
+import nl.marc_apps.tts.utils.CallbackHandler
 import nl.marc_apps.tts.utils.TtsProgressConverter
 import nl.marc_apps.tts.utils.VoiceAndroidLegacy
 import nl.marc_apps.tts.utils.VoiceAndroidModern
@@ -19,20 +20,21 @@ import nl.marc_apps.tts.utils.getContinuationId
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 import android.speech.tts.TextToSpeech as AndroidTTS
 
 /** A TTS instance. Should be [close]d when no longer in use. */
+@OptIn(ExperimentalUuidApi::class)
 @TargetApi(VERSION_CODES.DONUT)
 internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechInstance {
-    private val callbacks = mutableMapOf<UUID, (Result<Unit>) -> Unit>()
+    private val callbackHandler = CallbackHandler<String>()
 
     override val isSynthesizing = MutableStateFlow(false)
 
     override val isWarmingUp = MutableStateFlow(false)
 
     private var hasSpoken = false
-
-    private var preIcsQueueSize = 0
 
     private val internalVolume: Float
         get() = if(!isMuted) volume / 100f else 0f
@@ -149,12 +151,10 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
 
         val queueMode = if(clearQueue) AndroidTTS.QUEUE_FLUSH else AndroidTTS.QUEUE_ADD
-        val utteranceId = UUID.randomUUID()
+        val utteranceId = Uuid.random()
+        val utteranceIdString = utteranceId.toString()
 
-        callbacks += utteranceId to {
-            callback(it)
-            callbacks.remove(utteranceId)
-        }
+        callbackHandler.add(utteranceId, utteranceIdString, callback)
 
         if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1 && !hasSpoken) {
             hasSpoken = true
@@ -164,16 +164,15 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             val params = Bundle()
             params.putFloat(KEY_PARAM_VOLUME, internalVolume)
-            params.putString(KEY_PARAM_UTTERANCE_ID, utteranceId.toString())
-            tts?.speak(text, queueMode, params, utteranceId.toString())
+            params.putString(KEY_PARAM_UTTERANCE_ID, utteranceIdString)
+            tts?.speak(text, queueMode, params, utteranceIdString)
         } else {
             val params = hashMapOf(
                 KEY_PARAM_VOLUME to internalVolume.toString(),
-                KEY_PARAM_UTTERANCE_ID to utteranceId.toString()
+                KEY_PARAM_UTTERANCE_ID to utteranceIdString
             )
 
             if (!hasModernProgressListeners) {
-                preIcsQueueSize++
                 isSynthesizing.value = true
             }
 
@@ -200,25 +199,24 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
     }
 
-    private fun onTtsStarted(utteranceId: UUID) {
+    private fun onTtsStarted(utteranceId: Uuid) {
         isWarmingUp.value = false
         isSynthesizing.value = true
     }
 
-    private fun onTtsCompleted(utteranceId: UUID, result: Result<Unit>) {
+    private fun onTtsCompleted(utteranceId: Uuid, result: Result<Unit>) {
         isWarmingUp.value = false
 
+        callbackHandler.onResult(utteranceId, result)
+
         if (!hasModernProgressListeners) {
-            preIcsQueueSize--
-            if (preIcsQueueSize == 0)
+            if (callbackHandler.isQueueEmpty)
             {
                 isSynthesizing.value = false
             }
         } else {
             isSynthesizing.value = false
         }
-
-        callbacks[utteranceId]?.invoke(result)
     }
 
     /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
@@ -228,8 +226,8 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     override fun stop() {
         tts?.stop()
 
+        callbackHandler.onStopped()
         if (!hasModernProgressListeners) {
-            preIcsQueueSize = 0
             isSynthesizing.value = false
         }
     }
@@ -244,7 +242,7 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
         tts?.shutdown()
         tts = null
-        callbacks.clear()
+        callbackHandler.clear()
     }
 
     companion object {
