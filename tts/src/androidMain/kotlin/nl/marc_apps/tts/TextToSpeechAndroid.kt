@@ -23,7 +23,6 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import android.speech.tts.TextToSpeech as AndroidTTS
 
-/** A TTS instance. Should be [close]d when no longer in use. */
 @OptIn(ExperimentalUuidApi::class)
 @TargetApi(VERSION_CODES.DONUT)
 internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechInstance {
@@ -38,10 +37,6 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     private val internalVolume: Float
         get() = if(!isMuted) volume / 100f else 0f
 
-    /**
-     * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
-     * Changes only affect new calls to the [say] method.
-     */
     @IntRange(from = TextToSpeechInstance.VOLUME_MIN.toLong(), to = TextToSpeechInstance.VOLUME_MAX.toLong())
     override var volume: Int = TextToSpeechInstance.VOLUME_DEFAULT
         set(value) {
@@ -54,11 +49,6 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
             }
         }
 
-    /**
-     * Alternative to setting [volume] to zero.
-     * Setting this to true (and back to false) doesn't change the value of [volume].
-     * Changes only affect new calls to the [say] method.
-     */
     override var isMuted: Boolean = false
 
     override var pitch: Float = TextToSpeechInstance.VOICE_PITCH_DEFAULT
@@ -76,10 +66,6 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     private val voiceLocale: Locale
         get() = (if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) tts?.voice?.locale else tts?.language) ?: Locale.getDefault()
 
-    /**
-     * Returns a BCP 47 language tag of the selected voice on supported platforms.
-     * May return the language code as ISO 639 on older platforms.
-     */
     override val language: String
         get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) voiceLocale.toLanguageTag() else voiceLocale.language
 
@@ -136,12 +122,10 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         tts?.setOnUtteranceProgressListener(TtsProgressConverter(::onTtsStarted, ::onTtsCompleted))
     }
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override fun enqueue(text: String, clearQueue: Boolean) {
         enqueueInternal(text, clearQueue, ResultHandler.Empty)
     }
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
         enqueueInternal(text, clearQueue, ResultHandler.CallbackHandler(callback))
     }
@@ -183,7 +167,6 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
     }
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean){
         suspendCancellableCoroutine { cont ->
             enqueueInternal(text, clearQueue, ResultHandler.ContinuationHandler(cont))
@@ -215,10 +198,8 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
     }
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
     override fun plusAssign(text: String) = enqueue(text, false)
 
-    /** Clears the internal queue, but doesn't close used resources. */
     override fun stop() {
         tts?.stop()
 
@@ -228,7 +209,6 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
     }
 
-    /** Clears the internal queue and closes used resources (if possible) */
     override fun close() {
         stop()
         if (hasModernProgressListeners) {
