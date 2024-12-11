@@ -2,7 +2,6 @@ package nl.marc_apps.tts
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
-import nl.marc_apps.tts.experimental.ExperimentalIOSTarget
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import nl.marc_apps.tts.utils.CallbackHandler
 import nl.marc_apps.tts.utils.TtsProgressConverter
@@ -17,7 +16,6 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
-@ExperimentalIOSTarget
 internal class TextToSpeechIOS(private val synthesizer: AVSpeechSynthesizer) : TextToSpeechInstance {
     private val callbackHandler = CallbackHandler<AVSpeechUtterance>()
 

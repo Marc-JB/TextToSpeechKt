@@ -4,23 +4,23 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
-class CallbackHandler<TNativeObject> {
+class CallbackHandler<TNativeUtteranceId> {
     private val callbacks = mutableMapOf<Uuid, (Result<Unit>) -> Unit>()
 
-    private val utteranceIds = mutableMapOf<TNativeObject, Uuid>()
+    private val utteranceIds = mutableMapOf<TNativeUtteranceId, Uuid>()
 
     private var queueSize = 0
 
     val isQueueEmpty
         get() = queueSize == 0
 
-    fun add(utteranceId: Uuid, nativeObject: TNativeObject, callback: (Result<Unit>) -> Unit) {
+    fun add(utteranceId: Uuid, nativeObject: TNativeUtteranceId, callback: (Result<Unit>) -> Unit) {
         callbacks[utteranceId] = callback
         utteranceIds[nativeObject] = utteranceId
         queueSize++
     }
 
-    fun onResult(nativeObject: TNativeObject, result: Result<Unit>) {
+    fun onResult(nativeObject: TNativeUtteranceId, result: Result<Unit>) {
         val utteranceId = utteranceIds[nativeObject]
         if (utteranceId != null) {
             onResult(utteranceId, result)
