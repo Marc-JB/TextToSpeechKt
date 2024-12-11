@@ -83,7 +83,6 @@ kotlin {
             languageSettings {
                 optIn("nl.marc_apps.tts.experimental.ExperimentalVoiceApi")
                 optIn("nl.marc_apps.tts.experimental.ExperimentalDesktopTarget")
-                optIn("nl.marc_apps.tts.experimental.ExperimentalIOSTarget")
             }
         }
 
