@@ -4,9 +4,12 @@ import nl.marc_apps.tts.experimental.ExperimentalTextToSpeechApi
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+/**
+ * @hide
+ */
 @OptIn(ExperimentalUuidApi::class)
 @ExperimentalTextToSpeechApi
-class Utterance(val id: Uuid) {
+class UtteranceResult(val id: Uuid) {
     suspend fun awaitCompletion() {
         TODO()
     }
