@@ -29,9 +29,11 @@ kotlin {
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
+        iosSimulatorArm64(),
+        macosArm64(),
+        macosX64()
+    ).forEach { appleTarget ->
+        appleTarget.binaries.framework {
             baseName = "ComposeApp"
         }
     }
