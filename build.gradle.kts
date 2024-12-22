@@ -28,10 +28,12 @@ val dokkaWorkingDir = rootProject.layout.buildDirectory.asFile.get().resolve("do
 val versionArchiveDirectory = dokkaWorkingDir.resolve("html_version_archive")
 val currentVersionDir = versionArchiveDirectory.resolve(currentVersion)
 
+val dokkaWebPublishDirectory = rootProject.layout.projectDirectory.dir("out")
+
 tasks {
     val dokkaCopyDocsToOutputDir by register<Copy>("dokkaCopyDocsToOutputDir") {
         from(currentVersionDir)
-        into(dokkaWorkingDir.resolve("html"))
+        into(dokkaWebPublishDirectory)
     }
 
     val dokkaDeleteOlderVersions by register<Delete>("dokkaDeleteOlderVersions") {
