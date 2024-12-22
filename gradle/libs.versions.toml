@@ -9,7 +9,7 @@ androidx-constraintlayout = "2.2.0"
 androidx-fragment = "1.8.5"
 androidx-lifecycle-runtime = "2.8.7"
 
-compose = "1.7.1"
+compose = "1.7.3"
 
 dokka = "2.0.0"
 
