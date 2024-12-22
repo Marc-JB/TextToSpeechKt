@@ -102,12 +102,6 @@ tasks {
     }
 }
 
-val dokkaJavadocJar by tasks.registering(Jar::class) {
-    description = "A Javadoc JAR containing Dokka Javadoc"
-    from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
-    archiveClassifier = "javadoc"
-}
-
 val dokkaHtmlJar by tasks.registering(Jar::class) {
     description = "A HTML Documentation JAR containing Dokka HTML"
     from(tasks.dokkaGeneratePublicationHtml.flatMap { it.outputDirectory })
@@ -154,7 +148,7 @@ publishingRepositories {
 }
 
 configureTtsPublication {
-    javadocJarTask.set(dokkaJavadocJar)
+    javadocJarTask.set(dokkaHtmlJar)
 }
 
 signing {

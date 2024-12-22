@@ -52,8 +52,8 @@ tasks {
 }
 
 dokka {
-    dokkaPublications {
-        dokkaPublicationDirectory = currentVersionDir
+    dokkaPublications.html {
+        outputDirectory = currentVersionDir
     }
 
     pluginsConfiguration {
