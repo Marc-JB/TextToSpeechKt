@@ -25,174 +25,292 @@
 <link href="../../../styles/prism.css" rel="Stylesheet">
 <link href="../../../styles/logo-styles.css" rel="Stylesheet">
 <link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
 <script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
 <script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../../scripts/prism.js" async></script>
-<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
-<link href="../../../styles/multimodule.css" rel="Stylesheet"></head>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
 <body>
     <div class="root">
-<nav class="navigation" id="navigation-wrapper">
-    <div class="navigation--inner">
-        <div class="navigation-title">
-            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
-            <div class="library-name">
+    <nav class="navigation theme-dark" id="navigation-wrapper">
 <a class="library-name--link" href="../../../index.html">
-                            TextToSpeechKt
-                    </a>            </div>
-            <div class="library-version">
-<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;nl.marc_apps.tts/-voice/index.html&quot;}"><div class="versions-dropdown">
-  <div class="versions-dropdown-button">3.0</div>
-  <div class="versions-dropdown-data"><a href="index.html">3.0</a><a href="../../../older/2.8/tts/nl.marc_apps.tts/-voice/index.html">2.8</a><a href="../../../older/2.7/tts/nl.marc_apps.tts/-voice/index.html">2.7</a><a href="../../../older/2.6/tts/nl.marc_apps.tts/-voice/index.html">2.6</a><a href="../../../older/2.5/tts/nl.marc_apps.tts/-voice/index.html">2.5</a><a href="../../../older/2.4/tts/nl.marc_apps.tts/-voice/index.html">2.4</a><a href="../../../older/2.3/tts/nl.marc_apps.tts/-voice/index.html">2.3</a><a href="../../../older/2.2/tts/nl.marc_apps.tts/-voice/index.html">2.2</a><a href="../../../older/2.1/tts/nl.marc_apps.tts/-voice/index.html">2.1</a><a href="../../../older/2.0/tts/nl.marc_apps.tts/-voice/index.html">2.0</a><a href="../../../not-found-version.html?v=1.6">1.6</a><a href="../../../not-found-version.html?v=1.5">1.5</a><a href="../../../not-found-version.html?v=1.4">1.4</a><a href="../../../not-found-version.html?v=1.3">1.3</a><a href="../../../not-found-version.html?v=1.2">1.2</a><a href="../../../not-found-version.html?v=1.1">1.1</a></div>
+                    TextToSpeechKt
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;nl.marc_apps.tts/-voice/index.html&quot;}"><div class="dropdown versions-dropdown" data-role="dropdown">
+  <div class="button button_dropdown versions-dropdown-button" role="combobox" data-role="dropdown-toggle" aria-controls="versions-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select version" tabindex="0">3.0</div>
+  <div class="dropdown--list dropdown--list_positioned_left versions-dropdown-data" role="listbox" data-role="dropdown-listbox" aria-label="Versions" id="versions-listbox">
+    <div class="dropdown--header" data-remove-style="true" style="display: none"><span>Select version</span><button class="button" data-role="dropdown-toggle" aria-label="Close versions selection"><i class="ui-kit-icon ui-kit-icon_cross"></i></button></div>
+    <div><a href="index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">3.0</a></div>
+    <div><a href="../../../older/2.8/tts/nl.marc_apps.tts/-voice/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.8</a></div>
+    <div><a href="../../../older/2.7/tts/nl.marc_apps.tts/-voice/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.7</a></div>
+    <div><a href="../../../older/2.6/tts/nl.marc_apps.tts/-voice/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.6</a></div>
+    <div><a href="../../../older/2.5/tts/nl.marc_apps.tts/-voice/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.5</a></div>
+    <div><a href="../../../older/2.4/tts/nl.marc_apps.tts/-voice/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.4</a></div>
+    <div><a href="../../../older/2.3/tts/nl.marc_apps.tts/-voice/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.3</a></div>
+    <div><a href="../../../older/2.2/tts/nl.marc_apps.tts/-voice/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.2</a></div>
+    <div><a href="../../../older/2.1/tts/nl.marc_apps.tts/-voice/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.1</a></div>
+    <div><a href="../../../older/2.0/tts/nl.marc_apps.tts/-voice/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.0</a></div>
+    <div><a href="../../../not-found-version.html?v=1.6" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">1.6</a></div>
+    <div><a href="../../../not-found-version.html?v=1.5" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">1.5</a></div>
+    <div><a href="../../../not-found-version.html?v=1.4" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">1.4</a></div>
+    <div><a href="../../../not-found-version.html?v=1.3" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">1.3</a></div>
+    <div><a href="../../../not-found-version.html?v=1.2" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">1.2</a></div>
+    <div><a href="../../../not-found-version.html?v=1.1" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">1.1</a></div>
+  </div>
+  <div class="dropdown--overlay"></div>
 </div>
-</dokka-template-command>            </div>
+</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <div class="filter-section filter-section_loading" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":tts/androidMain">android</button>
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":tts/appleMain">apple</button>
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":tts/commonMain">common</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":tts/jvmMain">jvm</button>
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":tts/webCommonW3CMain">webCommonW3C</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
+                    <div class="dropdown--header"><span>Platform filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":tts/androidMain" data-filter=":tts/androidMain">
+                                <span class="checkbox--icon"></span>
+                                android
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":tts/appleMain" data-filter=":tts/appleMain">
+                                <span class="checkbox--icon"></span>
+                                apple
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":tts/commonMain" data-filter=":tts/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":tts/jvmMain" data-filter=":tts/jvmMain">
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":tts/webCommonW3CMain" data-filter=":tts/webCommonW3CMain">
+                                <span class="checkbox--icon"></span>
+                                webCommonW3C
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
         </div>
-        <div class="filter-section" id="filter-section">
-                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":tts:dokkaHtmlPartial/commonMain">common</button>
-                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":tts:dokkaHtmlPartial/jvmMain">jvm</button>
-                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":tts:dokkaHtmlPartial/webCommonW3CMain">webCommonW3C</button>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
         </div>
-    </div>
-    <div class="navigation-controls">
-        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
-        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
-    </div>
-</nav>
+    </nav>
         <div id="container">
             <div class="sidebar" id="leftColumn">
-                <div class="sidebar--inner" id="sideMenu"></div>
+                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox">
+                        <div class="dropdown--header">
+                            <span>
+                                    TextToSpeechKt
+                            </span>
+                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                            </button>
+                        </div>
+                        <div class="sidebar--inner" id="sideMenu"></div>
+                    </ul>
+                    <div class="dropdown--overlay"></div>
+                </div>
             </div>
             <div id="main">
-<div class="main-content" data-page-type="classlike" id="content" pageids="tts::nl.marc_apps.tts/Voice///PointingToDeclaration//1072851396">
+<div class="main-content" data-page-type="classlike" id="content" pageids="tts::nl.marc_apps.tts/Voice///PointingToDeclaration//714119662">
   <div class="breadcrumbs"><a href="../../index.html">tts</a><span class="delimiter">/</span><a href="../index.html">nl.marc_apps.tts</a><span class="delimiter">/</span><span class="current">Voice</span></div>
   <div class="cover ">
     <h1 class="cover"><span><span>Voice</span></span></h1>
     <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/commonMain" data-filterable-set=":tts:dokkaHtmlPartial/commonMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/jvmMain" data-filterable-set=":tts:dokkaHtmlPartial/jvmMain" data-toggle=":tts:dokkaHtmlPartial/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/webCommonW3CMain" data-filterable-set=":tts:dokkaHtmlPartial/webCommonW3CMain" data-toggle=":tts:dokkaHtmlPartial/webCommonW3CMain">webCommonW3C</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">interface </span><a href="index.html">Voice</a> : <a href="https://marc-jb.github.io/TextToSpeechKt/tts/nl.marc_apps.tts/-common-voice/index.html">CommonVoice</a><span class="clearfix"><span class="floating-right">(<a href="https://github.com/Marc-JB/TextToSpeechKt/blob/main/tts/src/commonMain/kotlin/nl/marc_apps/tts/Voice.kt#L18">source</a>)</span></span></div></div><div class="content sourceset-dependent-content" data-togglable=":tts:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">interface </span><a href="index.html">Voice</a> : <a href="https://marc-jb.github.io/TextToSpeechKt/tts/nl.marc_apps.tts/-common-voice/index.html">CommonVoice</a>, <a href="https://developer.android.com/reference/kotlin/java/io/Serializable.html">Serializable</a><span class="clearfix"><span class="floating-right">(<a href="https://github.com/Marc-JB/TextToSpeechKt/blob/main/tts/src/jvmMain/kotlin/nl/marc_apps/tts/Voice.kt#L8">source</a>)</span></span></div></div><div class="content sourceset-dependent-content" data-togglable=":tts:dokkaHtmlPartial/webCommonW3CMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">interface </span><a href="index.html">Voice</a> : <a href="https://marc-jb.github.io/TextToSpeechKt/tts/nl.marc_apps.tts/-common-voice/index.html">CommonVoice</a><span class="clearfix"><span class="floating-right">(<a href="https://github.com/Marc-JB/TextToSpeechKt/blob/main/tts/src/webCommonW3CMain/kotlin/nl/marc_apps/tts/Voice.kt#L6">source</a>)</span></span></div></div>    </div>
+      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts/androidMain" data-filterable-set=":tts/androidMain" data-active="" data-toggle=":tts/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":tts/appleMain" data-filterable-set=":tts/appleMain" data-toggle=":tts/appleMain">apple</button><button class="platform-bookmark" data-filterable-current=":tts/commonMain" data-filterable-set=":tts/commonMain" data-toggle=":tts/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":tts/jvmMain" data-filterable-set=":tts/jvmMain" data-toggle=":tts/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":tts/webCommonW3CMain" data-filterable-set=":tts/webCommonW3CMain" data-toggle=":tts/webCommonW3CMain">webCommonW3C</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":tts/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">interface </span><a href="index.html">Voice</a> : <a href="../-common-voice/index.html">CommonVoice</a>, <a href="https://developer.android.com/reference/kotlin/android/os/Parcelable.html">Parcelable</a>, <a href="https://developer.android.com/reference/kotlin/java/io/Serializable.html">Serializable</a><span class="clearfix"><span class="floating-right">(<a href="https://github.com/Marc-JB/TextToSpeechKt/blob/main/tts/src/androidMain/kotlin/nl/marc_apps/tts/Voice.kt#L9">source</a>)</span></span></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/appleMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">interface </span><a href="index.html">Voice</a><span class="clearfix"><span class="floating-right">(<a href="https://github.com/Marc-JB/TextToSpeechKt/blob/main/tts/src/appleMain/kotlin/nl/marc_apps/tts/Voice.kt#L6">source</a>)</span></span></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":tts/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">interface </span><a href="index.html">Voice</a> : <a href="../-common-voice/index.html">CommonVoice</a><span class="clearfix"><span class="floating-right">(<a href="https://github.com/Marc-JB/TextToSpeechKt/blob/main/tts/src/commonMain/kotlin/nl/marc_apps/tts/Voice.kt#L18">source</a>)</span></span></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">interface </span><a href="index.html">Voice</a> : <a href="../-common-voice/index.html">CommonVoice</a>, <a href="https://developer.android.com/reference/kotlin/java/io/Serializable.html">Serializable</a><span class="clearfix"><span class="floating-right">(<a href="https://github.com/Marc-JB/TextToSpeechKt/blob/main/tts/src/jvmMain/kotlin/nl/marc_apps/tts/Voice.kt#L8">source</a>)</span></span></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/webCommonW3CMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">interface </span><a href="index.html">Voice</a> : <a href="../-common-voice/index.html">CommonVoice</a><span class="clearfix"><span class="floating-right">(<a href="https://github.com/Marc-JB/TextToSpeechKt/blob/main/tts/src/webCommonW3CMain/kotlin/nl/marc_apps/tts/Voice.kt#L6">source</a>)</span></span></div></div>    </div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="PROPERTY">
         <h2 class="">Properties</h2>
-        <div class="table"><a data-name="-1405916580%2FProperties%2F1072851396" anchor-label="isDefault" id="-1405916580%2FProperties%2F1072851396" data-filterable-set=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain"></a>
-          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain" data-filterable-set=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain">
+        <div class="table"><a data-name="-1405916580%2FProperties%2F-942814896" anchor-label="isDefault" id="-1405916580%2FProperties%2F-942814896" data-filterable-set=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain"></a>
+          <div class="table-row" data-filterable-current=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain" data-filterable-set=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><span data-unresolved-link="nl.marc_apps.tts/CommonVoice/isDefault/#/PointingToDeclaration/"><span>is</span><wbr><span><span>Default</span></span></span></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1405916580%2FProperties%2F1072851396"></span>
+                  <div><a href="../-common-voice/is-default.html"><span>is</span><wbr><span><span>Default</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1405916580%2FProperties%2F-942814896"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/commonMain" data-filterable-set=":tts:dokkaHtmlPartial/commonMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/jvmMain" data-filterable-set=":tts:dokkaHtmlPartial/jvmMain" data-toggle=":tts:dokkaHtmlPartial/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/webCommonW3CMain" data-filterable-set=":tts:dokkaHtmlPartial/webCommonW3CMain" data-toggle=":tts:dokkaHtmlPartial/webCommonW3CMain">webCommonW3C</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-1405916580%2FProperties%2F1987066322">isDefault</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-1405916580%2FProperties%2F90598628">isDefault</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts:dokkaHtmlPartial/webCommonW3CMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-1405916580%2FProperties%2F-1679497102">isDefault</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div>                  </div>
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts/androidMain" data-filterable-set=":tts/androidMain" data-active="" data-toggle=":tts/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":tts/commonMain" data-filterable-set=":tts/commonMain" data-toggle=":tts/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":tts/jvmMain" data-filterable-set=":tts/jvmMain" data-toggle=":tts/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":tts/webCommonW3CMain" data-filterable-set=":tts/webCommonW3CMain" data-toggle=":tts/webCommonW3CMain">webCommonW3C</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":tts/androidMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/is-default.html">isDefault</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":tts/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/is-default.html">isDefault</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/jvmMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/is-default.html">isDefault</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/webCommonW3CMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/is-default.html">isDefault</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-132667638%2FProperties%2F1072851396" anchor-label="isOnline" id="-132667638%2FProperties%2F1072851396" data-filterable-set=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain"></a>
-          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain" data-filterable-set=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain">
+<a data-name="-132667638%2FProperties%2F-942814896" anchor-label="isOnline" id="-132667638%2FProperties%2F-942814896" data-filterable-set=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain"></a>
+          <div class="table-row" data-filterable-current=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain" data-filterable-set=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><span data-unresolved-link="nl.marc_apps.tts/CommonVoice/isOnline/#/PointingToDeclaration/"><span>is</span><wbr><span><span>Online</span></span></span></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-132667638%2FProperties%2F1072851396"></span>
+                  <div><a href="../-common-voice/is-online.html"><span>is</span><wbr><span><span>Online</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-132667638%2FProperties%2F-942814896"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/commonMain" data-filterable-set=":tts:dokkaHtmlPartial/commonMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/jvmMain" data-filterable-set=":tts:dokkaHtmlPartial/jvmMain" data-toggle=":tts:dokkaHtmlPartial/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/webCommonW3CMain" data-filterable-set=":tts:dokkaHtmlPartial/webCommonW3CMain" data-toggle=":tts:dokkaHtmlPartial/webCommonW3CMain">webCommonW3C</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-132667638%2FProperties%2F1987066322">isOnline</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-132667638%2FProperties%2F90598628">isOnline</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts:dokkaHtmlPartial/webCommonW3CMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-132667638%2FProperties%2F-1679497102">isOnline</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div>                  </div>
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts/androidMain" data-filterable-set=":tts/androidMain" data-active="" data-toggle=":tts/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":tts/commonMain" data-filterable-set=":tts/commonMain" data-toggle=":tts/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":tts/jvmMain" data-filterable-set=":tts/jvmMain" data-toggle=":tts/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":tts/webCommonW3CMain" data-filterable-set=":tts/webCommonW3CMain" data-toggle=":tts/webCommonW3CMain">webCommonW3C</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":tts/androidMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/is-online.html">isOnline</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":tts/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/is-online.html">isOnline</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/jvmMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/is-online.html">isOnline</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/webCommonW3CMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/is-online.html">isOnline</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1111407569%2FProperties%2F1072851396" anchor-label="language" id="-1111407569%2FProperties%2F1072851396" data-filterable-set=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain"></a>
-          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain" data-filterable-set=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain">
+<a data-name="-1111407569%2FProperties%2F-942814896" anchor-label="language" id="-1111407569%2FProperties%2F-942814896" data-filterable-set=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain"></a>
+          <div class="table-row" data-filterable-current=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain" data-filterable-set=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><span data-unresolved-link="nl.marc_apps.tts/CommonVoice/language/#/PointingToDeclaration/"><span><span>language</span></span></span></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1111407569%2FProperties%2F1072851396"></span>
+                  <div><a href="../-common-voice/language.html"><span><span>language</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1111407569%2FProperties%2F-942814896"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/commonMain" data-filterable-set=":tts:dokkaHtmlPartial/commonMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/jvmMain" data-filterable-set=":tts:dokkaHtmlPartial/jvmMain" data-toggle=":tts:dokkaHtmlPartial/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/webCommonW3CMain" data-filterable-set=":tts:dokkaHtmlPartial/webCommonW3CMain" data-toggle=":tts:dokkaHtmlPartial/webCommonW3CMain">webCommonW3C</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-1111407569%2FProperties%2F1987066322">language</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-1111407569%2FProperties%2F90598628">language</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts:dokkaHtmlPartial/webCommonW3CMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-1111407569%2FProperties%2F-1679497102">language</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div>                  </div>
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts/androidMain" data-filterable-set=":tts/androidMain" data-active="" data-toggle=":tts/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":tts/commonMain" data-filterable-set=":tts/commonMain" data-toggle=":tts/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":tts/jvmMain" data-filterable-set=":tts/jvmMain" data-toggle=":tts/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":tts/webCommonW3CMain" data-filterable-set=":tts/webCommonW3CMain" data-toggle=":tts/webCommonW3CMain">webCommonW3C</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":tts/androidMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/language.html">language</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":tts/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/language.html">language</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/jvmMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/language.html">language</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/webCommonW3CMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/language.html">language</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-721679407%2FProperties%2F1072851396" anchor-label="languageTag" id="-721679407%2FProperties%2F1072851396" data-filterable-set=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain"></a>
-          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain" data-filterable-set=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain">
+<a data-name="-721679407%2FProperties%2F-942814896" anchor-label="languageTag" id="-721679407%2FProperties%2F-942814896" data-filterable-set=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain"></a>
+          <div class="table-row" data-filterable-current=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain" data-filterable-set=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><span data-unresolved-link="nl.marc_apps.tts/CommonVoice/languageTag/#/PointingToDeclaration/"><span>language</span><wbr><span><span>Tag</span></span></span></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-721679407%2FProperties%2F1072851396"></span>
+                  <div><a href="../-common-voice/language-tag.html"><span>language</span><wbr><span><span>Tag</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-721679407%2FProperties%2F-942814896"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/commonMain" data-filterable-set=":tts:dokkaHtmlPartial/commonMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/jvmMain" data-filterable-set=":tts:dokkaHtmlPartial/jvmMain" data-toggle=":tts:dokkaHtmlPartial/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/webCommonW3CMain" data-filterable-set=":tts:dokkaHtmlPartial/webCommonW3CMain" data-toggle=":tts:dokkaHtmlPartial/webCommonW3CMain">webCommonW3C</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-721679407%2FProperties%2F1987066322">languageTag</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-721679407%2FProperties%2F90598628">languageTag</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts:dokkaHtmlPartial/webCommonW3CMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-721679407%2FProperties%2F-1679497102">languageTag</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div>                  </div>
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts/androidMain" data-filterable-set=":tts/androidMain" data-active="" data-toggle=":tts/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":tts/commonMain" data-filterable-set=":tts/commonMain" data-toggle=":tts/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":tts/jvmMain" data-filterable-set=":tts/jvmMain" data-toggle=":tts/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":tts/webCommonW3CMain" data-filterable-set=":tts/webCommonW3CMain" data-toggle=":tts/webCommonW3CMain">webCommonW3C</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":tts/androidMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/language-tag.html">languageTag</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":tts/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/language-tag.html">languageTag</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/jvmMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/language-tag.html">languageTag</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/webCommonW3CMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/language-tag.html">languageTag</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="373559960%2FProperties%2F90598628" anchor-label="locale" id="373559960%2FProperties%2F90598628" data-filterable-set=":tts:dokkaHtmlPartial/jvmMain"></a>
-          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/jvmMain" data-filterable-set=":tts:dokkaHtmlPartial/jvmMain">
+<a data-name="373559960%2FProperties%2F-711366420" anchor-label="locale" id="373559960%2FProperties%2F-711366420" data-filterable-set=":tts/androidMain,:tts/jvmMain"></a>
+          <div class="table-row" data-filterable-current=":tts/androidMain,:tts/jvmMain" data-filterable-set=":tts/androidMain,:tts/jvmMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="locale.html"><span><span>locale</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="373559960%2FProperties%2F90598628"></span>
+                  <div><a href="../../../tts/nl.marc_apps.tts/-voice/[jvm]locale.html"><span><span>locale</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="373559960%2FProperties%2F-711366420"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/jvmMain" data-filterable-set=":tts:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="locale.html">locale</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/Locale.html">Locale</a></div></div>                  </div>
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts/androidMain" data-filterable-set=":tts/androidMain" data-active="" data-toggle=":tts/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":tts/jvmMain" data-filterable-set=":tts/jvmMain" data-toggle=":tts/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts/androidMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="[android]locale.html">locale</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/Locale.html">Locale</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/jvmMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="[jvm]locale.html">locale</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/Locale.html">Locale</a></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1817067172%2FProperties%2F1072851396" anchor-label="name" id="-1817067172%2FProperties%2F1072851396" data-filterable-set=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain"></a>
-          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain" data-filterable-set=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain">
+<a data-name="-1817067172%2FProperties%2F-942814896" anchor-label="name" id="-1817067172%2FProperties%2F-942814896" data-filterable-set=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain"></a>
+          <div class="table-row" data-filterable-current=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain" data-filterable-set=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><span data-unresolved-link="nl.marc_apps.tts/CommonVoice/name/#/PointingToDeclaration/"><span><span>name</span></span></span></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1817067172%2FProperties%2F1072851396"></span>
+                  <div><a href="../-common-voice/name.html"><span><span>name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1817067172%2FProperties%2F-942814896"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/commonMain" data-filterable-set=":tts:dokkaHtmlPartial/commonMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/jvmMain" data-filterable-set=":tts:dokkaHtmlPartial/jvmMain" data-toggle=":tts:dokkaHtmlPartial/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/webCommonW3CMain" data-filterable-set=":tts:dokkaHtmlPartial/webCommonW3CMain" data-toggle=":tts:dokkaHtmlPartial/webCommonW3CMain">webCommonW3C</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-1817067172%2FProperties%2F1987066322">name</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-1817067172%2FProperties%2F90598628">name</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts:dokkaHtmlPartial/webCommonW3CMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#-1817067172%2FProperties%2F-1679497102">name</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div>                  </div>
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts/androidMain" data-filterable-set=":tts/androidMain" data-active="" data-toggle=":tts/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":tts/commonMain" data-filterable-set=":tts/commonMain" data-toggle=":tts/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":tts/jvmMain" data-filterable-set=":tts/jvmMain" data-toggle=":tts/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":tts/webCommonW3CMain" data-filterable-set=":tts/webCommonW3CMain" data-toggle=":tts/webCommonW3CMain">webCommonW3C</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":tts/androidMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/name.html">name</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":tts/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/name.html">name</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/jvmMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/name.html">name</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/webCommonW3CMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/name.html">name</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1289970323%2FProperties%2F1072851396" anchor-label="region" id="1289970323%2FProperties%2F1072851396" data-filterable-set=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain"></a>
-          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain" data-filterable-set=":tts:dokkaHtmlPartial/commonMain,:tts:dokkaHtmlPartial/jvmMain,:tts:dokkaHtmlPartial/webCommonW3CMain">
+<a data-name="1289970323%2FProperties%2F-942814896" anchor-label="region" id="1289970323%2FProperties%2F-942814896" data-filterable-set=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain"></a>
+          <div class="table-row" data-filterable-current=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain" data-filterable-set=":tts/commonMain,:tts/androidMain,:tts/jvmMain,:tts/webCommonW3CMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><span data-unresolved-link="nl.marc_apps.tts/CommonVoice/region/#/PointingToDeclaration/"><span><span>region</span></span></span></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1289970323%2FProperties%2F1072851396"></span>
+                  <div><a href="../-common-voice/region.html"><span><span>region</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1289970323%2FProperties%2F-942814896"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/commonMain" data-filterable-set=":tts:dokkaHtmlPartial/commonMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/jvmMain" data-filterable-set=":tts:dokkaHtmlPartial/jvmMain" data-toggle=":tts:dokkaHtmlPartial/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/webCommonW3CMain" data-filterable-set=":tts:dokkaHtmlPartial/webCommonW3CMain" data-toggle=":tts:dokkaHtmlPartial/webCommonW3CMain">webCommonW3C</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#1289970323%2FProperties%2F1987066322">region</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div><div class="content sourceset-dependent-content" data-togglable=":tts:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#1289970323%2FProperties%2F90598628">region</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div><div class="content sourceset-dependent-content" data-togglable=":tts:dokkaHtmlPartial/webCommonW3CMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="index.html#1289970323%2FProperties%2F-1679497102">region</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div>                  </div>
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts/androidMain" data-filterable-set=":tts/androidMain" data-active="" data-toggle=":tts/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":tts/commonMain" data-filterable-set=":tts/commonMain" data-toggle=":tts/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":tts/jvmMain" data-filterable-set=":tts/jvmMain" data-toggle=":tts/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":tts/webCommonW3CMain" data-filterable-set=":tts/webCommonW3CMain" data-toggle=":tts/webCommonW3CMain">webCommonW3C</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":tts/androidMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/region.html">region</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":tts/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/region.html">region</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/jvmMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/region.html">region</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div><div class="content sourceset-dependent-content" data-togglable=":tts/webCommonW3CMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="../-common-voice/region.html">region</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-1578325224%2FFunctions%2F-854529682" anchor-label="describeContents" id="-1578325224%2FFunctions%2F-854529682" data-filterable-set=":tts/androidMain"></a>
+          <div class="table-row" data-filterable-current=":tts/androidMain" data-filterable-set=":tts/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1578325224%2FFunctions%2F-854529682"><span>describe</span><wbr><span><span>Contents</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1578325224%2FFunctions%2F-854529682"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts/androidMain" data-filterable-set=":tts/androidMain" data-active="" data-toggle=":tts/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts/androidMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="index.html#-1578325224%2FFunctions%2F-854529682"><span class="token function">describeContents</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1754457655%2FFunctions%2F-854529682" anchor-label="writeToParcel" id="-1754457655%2FFunctions%2F-854529682" data-filterable-set=":tts/androidMain"></a>
+          <div class="table-row" data-filterable-current=":tts/androidMain" data-filterable-set=":tts/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1754457655%2FFunctions%2F-854529682"><span>write</span><wbr><span>To</span><wbr><span><span>Parcel</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1754457655%2FFunctions%2F-854529682"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts/androidMain" data-filterable-set=":tts/androidMain" data-active="" data-toggle=":tts/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts/androidMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="index.html#-1754457655%2FFunctions%2F-854529682"><span class="token function">writeToParcel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p0<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/os/Parcel.html">Parcel</a><span class="token punctuation">, </span></span><span class="parameter ">p1<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
                 </div>
               </div>
             </div>
@@ -202,12 +320,18 @@
     </div>
   </div>
 </div>
-      <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
-      </div>
+    <div class="footer">
+        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+        <span>© 2024 Copyright</span>
+        <span class="pull-right">
+            <span>Generated by </span>
+            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                <span>dokka</span>
+            </a>
+        </span>
+    </div>
             </div>
         </div>
     </div>
 </body>
 </html>
-
