@@ -1,6 +1,6 @@
 package nl.marc_apps.tts.experimental
 
-@Deprecated("The wasm text-to-speech target is no longer experimental. You cna remove this annotation.")
+@Deprecated("The wasm text-to-speech target is no longer experimental. You can remove this annotation.")
 @Retention(AnnotationRetention.BINARY)
 @Target(
     AnnotationTarget.CLASS,

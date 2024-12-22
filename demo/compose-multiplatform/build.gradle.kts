@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -28,9 +29,11 @@ kotlin {
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
+        iosSimulatorArm64(),
+        macosArm64(),
+        macosX64()
+    ).forEach { appleTarget ->
+        appleTarget.binaries.framework {
             baseName = "ComposeApp"
         }
     }
@@ -82,7 +85,6 @@ kotlin {
             languageSettings {
                 optIn("nl.marc_apps.tts.experimental.ExperimentalVoiceApi")
                 optIn("nl.marc_apps.tts.experimental.ExperimentalDesktopTarget")
-                optIn("nl.marc_apps.tts.experimental.ExperimentalIOSTarget")
             }
         }
 
@@ -101,8 +103,19 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(compose.uiTooling)
-            implementation("androidx.navigation:navigation-compose:2.7.7")
+
             implementation("androidx.activity:activity-compose:1.9.0")
+
+            implementation(libs.androidx.appcompat)
+            implementation(libs.androidx.constraintlayout)
+            implementation(libs.androidx.fragment)
+            implementation(libs.androidx.lifecycle.runtime)
+
+            implementation(libs.google.material.xml)
+
+            implementation(libs.koin.android)
+            implementation(libs.koin.androidx.startup)
+            implementation(libs.koin.annotations)
         }
 
         jvmMain.dependencies {
@@ -115,6 +128,12 @@ kotlin {
             implementation(libs.kotlin.browser)
         }
     }
+}
+
+dependencies {
+    implementation(platform(libs.koin.bom))
+    implementation(platform(libs.koin.annotations.bom))
+    add("kspAndroid", libs.koin.annotations.ksp)
 }
 
 android {
@@ -188,6 +207,10 @@ android {
         density.enableSplit = true
         texture.enableSplit = true
         deviceTier.enableSplit = true
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 
     testOptions {

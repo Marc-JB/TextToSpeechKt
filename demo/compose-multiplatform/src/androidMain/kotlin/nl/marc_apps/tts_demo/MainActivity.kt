@@ -12,9 +12,9 @@ import nl.marc_apps.tts_demo.resources.*
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
         enableEdgeToEdge()
+
+        super.onCreate(savedInstanceState)
 
         setContent {
             TtsDemoApp(

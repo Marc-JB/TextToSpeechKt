@@ -10,18 +10,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
+import nl.marc_apps.tts.utils.CallbackHandler
+import nl.marc_apps.tts.utils.ResultHandler
 import org.w3c.speech.SpeechSynthesis
 import org.w3c.speech.SpeechSynthesisUtterance
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
-/** A TTS instance. Should be [close]d when no longer in use. */
-internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInstance {
-    override val isSynthesizing = MutableStateFlow(false)
-
-    override val isWarmingUp = MutableStateFlow(false)
-
-    private var hasSpoken = false
+@OptIn(ExperimentalUuidApi::class)
+internal class TextToSpeechBrowser(context: Window = window) : TextToSpeech<Nothing?>() {
+    override val canDetectSynthesisStarted = true
 
     private val speechSynthesis: SpeechSynthesis = getSpeechSynthesis(context)
 
@@ -30,10 +30,6 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
     private val internalVolume: Float
         get() = if(!isMuted) volume / 100f else 0f
 
-    /**
-     * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
-     * Changes only affect new calls to the [say] method.
-     */
     override var volume: Int = TextToSpeechInstance.VOLUME_DEFAULT
         set(value) {
             field = when {
@@ -44,11 +40,6 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
             speechSynthesisUtterance.volume = internalVolume
         }
 
-    /**
-     * Alternative to setting [volume] to zero.
-     * Setting this to true (and back to false) doesn't change the value of [volume].
-     * Changes only affect new calls to the [say] method.
-     */
     override var isMuted = false
         set(value) {
             field = value
@@ -71,10 +62,6 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
         getVoiceList(speechSynthesis)
     }
 
-    /**
-     * Returns a BCP 47 language tag of the selected voice on supported platforms.
-     * May return the language code as ISO 639 on older platforms.
-     */
     override val language: String
         get() {
             val reportedLanguage = speechSynthesisUtterance.voice?.lang ?: speechSynthesisUtterance.lang
@@ -114,17 +101,13 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
         }
     }
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun enqueue(text: String, clearQueue: Boolean) {
-        if(isMuted || internalVolume == 0f) {
-            if(clearQueue) stop()
-            return
-        }
+    override fun enqueueInternal(text: String, resultHandler: ResultHandler) {
+        val utteranceId = Uuid.random()
 
-        if (!hasSpoken) {
-            hasSpoken = true
-            isWarmingUp.value = true
-        }
+        callbackHandler.add(utteranceId, null, resultHandler)
+
+        speechSynthesisUtterance.onstart = { onTtsStarted(utteranceId) }
+        speechSynthesisUtterance.onend = { onTtsCompleted(utteranceId, Result.success(Unit)) }
 
         speechSynthesisUtterance.text = text
         speechSynthesis.speak(speechSynthesisUtterance)
@@ -132,59 +115,13 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeechInsta
         resetCurrentUtterance()
     }
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
-        if(isMuted || internalVolume == 0f) {
-            if(clearQueue) stop()
-            callback(Result.success(Unit))
-            return
-        }
-
-        speechSynthesisUtterance.onstart = {
-            isWarmingUp.value = false
-            isSynthesizing.value = true
-        }
-
-        speechSynthesisUtterance.onend = {
-            isWarmingUp.value = false
-            isSynthesizing.value = false
-            callback(Result.success(Unit))
-        }
-
-        enqueue(text, clearQueue)
-    }
-
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean) {
-        suspendCancellableCoroutine { cont ->
-            say(text, clearQueue) {
-                if (it.isSuccess) {
-                    cont.resume(it.getOrThrow())
-                } else if (it.isFailure) {
-                    val error = it.exceptionOrNull() ?: UnknownTextToSpeechSynthesisError()
-                    cont.resumeWithException(error)
-                }
-            }
-            cont.invokeOnCancellation {
-                if (clearQueueOnCancellation) {
-                    stop()
-                }
-            }
-        }
-    }
-
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun plusAssign(text: String) {
-        enqueue(text, false)
-    }
-
-    /** Clears the internal queue, but doesn't close used resources. */
     override fun stop() {
         speechSynthesis.cancel()
+        super.stop()
     }
 
-    /** Clears the internal queue and closes used resources (if possible) */
     override fun close() {
-        speechSynthesis.cancel()
+        super.close()
+        callbackHandler.clear()
     }
 }

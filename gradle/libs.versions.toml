@@ -1,7 +1,7 @@
 [versions]
 android-buildTools = "35.0.0"
 android-compileSdk = "35"
-android-gradlePlugin = "8.7.2"
+android-gradlePlugin = "8.7.3"
 
 androidx-annotation = "1.9.1"
 androidx-appcompat = "1.7.0"
@@ -20,11 +20,11 @@ google-material-xml = "1.12.0"
 koin = "4.0.0"
 koin-annotations = "2.0.0-Beta2"
 
-kotlin = "2.1.0"
+kotlin = "2.0.21"
 kotlin-coroutines = "1.9.0"
 kotlin-browser = "0.3"
 
-ksp = "2.0.20-1.0.25"
+ksp = "2.0.21-1.0.28"
 
 tts = "2.5.0"
 

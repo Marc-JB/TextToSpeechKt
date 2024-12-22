@@ -1,11 +1,9 @@
 package nl.marc_apps.tts
 
-import nl.marc_apps.tts.experimental.ExperimentalIOSTarget
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import platform.AVFAudio.AVSpeechSynthesisVoice
 
 @ExperimentalVoiceApi
-@ExperimentalIOSTarget
 internal data class IOSVoice(
     override val name: String,
     override val isDefault: Boolean,

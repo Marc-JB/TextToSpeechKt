@@ -9,38 +9,25 @@ import android.os.Bundle
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.IntRange
 import androidx.annotation.RequiresApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.suspendCancellableCoroutine
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
+import nl.marc_apps.tts.utils.ResultHandler
 import nl.marc_apps.tts.utils.TtsProgressConverter
 import nl.marc_apps.tts.utils.VoiceAndroidLegacy
 import nl.marc_apps.tts.utils.VoiceAndroidModern
 import nl.marc_apps.tts.utils.getContinuationId
-import java.util.*
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
+import java.util.Locale
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 import android.speech.tts.TextToSpeech as AndroidTTS
 
-/** A TTS instance. Should be [close]d when no longer in use. */
+@OptIn(ExperimentalUuidApi::class)
 @TargetApi(VERSION_CODES.DONUT)
-internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechInstance {
-    private val callbacks = mutableMapOf<UUID, (Result<Unit>) -> Unit>()
-
-    override val isSynthesizing = MutableStateFlow(false)
-
-    override val isWarmingUp = MutableStateFlow(false)
-
-    private var hasSpoken = false
-
-    private var preIcsQueueSize = 0
+internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeech<String>() {
+    override val canDetectSynthesisStarted = hasModernProgressListeners
 
     private val internalVolume: Float
         get() = if(!isMuted) volume / 100f else 0f
 
-    /**
-     * The output volume, which is an integer between 0 and 100, set to 100(%) by default.
-     * Changes only affect new calls to the [say] method.
-     */
     @IntRange(from = TextToSpeechInstance.VOLUME_MIN.toLong(), to = TextToSpeechInstance.VOLUME_MAX.toLong())
     override var volume: Int = TextToSpeechInstance.VOLUME_DEFAULT
         set(value) {
@@ -53,11 +40,6 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
             }
         }
 
-    /**
-     * Alternative to setting [volume] to zero.
-     * Setting this to true (and back to false) doesn't change the value of [volume].
-     * Changes only affect new calls to the [say] method.
-     */
     override var isMuted: Boolean = false
 
     override var pitch: Float = TextToSpeechInstance.VOICE_PITCH_DEFAULT
@@ -75,10 +57,6 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
     private val voiceLocale: Locale
         get() = (if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) tts?.voice?.locale else tts?.language) ?: Locale.getDefault()
 
-    /**
-     * Returns a BCP 47 language tag of the selected voice on supported platforms.
-     * May return the language code as ISO 639 on older platforms.
-     */
     override val language: String
         get() = if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) voiceLocale.toLanguageTag() else voiceLocale.language
 
@@ -109,7 +87,8 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
     } else {
         Locale.getAvailableLocales().asSequence().filter {
-            tts?.isLanguageAvailable(it) == AndroidTTS.LANG_AVAILABLE
+            val availability = tts?.isLanguageAvailable(it)
+            availability != AndroidTTS.LANG_NOT_SUPPORTED && availability != AndroidTTS.LANG_MISSING_DATA
         }.map {
             VoiceAndroidLegacy(it, it == defaultVoice?.locale)
         }
@@ -135,108 +114,32 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         tts?.setOnUtteranceProgressListener(TtsProgressConverter(::onTtsStarted, ::onTtsCompleted))
     }
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun enqueue(text: String, clearQueue: Boolean) {
-        say(text, clearQueue) {}
-    }
+    override fun enqueueInternal(text: String, resultHandler: ResultHandler) {
+        val utteranceId = Uuid.random()
+        val utteranceIdString = utteranceId.toString()
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
-        if(isMuted || internalVolume == 0f) {
-            if(clearQueue) stop()
-            callback(Result.success(Unit))
-            return
-        }
-
-        val queueMode = if(clearQueue) AndroidTTS.QUEUE_FLUSH else AndroidTTS.QUEUE_ADD
-        val utteranceId = UUID.randomUUID()
-
-        callbacks += utteranceId to {
-            callback(it)
-            callbacks.remove(utteranceId)
-        }
-
-        if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1 && !hasSpoken) {
-            hasSpoken = true
-            isWarmingUp.value = true
-        }
+        callbackHandler.add(utteranceId, utteranceIdString, resultHandler)
 
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             val params = Bundle()
             params.putFloat(KEY_PARAM_VOLUME, internalVolume)
-            params.putString(KEY_PARAM_UTTERANCE_ID, utteranceId.toString())
-            tts?.speak(text, queueMode, params, utteranceId.toString())
+            params.putString(KEY_PARAM_UTTERANCE_ID, utteranceIdString)
+            tts?.speak(text, AndroidTTS.QUEUE_ADD, params, utteranceIdString)
         } else {
-            val params = hashMapOf(
+            tts?.speak(text, AndroidTTS.QUEUE_ADD, hashMapOf(
                 KEY_PARAM_VOLUME to internalVolume.toString(),
-                KEY_PARAM_UTTERANCE_ID to utteranceId.toString()
-            )
-
-            if (!hasModernProgressListeners) {
-                preIcsQueueSize++
-                isSynthesizing.value = true
-            }
-
-            tts?.speak(text, queueMode, params)
+                KEY_PARAM_UTTERANCE_ID to utteranceIdString
+            ))
         }
     }
 
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean){
-        suspendCancellableCoroutine { cont ->
-            say(text, clearQueue) {
-                if (it.isSuccess) {
-                    cont.resume(Unit)
-                } else if (it.isFailure) {
-                    val error = it.exceptionOrNull() ?: Exception()
-                    cont.resumeWithException(error)
-                }
-            }
-            cont.invokeOnCancellation {
-                if (clearQueueOnCancellation) {
-                    stop()
-                }
-            } 
-        }
-    }
-
-    private fun onTtsStarted(utteranceId: UUID) {
-        isWarmingUp.value = false
-        isSynthesizing.value = true
-    }
-
-    private fun onTtsCompleted(utteranceId: UUID, result: Result<Unit>) {
-        isWarmingUp.value = false
-
-        if (!hasModernProgressListeners) {
-            preIcsQueueSize--
-            if (preIcsQueueSize == 0)
-            {
-                isSynthesizing.value = false
-            }
-        } else {
-            isSynthesizing.value = false
-        }
-
-        callbacks[utteranceId]?.invoke(result)
-    }
-
-    /** Adds the given [text] to the internal queue, unless [isMuted] is true or [volume] equals 0. */
-    override fun plusAssign(text: String) = enqueue(text, false)
-
-    /** Clears the internal queue, but doesn't close used resources. */
     override fun stop() {
         tts?.stop()
-
-        if (!hasModernProgressListeners) {
-            preIcsQueueSize = 0
-            isSynthesizing.value = false
-        }
+        super.stop()
     }
 
-    /** Clears the internal queue and closes used resources (if possible) */
     override fun close() {
-        stop()
+        super.close()
         if (hasModernProgressListeners) {
             tts?.setOnUtteranceProgressListener(null)
         } else {
@@ -244,7 +147,6 @@ internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeechI
         }
         tts?.shutdown()
         tts = null
-        callbacks.clear()
     }
 
     companion object {

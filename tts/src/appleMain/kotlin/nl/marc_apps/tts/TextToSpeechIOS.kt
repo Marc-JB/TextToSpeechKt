@@ -1,27 +1,19 @@
 package nl.marc_apps.tts
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.suspendCancellableCoroutine
-import nl.marc_apps.tts.experimental.ExperimentalIOSTarget
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
+import nl.marc_apps.tts.utils.ResultHandler
 import nl.marc_apps.tts.utils.TtsProgressConverter
 import platform.AVFAudio.AVSpeechBoundary
 import platform.AVFAudio.AVSpeechSynthesisVoice
 import platform.AVFAudio.AVSpeechSynthesizer
 import platform.AVFAudio.AVSpeechUtterance
 import platform.AVFAudio.AVSpeechUtteranceDefaultSpeechRate
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
-@ExperimentalIOSTarget
-internal class TextToSpeechIOS(private val synthesizer: AVSpeechSynthesizer) : TextToSpeechInstance {
-    private val callbacks = mutableMapOf<AVSpeechUtterance, (Result<Unit>) -> Unit>()
-
-    override val isSynthesizing = MutableStateFlow(false)
-
-    override val isWarmingUp = MutableStateFlow(false)
-
-    private var hasSpoken = false
+@OptIn(ExperimentalUuidApi::class)
+internal class TextToSpeechIOS(private val synthesizer: AVSpeechSynthesizer) : TextToSpeech<AVSpeechUtterance>() {
+    override val canDetectSynthesisStarted = true
 
     private val internalVolume: Float
         get() = if(!isMuted) volume / 100f else 0f
@@ -59,39 +51,14 @@ internal class TextToSpeechIOS(private val synthesizer: AVSpeechSynthesizer) : T
         IOSVoice(it as AVSpeechSynthesisVoice, it == (defaultVoice as? IOSVoice)?.iosVoice)
     }
 
-    private val delegate = TtsProgressConverter(::onTtsStarted, ::onTtsCompleted)
+    private val delegate = TtsProgressConverter(callbackHandler, ::onTtsStarted, ::onTtsCompleted)
 
     init {
         synthesizer.delegate = delegate
     }
 
-    private fun onTtsStarted(utterance: AVSpeechUtterance) {
-        isWarmingUp.value = false
-        isSynthesizing.value = true
-    }
-
-    private fun onTtsCompleted(utterance: AVSpeechUtterance, result: Result<Unit>) {
-        isWarmingUp.value = false
-        isSynthesizing.value = false
-        callbacks[utterance]?.invoke(result)
-    }
-
-    override fun enqueue(text: String, clearQueue: Boolean) {
-        say(text, clearQueue) {}
-    }
-
     @OptIn(ExperimentalVoiceApi::class)
-    override fun say(text: String, clearQueue: Boolean, callback: (Result<Unit>) -> Unit) {
-        if(isMuted || volume == 0) {
-            if(clearQueue) stop()
-            callback(Result.success(Unit))
-            return
-        }
-
-        if(clearQueue) {
-            stop()
-        }
-
+    override fun enqueueInternal(text: String, resultHandler: ResultHandler) {
         val utterance = AVSpeechUtterance(string = text)
         utterance.volume = internalVolume
         utterance.rate = rate * AVSpeechUtteranceDefaultSpeechRate
@@ -101,49 +68,18 @@ internal class TextToSpeechIOS(private val synthesizer: AVSpeechSynthesizer) : T
             utterance.voice = voice.iosVoice
         }
 
-        val localCallback: (Result<Unit>) -> Unit = {
-            callback(it)
-            callbacks.remove(utterance)
-        }
-        callbacks += utterance to localCallback
-
-        if (!hasSpoken) {
-            hasSpoken = true
-            isWarmingUp.value = true
-        }
+        callbackHandler.add(Uuid.random(), utterance, resultHandler)
 
         synthesizer.speakUtterance(utterance)
     }
 
-    override suspend fun say(text: String, clearQueue: Boolean, clearQueueOnCancellation: Boolean) {
-        suspendCancellableCoroutine { cont ->
-            say(text, clearQueue) {
-                if (it.isSuccess) {
-                    cont.resume(Unit)
-                } else if (it.isFailure) {
-                    val error = it.exceptionOrNull() ?: Exception()
-                    cont.resumeWithException(error)
-                }
-            }
-            cont.invokeOnCancellation {
-                if (clearQueueOnCancellation) {
-                    stop()
-                }
-            }
-        }
-    }
-
-    override fun plusAssign(text: String) {
-        enqueue(text, clearQueue = false)
-    }
-
     override fun stop() {
         synthesizer.stopSpeakingAtBoundary(AVSpeechBoundary.AVSpeechBoundaryImmediate)
+        super.stop()
     }
 
     override fun close() {
-        stop()
+        super.close()
         synthesizer.setDelegate(null)
-        callbacks.clear()
     }
 }
