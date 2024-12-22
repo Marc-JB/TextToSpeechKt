@@ -1,0 +1,269 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>SpeechSynthesis</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
+<link href="../../../styles/multimodule.css" rel="Stylesheet"></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            TextToSpeechKt
+                    </a>            </div>
+            <div class="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;org.w3c.speech/-speech-synthesis/index.html&quot;}"><div class="dropdown versions-dropdown" data-role="dropdown">
+  <div class="button button_dropdown versions-dropdown-button" role="combobox" data-role="dropdown-toggle" aria-controls="versions-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select version" tabindex="0">2.2</div>
+  <div class="dropdown--list dropdown--list_positioned_left versions-dropdown-data" role="listbox" data-role="dropdown-listbox" aria-label="Versions" id="versions-listbox">
+    <div class="dropdown--header" data-remove-style="true" style="display: none"><span>Select version</span><button class="button" data-role="dropdown-toggle" aria-label="Close versions selection"><i class="ui-kit-icon ui-kit-icon_cross"></i></button></div>
+    <div><a href="../../../../../tts/org.w3c.speech/-speech-synthesis/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">3.0</a></div>
+    <div><a href="../../../../2.8/tts/org.w3c.speech/-speech-synthesis/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.8</a></div>
+    <div><a href="../../../../2.7/tts/org.w3c.speech/-speech-synthesis/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.7</a></div>
+    <div><a href="../../../../2.6/tts/org.w3c.speech/-speech-synthesis/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.6</a></div>
+    <div><a href="../../../../2.5/tts/org.w3c.speech/-speech-synthesis/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.5</a></div>
+    <div><a href="../../../../2.4/tts/org.w3c.speech/-speech-synthesis/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.4</a></div>
+    <div><a href="../../../../2.3/tts/org.w3c.speech/-speech-synthesis/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.3</a></div>
+    <div><a href="index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.2</a></div>
+    <div><a href="../../../../2.1/tts/org.w3c.speech/-speech-synthesis/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.1</a></div>
+    <div><a href="../../../../2.0/tts/org.w3c.speech/-speech-synthesis/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">2.0</a></div>
+    <div><a href="../../../../1.6/tts/org.w3c.speech/-speech-synthesis/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">1.6</a></div>
+    <div><a href="../../../../1.5/tts/org.w3c.speech/-speech-synthesis/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">1.5</a></div>
+    <div><a href="../../../../1.4/tts/org.w3c.speech/-speech-synthesis/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">1.4</a></div>
+    <div><a href="../../../../1.3/tts/org.w3c.speech/-speech-synthesis/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">1.3</a></div>
+    <div><a href="../../../../1.2/tts/org.w3c.speech/-speech-synthesis/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">1.2</a></div>
+    <div><a href="../../../../1.1/tts/org.w3c.speech/-speech-synthesis/index.html" class="dropdown--option dropdown--option-link" style="display: block; padding: 5px; color: #fff" data-remove-style="true" role="option">1.1</a></div>
+  </div>
+  <div class="dropdown--overlay"></div>
+</div>
+</dokka-template-command>            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector js-like" data-active="" data-filter=":tts:dokkaHtmlPartial/browserMain">browser</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="tts::org.w3c.speech/SpeechSynthesis///PointingToDeclaration//-348590766">
+  <div class="breadcrumbs"><a href="../../index.html">tts</a><span class="delimiter">/</span><a href="../index.html">org.w3c.speech</a><span class="delimiter">/</span><span class="current">SpeechSynthesis</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Speech</span><wbr><span><span>Synthesis</span></span></h1>
+    <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/browserMain">browser</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/browserMain"><div class="symbol monospace"><span class="token keyword">external </span><span class="token keyword">interface </span><a href="index.html">SpeechSynthesis</a><span class="clearfix"><span class="floating-right">(<a href="https://github.com/Marc-JB/TextToSpeechKt/blob/main/tts/src/browserMain/kotlin/org/w3c/speech/SpeechSynthesis.kt#L8">source</a>)</span></span></div><p class="paragraph">The SpeechSynthesis interface of the Web Speech API is the controller interface for the speech service; this can be used to retrieve information about the synthesis voices available on the device, start and pause speech, and other commands besides.</p></div>    </div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-1606731882%2FProperties%2F-348590766" anchor-label="paused" id="-1606731882%2FProperties%2F-348590766" data-filterable-set=":tts:dokkaHtmlPartial/browserMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="paused.html"><span><span>paused</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1606731882%2FProperties%2F-348590766"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/browserMain">browser</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/browserMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">val </span><a href="paused.html">paused</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">A <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a> that returns true if the SpeechSynthesis object is in a paused state.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1845375585%2FProperties%2F-348590766" anchor-label="pending" id="-1845375585%2FProperties%2F-348590766" data-filterable-set=":tts:dokkaHtmlPartial/browserMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="pending.html"><span><span>pending</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1845375585%2FProperties%2F-348590766"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/browserMain">browser</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/browserMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">val </span><a href="pending.html">pending</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">A <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a> that returns true if the utterance queue contains as-yet-unspoken utterances.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1165351308%2FProperties%2F-348590766" anchor-label="speaking" id="-1165351308%2FProperties%2F-348590766" data-filterable-set=":tts:dokkaHtmlPartial/browserMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="speaking.html"><span><span>speaking</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1165351308%2FProperties%2F-348590766"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/browserMain">browser</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/browserMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">val </span><a href="speaking.html">speaking</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">A <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a> that returns true if an utterance is currently in the process of being spoken — even if SpeechSynthesis is in a paused state.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1475062243%2FProperties%2F-348590766" anchor-label="voiceschanged" id="1475062243%2FProperties%2F-348590766" data-filterable-set=":tts:dokkaHtmlPartial/browserMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="voiceschanged.html"><span><span>voiceschanged</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1475062243%2FProperties%2F-348590766"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/browserMain">browser</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/browserMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">var </span><a href="voiceschanged.html">voiceschanged</a><span class="token operator">: </span><span class="token punctuation">(</span><span class="token keyword"></span>dynamic<span class="token punctuation">)</span><span class="token operator"> -&gt; </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Fired when the list of <a href="../-speech-synthesis-voice/index.html">SpeechSynthesisVoice</a> objects that would be returned by the <a href="get-voices.html">getVoices</a> method has changed.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="1895034826%2FFunctions%2F-348590766" anchor-label="cancel" id="1895034826%2FFunctions%2F-348590766" data-filterable-set=":tts:dokkaHtmlPartial/browserMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cancel.html"><span><span>cancel</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1895034826%2FFunctions%2F-348590766"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/browserMain">browser</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/browserMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="cancel.html"><span class="token function">cancel</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Removes all utterances from the utterance queue.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-96737153%2FFunctions%2F-348590766" anchor-label="getVoices" id="-96737153%2FFunctions%2F-348590766" data-filterable-set=":tts:dokkaHtmlPartial/browserMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-voices.html"><span>get</span><wbr><span><span>Voices</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-96737153%2FFunctions%2F-348590766"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/browserMain">browser</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/browserMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="get-voices.html"><span class="token function">getVoices</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-speech-synthesis-voice/index.html">SpeechSynthesisVoice</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Returns a list of <a href="../-speech-synthesis-voice/index.html">SpeechSynthesisVoice</a> objects representing all the available voices on the current device.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="743939168%2FFunctions%2F-348590766" anchor-label="pause" id="743939168%2FFunctions%2F-348590766" data-filterable-set=":tts:dokkaHtmlPartial/browserMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="pause.html"><span><span>pause</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="743939168%2FFunctions%2F-348590766"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/browserMain">browser</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/browserMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="pause.html"><span class="token function">pause</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Puts the SpeechSynthesis object into a paused state.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="673420663%2FFunctions%2F-348590766" anchor-label="resume" id="673420663%2FFunctions%2F-348590766" data-filterable-set=":tts:dokkaHtmlPartial/browserMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="resume.html"><span><span>resume</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="673420663%2FFunctions%2F-348590766"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/browserMain">browser</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/browserMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="resume.html"><span class="token function">resume</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Puts the SpeechSynthesis object into a non-paused state: resumes it if it was already paused.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2087043132%2FFunctions%2F-348590766" anchor-label="speak" id="-2087043132%2FFunctions%2F-348590766" data-filterable-set=":tts:dokkaHtmlPartial/browserMain"></a>
+          <div class="table-row" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="speak.html"><span><span>speak</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2087043132%2FFunctions%2F-348590766"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":tts:dokkaHtmlPartial/browserMain" data-filterable-set=":tts:dokkaHtmlPartial/browserMain" data-active="" data-toggle=":tts:dokkaHtmlPartial/browserMain">browser</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":tts:dokkaHtmlPartial/browserMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword"></span><span class="token keyword">fun </span><a href="speak.html"><span class="token function">speak</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">utterance<span class="token operator">: </span><a href="../-speech-synthesis-utterance/index.html">SpeechSynthesisUtterance</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Adds an <a href="speak.html">utterance</a> to the utterance queue; it will be spoken when any other utterances queued before it have been spoken.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
