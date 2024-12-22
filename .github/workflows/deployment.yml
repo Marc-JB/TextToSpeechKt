@@ -23,8 +23,8 @@ permissions:
 
 jobs:
   build-and-deploy-lib:
-    runs-on: ubuntu-latest
-    timeout-minutes: 16
+    runs-on: macos-latest
+    timeout-minutes: 14
     steps:
 
       - name: Checkout repository
@@ -41,7 +41,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Update version
-        run: sed -i 's/tts[[:space:]]*=[[:space:]]*"[^"]*"/tts = "${{ github.event.inputs.version }}"/g' ./gradle/libs.versions.toml
+        run: sed -i '' 's/tts[[:space:]]*=[[:space:]]*"[^"]*"/tts = "${{ github.event.inputs.version }}"/g' ./gradle/libs.versions.toml
 
       - name: Build & Deploy with Gradle
         run: ./gradlew :tts:publish :tts-compose:publish
@@ -94,7 +94,7 @@ jobs:
           path: './build/dokka/html_version_archive/'
 
       - name: Generate docs with Gradle & Dokka
-        run: ./gradlew :dokkaHtmlMultiModule
+        run: ./gradlew :dokkaGenerate
 
       - name: Move docs
         run: |

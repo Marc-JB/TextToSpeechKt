@@ -1,10 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.net.URL
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -14,21 +12,26 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.mavenRepositoryConfiguration)
+    alias(libs.plugins.ttsPublication)
 }
 
-val projectId = "compose"
+object Project {
+    const val ARTIFACT_ID = "tts-compose"
+    const val NAMESPACE = "nl.marc_apps.tts_compose"
+}
 
-group = getTtsProperty("groupId")!!
+group = "nl.marc-apps"
 version = libs.versions.tts.get()
 
 kotlin {
-    js("browserJs", IR) {
+    js {
         browser()
         binaries.executable()
     }
 
     @OptIn(ExperimentalWasmDsl::class)
-    wasmJs("browserWasm") {
+    wasmJs {
         browser()
         binaries.executable()
     }
@@ -36,14 +39,18 @@ kotlin {
     androidTarget {
         publishLibraryVariants("release")
 
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget = JvmTarget.JVM_1_8
         }
     }
 
-    jvm("desktop") {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+    macosArm64()
+    macosX64()
+
+    jvm {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_17
         }
@@ -52,7 +59,7 @@ kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     applyDefaultHierarchyTemplate {
         common {
-            group("browser") {
+            group("webCommonW3C") {
                 withJs()
                 withWasmJs()
             }
@@ -63,11 +70,15 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(libs.kotlin.coroutines)
-            api(project(":tts"))
+            api(projects.tts)
         }
 
         androidMain.dependencies {
             implementation(compose.foundation)
+        }
+
+        wasmJsMain.dependencies {
+            implementation(libs.kotlin.browser)
         }
     }
 }
@@ -76,59 +87,70 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     buildToolsVersion = libs.versions.android.buildTools.get()
 
-    namespace = getTtsScopedProperty("namespace")
+    namespace = Project.NAMESPACE
 
     defaultConfig {
         minSdk = 21
 
-        setProperty("archivesBaseName", getTtsScopedProperty("artifactId"))
+        setProperty("archivesBaseName", Project.ARTIFACT_ID)
     }
 }
 
-dependencies {
-    dokkaPlugin(libs.dokka.plugins.androidDocs)
-    dokkaPlugin(libs.dokka.plugins.versioning)
+tasks {
+    matching {
+        it.name.startsWith("publish") && "PublicationTo" in it.name && it.name.endsWith("Repository")
+    }.configureEach {
+        dependsOn(matching { it.name.startsWith("sign") && it.name.endsWith("Publication") })
+    }
 }
 
-tasks.withType<DokkaTaskPartial>().configureEach {
+val dokkaHtmlJar by tasks.registering(Jar::class) {
+    description = "A HTML Documentation JAR containing Dokka HTML"
+    from(tasks.dokkaGeneratePublicationHtml.flatMap { it.outputDirectory })
+    archiveClassifier = "html-doc"
+}
+
+dokka {
     dokkaSourceSets.configureEach {
         sourceLink {
-            localDirectory.set(file("src/${name}/kotlin"))
-            remoteUrl.set(URL("https://${getTtsProperty("git", "location")}/blob/main/${getTtsScopedProperty("artifactId")}/src/${name}/kotlin"))
-            remoteLineSuffix.set("#L")
+            localDirectory = file("src/${name}/kotlin")
+            remoteUrl("https://github.com/Marc-JB/TextToSpeechKt/blob/main/${Project.ARTIFACT_ID}/src/${name}/kotlin")
+            remoteLineSuffix = "#L"
         }
 
-        externalDocumentationLink {
-            url.set(URL(getTtsProperty("documentation", "url")))
-            packageListUrl.set(URL("${getTtsProperty("documentation", "url")}/package-list"))
+        externalDocumentationLinks {
+            create("tts") {
+                url("https://marc-jb.github.io/TextToSpeechKt")
+                packageListUrl("https://marc-jb.github.io/TextToSpeechKt/package-list")
+            }
         }
 
         if (name.startsWith("android")){
             jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
-        } else if (name.startsWith("desktop")){
-            jdkVersion.set(JavaVersion.VERSION_21.majorVersion.toInt())
+        } else if (name.startsWith("jvm")){
+            jdkVersion.set(JavaVersion.VERSION_17.majorVersion.toInt())
         }
     }
 }
 
-val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
-    dependsOn(tasks.dokkaHtmlPartial)
-    archiveClassifier.set("javadoc")
-    from(layout.buildDirectory.asFile.get().resolve("dokka"))
+publishingRepositories {
+    isSnapshot = "SNAPSHOT" in libs.versions.tts.get()
+
+    ossrh {
+        username = getConfigProperty("ossrh", "username")
+        token = getConfigProperty("ossrh", "password")
+    }
+
+    /*githubPackages {
+        organization = "Marc-JB"
+        project = "TextToSpeechKt"
+        username = getConfigProperty("gpr", "user")
+        token = getConfigProperty("gpr", "key")
+    }*/
 }
 
-publishing {
-    repositories {
-        configureOssrhRepository("SNAPSHOT" in libs.versions.tts.get(), getConfigProperty("ossrh", "username"), getConfigProperty("ossrh", "password"))
-
-        // configureGitHubPackagesRepository("Marc-JB", "TextToSpeechKt", getConfigProperty("gpr", "user"), getConfigProperty("gpr", "key"))
-    }
-
-    publications {
-        withType<MavenPublication> {
-            configureMavenPublication(project, this, javadocJar, getTtsScopedProperty("artifactId")!!)
-        }
-    }
+configureTtsPublication {
+    javadocJarTask.set(dokkaHtmlJar)
 }
 
 signing {
@@ -138,17 +160,10 @@ signing {
     val signingPassword = getConfigProperty("gpg", "signing", "password")
     useInMemoryPgpKeys(signingKey, signingPassword)
 
-    sign(publishing.publications)
+    sign(publishing.publications.matching { it is MavenPublication })
 }
 
-afterEvaluate {
-    val publicationTaskNames = tasks.names.filter { it.startsWith("publish") && "PublicationTo" in it && it.endsWith("Repository") }
-    val signTaskNames = tasks.names.filter { it.startsWith("sign") && it.endsWith("Publication") }.toTypedArray()
-    for (publicationTaskName in publicationTaskNames) {
-        tasks.getByName(publicationTaskName) {
-            dependsOn(*signTaskNames)
-        }
-    }
+fun getConfigProperty(vararg path: String): String? {
+    return findProperty(path.joinToString(".")) as? String
+        ?: System.getenv(path.joinToString("_") { it.uppercase() })
 }
-
-private fun getTtsScopedProperty(vararg path: String) = getTtsProperty(projectId, *path)

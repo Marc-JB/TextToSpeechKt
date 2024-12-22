@@ -1,31 +1,58 @@
 [versions]
 android-buildTools = "35.0.0"
 android-compileSdk = "35"
-android-gradlePlugin = "8.5.2"
-androidx-annotation = "1.8.2"
+android-gradlePlugin = "8.7.3"
 
-compose = "1.6.11"
+androidx-annotation = "1.9.1"
+androidx-appcompat = "1.7.0"
+androidx-constraintlayout = "2.2.0"
+androidx-fragment = "1.8.5"
+androidx-lifecycle-runtime = "2.8.7"
 
-dokka = "1.9.20"
+compose = "1.7.1"
+
+dokka = "2.0.0"
 
 freetts_java = "1.2.2"
 
-kotlin = "2.0.20"
-kotlin-coroutines = "1.8.1"
+google-material-xml = "1.12.0"
+
+koin = "4.0.0"
+koin-annotations = "2.0.0-Beta2"
+
+kotlin = "2.0.21"
+kotlin-coroutines = "1.9.0"
+kotlin-browser = "0.3"
+
+ksp = "2.0.21-1.0.28"
 
 tts = "2.5.0"
 
-versioncheck = "0.50.0"
+versioncheck = "0.51.0"
 
 [libraries]
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "androidx-constraintlayout" }
+androidx-fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "androidx-fragment" }
+androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle-runtime" }
 
 dokka-plugins-androidDocs = { module = "org.jetbrains.dokka:android-documentation-plugin", version.ref = "dokka" }
 dokka-plugins-versioning = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
 
 freetts = { module = "net.sf.sociaal:freetts", version.ref = "freetts_java" }
 
+google-material-xml = { module = "com.google.android.material:material", version.ref = "google-material-xml" }
+
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android" }
+koin-androidx-startup = { module = "io.insert-koin:koin-androidx-startup" }
+koin-annotations-bom = { module = "io.insert-koin:koin-annotations-bom", version.ref = "koin-annotations" }
+koin-annotations = { module = "io.insert-koin:koin-annotations" }
+koin-annotations-ksp = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin-annotations" }
+
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+kotlin-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlin-browser" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradlePlugin" }
@@ -37,5 +64,12 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+
+ksp = { id = "com.google.devtools.ksp", version.ref="ksp" }
+
+mavenRepositoryConfiguration = { id = "nl.marc-apps.maven-repository-configuration-plugin" }
+
+ttsPublication = { id = "nl.marc-apps.tts-publication-plugin" }
 
 versioncheck = { id = "com.github.ben-manes.versions", version.ref = "versioncheck" }

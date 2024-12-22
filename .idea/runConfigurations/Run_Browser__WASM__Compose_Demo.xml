@@ -10,7 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="browserWasmRun" />
+          <option value="wasmJsRun" />
         </list>
       </option>
       <option name="vmOptions" />

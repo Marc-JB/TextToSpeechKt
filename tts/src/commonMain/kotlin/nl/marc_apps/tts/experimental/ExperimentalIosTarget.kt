@@ -1,9 +1,6 @@
 package nl.marc_apps.tts.experimental
 
-@RequiresOptIn(
-    message = "This API is experimental. It may be changed in the future without notice.",
-    level = RequiresOptIn.Level.ERROR
-)
+@Deprecated("The iOS/Apple text-to-speech target is no longer experimental. You can remove this annotation.")
 @Retention(AnnotationRetention.BINARY)
 @Target(
     AnnotationTarget.CLASS,
@@ -14,4 +11,4 @@ package nl.marc_apps.tts.experimental
     AnnotationTarget.PROPERTY_GETTER,
     AnnotationTarget.PROPERTY_SETTER
 )
-annotation class ExperimentalIosTarget
+annotation class ExperimentalIOSTarget

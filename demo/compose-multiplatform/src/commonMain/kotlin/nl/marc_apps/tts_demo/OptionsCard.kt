@@ -15,11 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import nl.marc_apps.tts.TextToSpeechInstance
 import org.jetbrains.compose.resources.stringResource
-import texttospeechkt.demo.compose_multiplatform.generated.resources.Res
-import texttospeechkt.demo.compose_multiplatform.generated.resources.action_options_reset_all
-import texttospeechkt.demo.compose_multiplatform.generated.resources.options_title
-import texttospeechkt.demo.compose_multiplatform.generated.resources.placeholder_voice_unknown
 import kotlin.math.roundToInt
+import nl.marc_apps.tts_demo.resources.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -150,7 +147,7 @@ fun OptionsCard(
                     Icon(Icons.Rounded.Language, contentDescription = null)
 
                     Text(
-                        textToSpeech.currentVoice?.name ?: stringResource(Res.string.placeholder_voice_unknown),
+                        textToSpeech.currentVoice?.let { "${it.languageTag} (${it.name})" } ?: stringResource(Res.string.placeholder_voice_unknown),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -189,7 +186,8 @@ fun OptionsCard(
                             LazyColumn {
                                 items(textToSpeech.voices.toList(), key = { it.hashCode() }) {
                                     Text(
-                                        it.name,
+                                        "${it.languageTag} (${it.name})",
+                                        maxLines = 1,
                                         modifier = Modifier
                                             .padding(16.dp, 4.dp)
                                             .clickable {

@@ -10,7 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="browserJsRun" />
+          <option value="jsRun" />
         </list>
       </option>
       <option name="vmOptions" />

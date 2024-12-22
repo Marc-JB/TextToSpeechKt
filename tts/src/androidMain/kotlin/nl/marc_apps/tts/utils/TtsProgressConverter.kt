@@ -5,15 +5,17 @@ import android.speech.tts.UtteranceProgressListener
 import androidx.annotation.RequiresApi
 import nl.marc_apps.tts.errors.TextToSpeechSynthesisInterruptedError
 import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
-import java.util.*
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 /**
  * @hide
  */
+@OptIn(ExperimentalUuidApi::class)
 @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
 class TtsProgressConverter(
-    val onStart: (UUID) -> Unit,
-    val onComplete: (UUID, Result<Unit>) -> Unit
+    val onStart: (Uuid) -> Unit,
+    val onComplete: (Uuid, Result<Unit>) -> Unit
 ) : UtteranceProgressListener() {
     override fun onStart(utteranceId: String?) {
         val id = getContinuationId(utteranceId) ?: return

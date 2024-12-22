@@ -1,40 +1,56 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.resources.ResourcesExtension.ResourceClassGeneration
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget = JvmTarget.JVM_1_8
         }
+
+        dependencies {
+            debugImplementation(compose.uiTooling)
+        }
     }
 
-    js("browserJs", IR) {
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
+        macosArm64(),
+        macosX64()
+    ).forEach { appleTarget ->
+        appleTarget.binaries.framework {
+            baseName = "ComposeApp"
+        }
+    }
+
+    js {
         moduleName = "compose-multiplatform"
         browser {
             commonWebpackConfig {
                 devServer = devServer ?: KotlinWebpackConfig.DevServer()
-                experiments += "topLevelAwait"
             }
         }
         binaries.executable()
+        useEsModules()
     }
 
     @OptIn(ExperimentalWasmDsl::class)
-    wasmJs("browserWasm") {
+    wasmJs {
         moduleName = "compose-multiplatform"
         browser {
             commonWebpackConfig {
@@ -44,8 +60,7 @@ kotlin {
         binaries.executable()
     }
 
-    jvm("desktop") {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    jvm {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_17
         }
@@ -54,11 +69,15 @@ kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     applyDefaultHierarchyTemplate {
         common {
-            group("browser") {
+            group("webCommonW3C") {
                 withJs()
                 withWasmJs()
             }
         }
+    }
+
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
     sourceSets {
@@ -78,26 +97,43 @@ kotlin {
             // implementation(compose.components.uiToolingPreview)
             implementation(compose.components.resources)
             implementation(libs.kotlin.coroutines)
-            implementation(project(":tts-compose"))
+            implementation(projects.ttsCompose)
         }
 
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(compose.uiTooling)
-            implementation("androidx.navigation:navigation-compose:2.7.7")
+
             implementation("androidx.activity:activity-compose:1.9.0")
+
+            implementation(libs.androidx.appcompat)
+            implementation(libs.androidx.constraintlayout)
+            implementation(libs.androidx.fragment)
+            implementation(libs.androidx.lifecycle.runtime)
+
+            implementation(libs.google.material.xml)
+
+            implementation(libs.koin.android)
+            implementation(libs.koin.androidx.startup)
+            implementation(libs.koin.annotations)
         }
 
-        getByName("desktopMain").dependencies {
+        jvmMain.dependencies {
             implementation(compose.preview)
             implementation(compose.uiTooling)
             implementation(compose.desktop.currentOs)
+        }
+
+        wasmJsMain.dependencies {
+            implementation(libs.kotlin.browser)
         }
     }
 }
 
 dependencies {
-    debugImplementation(compose.uiTooling)
+    implementation(platform(libs.koin.bom))
+    implementation(platform(libs.koin.annotations.bom))
+    add("kspAndroid", libs.koin.annotations.ksp)
 }
 
 android {
@@ -148,14 +184,14 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
+        named("release") {
             isMinifyEnabled = true
             isShrinkResources = true
 
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
 
-        getByName("debug") {
+        named("debug") {
             applicationIdSuffix = ".debug"
 
             isMinifyEnabled = false
@@ -173,6 +209,10 @@ android {
         deviceTier.enableSplit = true
     }
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
@@ -180,10 +220,10 @@ android {
     }
 }
 
-tasks.withType(KotlinCompilationTask::class) {
-    compilerOptions {
-        freeCompilerArgs.add("-Xexpect-actual-classes")
-    }
+compose.resources {
+    publicResClass = false
+    packageOfResClass = "nl.marc_apps.tts_demo.resources"
+    generateResClass = ResourceClassGeneration.Always
 }
 
 compose.desktop {
