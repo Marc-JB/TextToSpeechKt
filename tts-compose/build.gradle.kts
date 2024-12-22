@@ -1,10 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.net.URI
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -98,43 +96,40 @@ android {
     }
 }
 
-dependencies {
-    dokkaPlugin(libs.dokka.plugins.androidDocs)
-    dokkaPlugin(libs.dokka.plugins.versioning)
-}
-
 tasks {
-    withType<DokkaTaskPartial>().configureEach {
-        dokkaSourceSets.configureEach {
-            sourceLink {
-                localDirectory.set(file("src/${name}/kotlin"))
-                remoteUrl.set(URI.create("https://github.com/Marc-JB/TextToSpeechKt/blob/main/${Project.ARTIFACT_ID}/src/${name}/kotlin").toURL())
-                remoteLineSuffix.set("#L")
-            }
-
-            externalDocumentationLink {
-                url.set(URI.create("https://marc-jb.github.io/TextToSpeechKt").toURL())
-                packageListUrl.set(URI.create("https://marc-jb.github.io/TextToSpeechKt/package-list").toURL())
-            }
-
-            if (name.startsWith("android")){
-                jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
-            } else if (name.startsWith("jvm")){
-                jdkVersion.set(JavaVersion.VERSION_21.majorVersion.toInt())
-            }
-        }
-    }
-
     matching {
         it.name.startsWith("publish") && "PublicationTo" in it.name && it.name.endsWith("Repository")
     }.configureEach {
         dependsOn(matching { it.name.startsWith("sign") && it.name.endsWith("Publication") })
     }
+}
 
-    register<Jar>("javadocJar") {
-        dependsOn(dokkaHtmlPartial)
-        archiveClassifier.set("javadoc")
-        from(layout.buildDirectory.asFile.get().resolve("dokka"))
+val dokkaHtmlJar by tasks.registering(Jar::class) {
+    description = "A HTML Documentation JAR containing Dokka HTML"
+    from(tasks.dokkaGeneratePublicationHtml.flatMap { it.outputDirectory })
+    archiveClassifier = "html-doc"
+}
+
+dokka {
+    dokkaSourceSets.configureEach {
+        sourceLink {
+            localDirectory = file("src/${name}/kotlin")
+            remoteUrl("https://github.com/Marc-JB/TextToSpeechKt/blob/main/${Project.ARTIFACT_ID}/src/${name}/kotlin")
+            remoteLineSuffix = "#L"
+        }
+
+        externalDocumentationLinks {
+            create("tts") {
+                url("https://marc-jb.github.io/TextToSpeechKt")
+                packageListUrl("https://marc-jb.github.io/TextToSpeechKt/package-list")
+            }
+        }
+
+        if (name.startsWith("android")){
+            jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
+        } else if (name.startsWith("jvm")){
+            jdkVersion.set(JavaVersion.VERSION_17.majorVersion.toInt())
+        }
     }
 }
 
@@ -155,7 +150,7 @@ publishingRepositories {
 }
 
 configureTtsPublication {
-    javadocJarTask.set(tasks.named<Jar>("javadocJar").get())
+    javadocJarTask.set(dokkaHtmlJar)
 }
 
 signing {
