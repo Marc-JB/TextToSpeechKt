@@ -1,0 +1,11 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+module:tts
+nl.marc_apps.tts
+nl.marc_apps.tts.errors
+nl.marc_apps.tts.experimental
+nl.marc_apps.tts.utils
+org.w3c.speech
+module:tts-compose
+nl.marc_apps.tts
