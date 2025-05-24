@@ -43,15 +43,22 @@ jobs:
       - name: Update version
         run: sed -i '' 's/tts[[:space:]]*=[[:space:]]*"[^"]*"/tts = "${{ github.event.inputs.version }}"/g' ./gradle/libs.versions.toml
 
-      - name: Build & Deploy with Gradle
-        run: ./gradlew :tts:publish :tts-compose:publish
+      - name: Build & Deploy with Gradle to Maven
+        run: ./gradlew :tts:publishAndReleaseToMavenCentral :tts-compose:publishAndReleaseToMavenCentral
         env:
-          GPR_USER: github-actions
-          GPR_KEY: ${{ secrets.GITHUB_TOKEN }}
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
-          GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_SIGNING_PASSWORD }}
+
+#      - name: Build & Deploy with Gradle to GitHub Packages
+#        continue-on-error: true
+#        run: ./gradlew :tts:publishAllPublicationsToGithubPackagesRepository :tts-compose:publishAllPublicationsToGithubPackagesRepository
+#        env:
+#          ORG_GRADLE_PROJECT_githubPackagesUsername: github-actions
+#          ORG_GRADLE_PROJECT_githubPackagesPassword: ${{ secrets.GITHUB_TOKEN }}
+#          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_SIGNING_KEY }}
+#          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_SIGNING_PASSWORD }}
 
       - name: Upload library artifacts
         uses: actions/upload-artifact@v4

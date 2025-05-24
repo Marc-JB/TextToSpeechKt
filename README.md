@@ -1,7 +1,7 @@
 <div align="center">
 
   # TextToSpeechKt
-  Kotlin Multiplatform Text-to-Speech library for Android, iOS, macOS and browser (Kotlin/JS & Kotlin/Wasm).
+  Text-to-Speech library for Kotlin Multiplatform. Supports targets Android, iOS, macOS and browser (js and wasmJs).
 
   [![Gradle deployment](https://github.com/Marc-JB/TextToSpeechKt/actions/workflows/deployment.yml/badge.svg)](https://github.com/Marc-JB/TextToSpeechKt/actions) 
   [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Marc-JB_TextToSpeechKt&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Marc-JB_TextToSpeechKt) 
@@ -32,17 +32,19 @@ Uses Kotlin Multiplatform with support for the following targets:
 | Browser             | Kotlin/Wasm   | ✅                         |
 | Browser             | JS, TS        | ❌ _Support ended in v2.0_ |
 | Desktop             | Kotlin/JVM    | ⚠️ _Experimental support_ |
-| iOS, MacOS          | Kotlin/Native | ⚠️ _Experimental support_ |
+| iOS, MacOS          | Kotlin/Native | ✅                         |
 | Other Kotlin/Native | Kotlin/Native | ❌                         |
 
 
 ### :dart: Features
-- Create the engine with Kotlin Coroutines
-- Await speech synthesis completion using Kotlin Coroutines
-- Modify the volume or mute the volume entirely
-- Modify the voice pitch
-- Modify the voice rate
-- Compose support with `rememberTextToSpeechOrNull()` (works in multiplatform code!)
+- Kotlin Multiplatform API for text-to-speech on the following platforms: Android, iOS, macOS, js and wasmJs
+- Await synthesis completion using Kotlin Coroutines
+- Supports the following configuration:
+   * Voice pitch & rate
+   * Volume
+   * Voice selection
+   * Language (through voice selection)
+- Compose Multiplatform support with `rememberTextToSpeechOrNull()` available in the `tts-compose` package.
 
 ## 	:toolbox: Getting Started
 ### :bangbang: Prerequisites
@@ -50,23 +52,32 @@ A build tool like Gradle or Maven.
 
 ### :gear: Installation
 <details>
-  <summary><strong>Gradle</strong></summary>
+  <summary><strong>libs.versions.toml</strong></summary>
 
-  Configure the Maven Central repository:  
-  ```Kotlin copy
-  repositories {
-      mavenCentral()
-  }
+  ```Toml copy
+  [versions]
+  textToSpeech = "3.0.0"
+
+  [libraries]
+  textToSpeech = { module = "nl.marc-apps:tts", version.ref = "textToSpeech" }
+  # Optional: Extensions for Compose
+  textToSpeech-compose = { module = "nl.marc-apps:tts-compose", version.ref = "textToSpeech" }
   ```
+
+Make sure to configure the latest stable version: [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://central.sonatype.com/search?smo=true&namespace=nl.marc-apps&q=tts)
+
+</details>
+
+<details>
+  <summary><strong>Gradle</strong></summary>
 
   And add the library to your dependencies:  
   ```Kotlin copy
   dependencies {
-      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-      implementation("nl.marc-apps:tts:2.5.0")
+      implementation("nl.marc-apps:tts:3.0.0")
 
       // Optional: Extensions for Compose
-      implementation("nl.marc-apps:tts-compose:2.5.0")
+      implementation("nl.marc-apps:tts-compose:3.0.0")
   }
   ```  
 
@@ -76,44 +87,16 @@ A build tool like Gradle or Maven.
   kotlin {
       sourceSets {
           commonMain.dependencies { 
-              implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-              implementation("nl.marc-apps:tts:2.5.0")
+              implementation("nl.marc-apps:tts:3.0.0")
 
               // Optional: Extensions for Compose 
-              implementation("nl.marc-apps:tts-compose:2.5.0")
+              implementation("nl.marc-apps:tts-compose:3.0.0")
           }
       }
   }
   ```
 
   Make sure to configure the latest stable version: [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://central.sonatype.com/search?smo=true&namespace=nl.marc-apps&q=tts)   
-
-</details>
-
-<details>
-  <summary><strong>Apache Maven</strong></summary>
-
-  Add the library to your dependencies:  
-  ```XML copy
-  <dependency>
-      <groupId>org.jetbrains.kotlinx</groupId>
-      <artifactId>kotlinx-coroutines-core</artifactId>
-      <version>1.8.0</version>
-  </dependency>
-  <dependency>
-      <groupId>nl.marc-apps</groupId>
-      <artifactId>tts</artifactId>
-      <version>2.5.0</version>
-  </dependency>
-  <!-- Optional: Extensions for Compose -->
-  <dependency>
-      <groupId>nl.marc-apps</groupId>
-      <artifactId>tts-compose</artifactId>
-      <version>2.5.0</version>
-  </dependency>
-  ```  
-
-  Make sure to configure the latest stable version: [![Maven Central](https://badgen.net/maven/v/maven-central/nl.marc-apps/tts)](https://central.sonatype.com/search?smo=true&namespace=nl.marc-apps&q=tts)
 
 </details>
 
