@@ -1,7 +1,7 @@
 <div align="center">
 
   # TextToSpeechKt
-  Kotlin Multiplatform Text-to-Speech library for Android, iOS, macOS and browser (Kotlin/JS & Kotlin/Wasm).
+  Text-to-Speech library for Kotlin Multiplatform. Supports targets Android, iOS, macOS and browser (js and wasmJs).
 
   [![Gradle deployment](https://github.com/Marc-JB/TextToSpeechKt/actions/workflows/deployment.yml/badge.svg)](https://github.com/Marc-JB/TextToSpeechKt/actions) 
   [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Marc-JB_TextToSpeechKt&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Marc-JB_TextToSpeechKt) 
@@ -32,7 +32,7 @@ Uses Kotlin Multiplatform with support for the following targets:
 | Browser             | Kotlin/Wasm   | ✅                         |
 | Browser             | JS, TS        | ❌ _Support ended in v2.0_ |
 | Desktop             | Kotlin/JVM    | ⚠️ _Experimental support_ |
-| iOS, MacOS          | Kotlin/Native | ⚠️ _Experimental support_ |
+| iOS, MacOS          | Kotlin/Native | ✅                         |
 | Other Kotlin/Native | Kotlin/Native | ❌                         |
 
 

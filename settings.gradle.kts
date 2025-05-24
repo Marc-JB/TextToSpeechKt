@@ -1,7 +1,6 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
-    includeBuild("plugins")
     repositories {
         gradlePluginPortal()
         google()

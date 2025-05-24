@@ -30,6 +30,8 @@ tts = "2.5.0"
 
 versioncheck = "0.51.0"
 
+mavenPublishPlugin = "0.32.0"
+
 [libraries]
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
@@ -68,8 +70,6 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 ksp = { id = "com.google.devtools.ksp", version.ref="ksp" }
 
-mavenRepositoryConfiguration = { id = "nl.marc-apps.maven-repository-configuration-plugin" }
-
-ttsPublication = { id = "nl.marc-apps.tts-publication-plugin" }
+mavenPublishPlugin = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublishPlugin" }
 
 versioncheck = { id = "com.github.ben-manes.versions", version.ref = "versioncheck" }
