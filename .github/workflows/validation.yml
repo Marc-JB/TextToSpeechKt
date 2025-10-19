@@ -29,7 +29,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew :tts:build :tts-compose:build
+        run: ./gradlew :tts-browser-definitions:build :tts:build :tts-compose:build
         env:
           GPR_USER: github-actions
           GPR_KEY: ${{ secrets.GITHUB_TOKEN }}

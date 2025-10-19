@@ -1,45 +1,37 @@
-@file:Suppress("UnstableApiUsage")
-
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
-import com.vanniktech.maven.publish.SonatypeHost
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
+    alias(libs.plugins.android.library.kmp)
+    alias(libs.plugins.android.lint)
+
+    alias(libs.plugins.jetbrains.dokka)
+
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.dokka)
-    alias(libs.plugins.mavenPublishPlugin)
+
+    alias(libs.plugins.mavenPublishing)
 }
 
-object Project {
-    const val ARTIFACT_ID = "tts"
-    const val NAMESPACE = "nl.marc_apps.tts"
-}
+val libraryVersion = rootProject.findProperty("nl.marc_apps.tts.version")?.toString() ?: "0.0.1"
 
 group = "nl.marc-apps"
-version = libs.versions.tts.get()
+version = libraryVersion
 
 kotlin {
-    js {
-        browser()
-        binaries.executable()
+    abiValidation {
+        @OptIn(ExperimentalAbiValidation::class)
+        enabled.set(true)
     }
 
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
+    jvmToolchain(8)
 
-    androidTarget {
-        publishLibraryVariants("release")
+    androidLibrary {
+        compileSdk = 36
+        minSdk = 1
 
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_1_8
-        }
+        namespace = "nl.marc_apps.tts"
     }
 
     iosX64()
@@ -48,32 +40,20 @@ kotlin {
     macosArm64()
     macosX64()
 
-    jvm {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_17
-        }
-    }
+    jvm()
 
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    applyDefaultHierarchyTemplate {
-        common {
-            group("webCommonW3C") {
-                withJs()
-                withWasmJs()
-            }
-        }
-    }
-
-    compilerOptions {
-        freeCompilerArgs.add("-Xexpect-actual-classes")
+    listOf(
+        js(),
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmJs()
+    ).forEach { webTarget ->
+        webTarget.browser()
+        webTarget.binaries.executable()
     }
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.kotlin.coroutines)
-        }
-
-        androidMain.dependencies {
+            implementation(libs.kotlinx.coroutines)
             implementation(libs.androidx.annotation)
         }
 
@@ -81,30 +61,19 @@ kotlin {
             implementation(libs.freetts)
         }
 
-        wasmJsMain.dependencies {
-            implementation(libs.kotlin.browser)
+        webMain.dependencies {
+            implementation(projects.ttsBrowserDefinitions)
+
+            implementation(libs.kotlinx.browser)
         }
-    }
-}
-
-android {
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    buildToolsVersion = libs.versions.android.buildTools.get()
-
-    namespace = Project.NAMESPACE
-
-    defaultConfig {
-        minSdk = 1
-
-        setProperty("archivesBaseName", Project.ARTIFACT_ID)
     }
 }
 
 dokka {
     dokkaSourceSets.configureEach {
         sourceLink {
-            localDirectory = file("src/${name}/kotlin")
-            remoteUrl("https://github.com/Marc-JB/TextToSpeechKt/blob/main/${Project.ARTIFACT_ID}/src/${name}/kotlin")
+            localDirectory = file("src/$name/kotlin")
+            remoteUrl("https://github.com/Marc-JB/TextToSpeechKt/blob/main/tts/src/$name/kotlin")
             remoteLineSuffix = "#L"
         }
 
@@ -115,30 +84,18 @@ dokka {
             }
         }
 
-        if (name.startsWith("android")){
-            jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
-        } else if (name.startsWith("jvm")){
-            jdkVersion.set(JavaVersion.VERSION_17.majorVersion.toInt())
-        }
+        jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
     }
 }
 
 mavenPublishing {
-    coordinates("nl.marc-apps", Project.ARTIFACT_ID, libs.versions.tts.get())
+    coordinates("nl.marc-apps", "tts", libraryVersion)
 
     configure(KotlinMultiplatform(
         javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationHtml")
     ))
 
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-
-    /*repositories {
-        maven {
-            name = "githubPackages"
-            url = uri("https://maven.pkg.github.com/Marc-JB/TextToSpeechKt")
-            credentials(PasswordCredentials::class)
-        }
-    }*/
+    publishToMavenCentral()
 
     signAllPublications()
 }

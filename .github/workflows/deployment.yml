@@ -40,12 +40,10 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Update version
-        run: sed -i '' 's/tts[[:space:]]*=[[:space:]]*"[^"]*"/tts = "${{ github.event.inputs.version }}"/g' ./gradle/libs.versions.toml
-
       - name: Build & Deploy with Gradle to Maven
-        run: ./gradlew :tts:publishAndReleaseToMavenCentral :tts-compose:publishAndReleaseToMavenCentral
+        run: ./gradlew :tts-browser-definitions:publishAndReleaseToMavenCentral :tts:publishAndReleaseToMavenCentral :tts-compose:publishAndReleaseToMavenCentral
         env:
+          ORG_GRADLE_PROJECT_nl.marc_apps.tts.version: ${{ github.event.inputs.version }}
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_SIGNING_KEY }}
@@ -65,6 +63,7 @@ jobs:
         with:
           name: TextToSpeechKt.Libs
           path: |
+            ./tts-browser-definitions/build/libs/tts-browser-definitions-*.klib
             ./tts/build/outputs/aar/tts-*.aar
             ./tts/build/libs/tts-*.klib
             ./tts/build/libs/tts-*.jar
@@ -91,9 +90,6 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Update version
-        run: sed -i 's/tts[[:space:]]*=[[:space:]]*"[^"]*"/tts = "${{ github.event.inputs.version }}"/g' ./gradle/libs.versions.toml
-
       - name: Copy docs of previous versions
         uses: actions/checkout@v4
         with:
@@ -102,6 +98,8 @@ jobs:
 
       - name: Generate docs with Gradle & Dokka
         run: ./gradlew :dokkaGenerate
+        env:
+          ORG_GRADLE_PROJECT_nl.marc_apps.tts.version: ${{ github.event.inputs.version }}
 
       - name: Upload docs
         uses: actions/upload-artifact@v4
