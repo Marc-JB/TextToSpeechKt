@@ -1,6 +1,7 @@
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
@@ -32,6 +33,10 @@ kotlin {
         minSdk = 1
 
         namespace = "nl.marc_apps.tts"
+
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
+        }
     }
 
     iosX64()
@@ -40,7 +45,11 @@ kotlin {
     macosArm64()
     macosX64()
 
-    jvm()
+    jvm {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
+    }
 
     listOf(
         js(),
@@ -83,8 +92,6 @@ dokka {
                 packageListUrl("https://marc-jb.github.io/TextToSpeechKt/package-list")
             }
         }
-
-        jdkVersion.set(JavaVersion.VERSION_1_8.majorVersion.toInt())
     }
 }
 
