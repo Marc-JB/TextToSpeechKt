@@ -3,7 +3,7 @@ package nl.marc_apps.tts
 import kotlinx.browser.window
 import nl.marc_apps.tts.errors.TextToSpeechNotSupportedError
 import org.w3c.dom.Window
-import org.w3c.speech.windowHasSpeechSynthesis
+import org.w3c.speech.speechSynthesis
 import kotlin.js.ExperimentalWasmJsInterop
 
 /**
@@ -13,7 +13,7 @@ import kotlin.js.ExperimentalWasmJsInterop
 actual class TextToSpeechFactory(
     private val context: Window = window
 ) {
-    actual val isSupported = windowHasSpeechSynthesis
+    actual val isSupported = context.speechSynthesis != null
 
     actual val canChangeVolume = true
 

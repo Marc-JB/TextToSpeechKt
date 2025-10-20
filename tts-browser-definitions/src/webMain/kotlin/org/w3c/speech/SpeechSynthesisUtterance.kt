@@ -35,6 +35,15 @@ external class SpeechSynthesisUtterance() : JsAny {
     /** Gets and sets the volume that the utterance will be spoken at. */
     var volume: Float
 
+    /** Fired when the utterance has finished being spoken. */
+    var onend: ((Event) -> Unit)??
+
+    /** Fired when an error occurs that prevents the utterance from being successfully spoken. */
+    var onerror: ((Event) -> Unit)??
+
+    /** Fired when the utterance has begun to be spoken. */
+    var onstart: ((Event) -> Unit)??
+
     fun addEventListener(type: String, callback: EventListener?, options: AddEventListenerOptions)
     fun addEventListener(type: String, callback: ((Event) -> Unit)?, options: AddEventListenerOptions)
     fun addEventListener(type: String, callback: EventListener?, options: Boolean)

@@ -6,9 +6,13 @@ import kotlin.js.js
 
 @ExperimentalWasmJsInterop
 @Suppress("unused")
-external val Window.speechSynthesis: SpeechSynthesis
+private fun getSpeechSynthesis(context: Window): SpeechSynthesis = js("context.speechSynthesis")
 
 @ExperimentalWasmJsInterop
 @Suppress("unused")
-val windowHasSpeechSynthesis: Boolean
-    get() = js("\"speechSynthesis\" in window")
+private fun hasSpeechSynthesis(context: Window): Boolean = js("\"speechSynthesis\" in context")
+
+@ExperimentalWasmJsInterop
+@Suppress("unused")
+val Window.speechSynthesis: SpeechSynthesis?
+    get() = if (hasSpeechSynthesis(this)) getSpeechSynthesis(this) else null

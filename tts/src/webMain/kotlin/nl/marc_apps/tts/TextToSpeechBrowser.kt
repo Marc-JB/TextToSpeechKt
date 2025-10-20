@@ -3,6 +3,7 @@
 package nl.marc_apps.tts
 
 import kotlinx.browser.window
+import nl.marc_apps.tts.errors.UnknownTextToSpeechSynthesisError
 import nl.marc_apps.tts.experimental.ExperimentalVoiceApi
 import nl.marc_apps.tts.utils.ResultHandler
 import org.w3c.dom.Window
@@ -36,7 +37,7 @@ import kotlin.uuid.Uuid
 internal class TextToSpeechBrowser(context: Window = window) : TextToSpeech<Nothing?>() {
     override val canDetectSynthesisStarted = true
 
-    private val speechSynthesis: SpeechSynthesis = context.speechSynthesis
+    private val speechSynthesis: SpeechSynthesis = context.speechSynthesis!!
 
     private var speechSynthesisUtterance = SpeechSynthesisUtterance()
 
@@ -119,12 +120,16 @@ internal class TextToSpeechBrowser(context: Window = window) : TextToSpeech<Noth
 
         callbackHandler.add(utteranceId, null, resultHandler)
 
-        speechSynthesisUtterance.addEventListener("onstart") {
+        speechSynthesisUtterance.onstart = {
             onTtsStarted(utteranceId)
         }
 
-        speechSynthesisUtterance.addEventListener("onend") {
+        speechSynthesisUtterance.onend = {
             onTtsCompleted(utteranceId, Result.success(Unit))
+        }
+
+        speechSynthesisUtterance.onerror = {
+            onTtsCompleted(utteranceId, Result.failure(UnknownTextToSpeechSynthesisError()))
         }
 
         speechSynthesisUtterance.text = text

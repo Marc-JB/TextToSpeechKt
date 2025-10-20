@@ -46,6 +46,12 @@ abstract external class SpeechSynthesis : JsAny {
      */
     fun speak(utterance: SpeechSynthesisUtterance)
 
+    /**
+     * Fired when the list of [SpeechSynthesisVoice] objects that would be returned
+     * by the [getVoices] method has changed.
+     */
+    var onvoiceschanged: ((Event) -> Unit)??
+
     fun addEventListener(type: String, callback: EventListener?, options: AddEventListenerOptions)
     fun addEventListener(type: String, callback: ((Event) -> Unit)?, options: AddEventListenerOptions)
     fun addEventListener(type: String, callback: EventListener?, options: Boolean)
