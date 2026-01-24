@@ -1,28 +1,43 @@
 [versions]
-android-gradlePlugin = "8.13.0"
+android-gradlePlugin = "8.13.2"
+androidx-activity = "1.12.2"
 androidx-annotation = "1.9.1"
+androidx-lifecycle = "2.9.6"
 
 freetts = "1.2.2"
 
-jetbrains-compose = "1.9.1"
+jetbrains-compose = "1.10.0"
 jetbrains-dokka = "2.1.0"
 
-kotlin = "2.2.20"
+kotlin = "2.3.0"
 kotlinx-browser = "0.5.0"
 kotlinx-coroutines = "1.10.2"
 
-mavenPublishing = "0.34.0"
+material3 = "1.9.0"
+
+mavenPublishing = "0.35.0"
 
 [libraries]
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
 
 freetts = { module = "net.sf.sociaal:freetts", version.ref = "freetts" }
 
+jetbrains-androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
+jetbrains-androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+jetbrains-compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "jetbrains-compose" }
+jetbrains-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "jetbrains-compose" }
+jetbrains-compose-uiTooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "jetbrains-compose" }
+jetbrains-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
+jetbrains-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrains-compose" }
+jetbrains-compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "jetbrains-compose" }
+jetbrains-compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "jetbrains-compose" }
 jetbrains-dokka-plugins-androidDocumentation = { module = "org.jetbrains.dokka:android-documentation-plugin", version.ref = "jetbrains-dokka" }
 jetbrains-dokka-plugins-versioning = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "jetbrains-dokka" }
 
 kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
 kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradlePlugin" }

@@ -26,7 +26,7 @@ kotlin {
         enabled.set(true)
     }
 
-    jvmToolchain(8)
+    jvmToolchain(17)
 
     androidLibrary {
         compileSdk = 36
@@ -47,7 +47,7 @@ kotlin {
 
     jvm {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_1_8)
         }
     }
 

@@ -29,7 +29,7 @@ kotlin {
         enabled.set(true)
     }
 
-    jvmToolchain(8)
+    jvmToolchain(17)
 
     androidLibrary {
         compileSdk = 36
@@ -67,11 +67,11 @@ kotlin {
         commonMain.dependencies {
             api(projects.tts)
 
-            implementation(compose.runtime)
+            implementation(libs.jetbrains.compose.runtime)
         }
 
         androidMain.dependencies {
-            implementation(compose.foundation)
+            implementation(libs.jetbrains.compose.foundation)
         }
     }
 }

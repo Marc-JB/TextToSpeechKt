@@ -36,4 +36,4 @@ rootProject.name = "TextToSpeechKt"
 include(":tts-browser-definitions")
 include(":tts")
 include(":tts-compose")
-// TODO: include(":demo:composeApp")
+include(":demo:shared")
