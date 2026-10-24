@@ -1,24 +1,28 @@
 [versions]
-android-gradlePlugin = "8.13.2"
-androidx-activity = "1.12.2"
-androidx-annotation = "1.9.1"
-androidx-lifecycle = "2.9.6"
+android-gradlePlugin = "9.4.1"
+androidx-activity = "1.13.0"
+androidx-annotation = "1.11.0"
+androidx-lifecycle = "2.11.0"
 
+desugar = "2.1.5"
 freetts = "1.2.2"
 
-jetbrains-compose = "1.10.0"
-jetbrains-dokka = "2.1.0"
+jetbrains-compose = "1.12.2"
+jetbrains-dokka = "2.2.0"
 
-kotlin = "2.3.0"
+kotlin = "2.4.21"
 kotlinx-browser = "0.5.0"
-kotlinx-coroutines = "1.10.2"
+kotlinx-coroutines = "1.11.0"
 
 material3 = "1.9.0"
 
-mavenPublishing = "0.35.0"
+mavenPublishing = "0.37.0"
+
+versioncheck = "0.66.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
 
 freetts = { module = "net.sf.sociaal:freetts", version.ref = "freetts" }
@@ -30,6 +34,7 @@ jetbrains-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", 
 jetbrains-compose-uiTooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "jetbrains-compose" }
 jetbrains-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 jetbrains-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrains-compose" }
+jetbrains-compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version = "1.7.3" }
 jetbrains-compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "jetbrains-compose" }
 jetbrains-compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "jetbrains-compose" }
 jetbrains-dokka-plugins-androidDocumentation = { module = "org.jetbrains.dokka:android-documentation-plugin", version.ref = "jetbrains-dokka" }
@@ -52,3 +57,5 @@ jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "jetbrains-dokka" 
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 
 mavenPublishing = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublishing" }
+
+versioncheck = { id = "com.github.ben-manes.versions", version.ref = "versioncheck" }

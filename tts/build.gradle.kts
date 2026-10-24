@@ -1,5 +1,7 @@
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JvmVendorSpec
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
@@ -21,33 +23,36 @@ group = "nl.marc-apps"
 version = libraryVersion
 
 kotlin {
-    abiValidation {
-        @OptIn(ExperimentalAbiValidation::class)
-        enabled.set(true)
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation { }
+
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
-    jvmToolchain(17)
+    jvmToolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+        vendor = JvmVendorSpec.JETBRAINS
+    }
 
-    androidLibrary {
-        compileSdk = 36
+    android {
+        compileSdk = 37
         minSdk = 1
 
         namespace = "nl.marc_apps.tts"
 
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_1_8)
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
 
-    iosX64()
     iosArm64()
     iosSimulatorArm64()
     macosArm64()
-    macosX64()
 
     jvm {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_1_8)
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
 
@@ -92,6 +97,8 @@ dokka {
                 packageListUrl("https://marc-jb.github.io/TextToSpeechKt/package-list")
             }
         }
+
+        jdkVersion.set(11)
     }
 }
 

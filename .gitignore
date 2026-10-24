@@ -1,19 +1,74 @@
-*.iml
-.kotlin
-.gradle
-**/build/
-xcuserdata
+# Gradle
+.gradle/
+build/
 !src/**/build/
+
+# Kotlin
+.kotlin/
+kotlin-js-store/.yarn/
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+.idea/caches
+.idea/modules.xml
+.idea/vcs.xml
+*.ipr
+*.iws
+out/
+classes/
+
+# Android
 local.properties
-.idea
-.DS_Store
-captures
-.externalNativeBuild
-.cxx
+captures/
+*.apk
+*.aab
+*.ap_
+*.dex
+bin/
+gen/
+release/
+*.jks
+*.keystore
+keystore.properties
+
+# Android Profiling / native build
+.externalNativeBuild/
+.cxx/
+
+# Xcode / iOS
+xcuserdata/
+Developer.xcconfig
+*.xccheckout
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+iOS Build/
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
 !*.xcodeproj/xcshareddata/
 !*.xcodeproj/project.xcworkspace/
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Kotlin/JS & Node
 node_modules/
+npm-debug.log
+yarn-error.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.log
+
+# Legacy
+old-reference/

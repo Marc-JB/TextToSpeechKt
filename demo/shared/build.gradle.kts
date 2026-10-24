@@ -1,3 +1,7 @@
+import com.sun.net.httpserver.HttpServer
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JvmVendorSpec
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.compose.resources.ResourcesExtension
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -13,25 +17,26 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+        vendor = JvmVendorSpec.JETBRAINS
+    }
 
-    androidLibrary {
-        compileSdk = 36
+    android {
+        compileSdk = 37
         minSdk = 21
 
-        namespace = "nl.marc_apps.tts.demo"
+        namespace = "nl.marc_apps.tts.demo.shared"
 
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_1_8)
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
 
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64(),
         macosArm64(),
-        macosX64()
     ).forEach { appleTarget ->
         appleTarget.binaries.framework {
             baseName = "Shared"
@@ -40,7 +45,7 @@ kotlin {
 
     jvm {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_1_8)
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
 
@@ -65,10 +70,9 @@ kotlin {
             implementation(libs.jetbrains.compose.runtime)
             implementation(libs.jetbrains.compose.foundation)
             implementation(libs.jetbrains.compose.ui)
-            implementation(compose.materialIconsExtended)
             implementation(libs.jetbrains.compose.material3)
+            implementation(libs.jetbrains.compose.material.icons.extended)
             implementation(libs.jetbrains.compose.components.resources)
-            implementation(libs.jetbrains.compose.uiTooling)
             implementation(libs.jetbrains.compose.uiToolingPreview)
             implementation(libs.jetbrains.androidx.lifecycle.viewmodelCompose)
             implementation(libs.jetbrains.androidx.lifecycle.runtimeCompose)
@@ -78,11 +82,13 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
+            implementation(libs.jetbrains.compose.uiTooling)
         }
 
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.jetbrains.compose.uiTooling)
         }
 
         webMain.dependencies {
@@ -93,6 +99,19 @@ kotlin {
 
 compose.resources {
     publicResClass = false
-    packageOfResClass = "nl.marc_apps.tts_demo.resources"
+    packageOfResClass = "nl.marc_apps.tts.demo.resources"
     generateResClass = ResourcesExtension.ResourceClassGeneration.Always
 }
+
+compose.desktop {
+    application {
+        mainClass = "nl.marc_apps.tts.demo.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "TTS Demo"
+            packageVersion = "1.0.0"
+        }
+    }
+}
+

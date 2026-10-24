@@ -1,4 +1,6 @@
 import com.vanniktech.maven.publish.KotlinMultiplatform
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JvmVendorSpec
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
@@ -14,9 +16,12 @@ group = "nl.marc-apps"
 version = libraryVersion
 
 kotlin {
-    abiValidation {
-        @OptIn(ExperimentalAbiValidation::class)
-        enabled.set(true)
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation { }
+
+    jvmToolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+        vendor = JvmVendorSpec.JETBRAINS
     }
 
     listOf(

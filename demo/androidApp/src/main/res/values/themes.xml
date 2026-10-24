@@ -1,0 +1,5 @@
+<resources>
+    <!-- Compose apps don't need an action bar or Material Components; the app
+         hosts Compose UI via MainActivity in :demo:shared. -->
+    <style name="Theme.TTSDemo" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

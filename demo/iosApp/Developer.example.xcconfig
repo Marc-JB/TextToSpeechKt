@@ -1,0 +1,10 @@
+// Reference file for personal signing settings.
+//
+// Usage: copy this file to Developer.xcconfig (same directory) and fill in
+// your Apple Developer team ID. Developer.xcconfig is gitignored and is
+// attached as the base configuration of every build configuration in
+// iosApp.xcodeproj, so the team ID never ends up in version control.
+//
+// With CODE_SIGN_STYLE = Automatic (set in the Xcode project) this is all
+// you need to run the demo on your own devices.
+DEVELOPMENT_TEAM = YOUR_TEAM_ID_HERE

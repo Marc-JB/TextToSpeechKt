@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.dokkaPlugin
-
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library.kmp) apply false
@@ -13,6 +11,8 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform) apply false
 
     alias(libs.plugins.mavenPublishing) apply false
+
+    alias(libs.plugins.versioncheck)
 }
 
 dependencies {
@@ -32,19 +32,27 @@ val currentVersionDir = versionArchiveDirectory.resolve(currentVersion)
 val dokkaWebPublishDirectory = rootProject.layout.projectDirectory.dir("out")
 
 tasks {
-    val dokkaCopyDocsToOutputDir by register<Copy>("dokkaCopyDocsToOutputDir") {
+    val dokkaCopyDocsToOutputDir = register<Copy>("dokkaCopyDocsToOutputDir") {
         from(currentVersionDir)
         into(dokkaWebPublishDirectory)
     }
 
-    val dokkaDeleteOlderVersions by register<Delete>("dokkaDeleteOlderVersions") {
+    val dokkaDeleteOlderVersions = register<Delete>("dokkaDeleteOlderVersions") {
         delete(currentVersionDir.resolve("older"))
     }
 
-    dokkaDeleteOlderVersions.mustRunAfter(dokkaCopyDocsToOutputDir)
+    dokkaDeleteOlderVersions {
+        mustRunAfter(dokkaCopyDocsToOutputDir)
+    }
 
     dokkaGenerate {
         finalizedBy(dokkaCopyDocsToOutputDir, dokkaDeleteOlderVersions)
+    }
+
+    dependencyUpdates {
+        rejectVersionIf {
+            arrayOf("alpha", "beta", "rc").any { it in candidate.version.lowercase() }
+        }
     }
 }
 
