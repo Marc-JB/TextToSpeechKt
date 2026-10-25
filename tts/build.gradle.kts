@@ -37,7 +37,7 @@ kotlin {
 
     android {
         compileSdk = 37
-        minSdk = 1
+        minSdk = 19
 
         namespace = "nl.marc_apps.tts"
 
