@@ -42,7 +42,7 @@ jobs:
       - name: Build & Deploy with Gradle to Maven
         run: ./gradlew :tts-browser-definitions:publishAndReleaseToMavenCentral :tts:publishAndReleaseToMavenCentral :tts-compose:publishAndReleaseToMavenCentral
         env:
-          ORG_GRADLE_PROJECT_nl.marc_apps.tts.version: ${{ github.event.inputs.version }}
+          ORG_GRADLE_PROJECT_publicationVersion: ${{ github.event.inputs.version }}
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_SIGNING_KEY }}
@@ -97,7 +97,7 @@ jobs:
       - name: Generate docs with Gradle & Dokka
         run: ./gradlew :dokkaGenerate
         env:
-          ORG_GRADLE_PROJECT_nl.marc_apps.tts.version: ${{ github.event.inputs.version }}
+          ORG_GRADLE_PROJECT_publicationVersion: ${{ github.event.inputs.version }}
 
       - name: Upload docs
         uses: actions/upload-artifact@v7

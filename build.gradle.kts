@@ -22,7 +22,7 @@ dependencies {
     dokka(projects.ttsCompose)
 }
 
-val libraryVersion = rootProject.findProperty("nl.marc_apps.tts.version")?.toString() ?: "0.0.1"
+val libraryVersion = rootProject.findProperty("publicationVersion")?.toString() ?: "0.0.1"
 
 val currentVersion = libraryVersion.substring(0, libraryVersion.indexOf('.', libraryVersion.indexOf('.') + 1))
 val dokkaWorkingDir = rootProject.layout.buildDirectory.asFile.get().resolve("dokka")
