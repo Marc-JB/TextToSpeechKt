@@ -1,0 +1,9 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, js, macosArm64, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <nl.marc-apps:tts-compose>
+final fun nl.marc_apps.tts/rememberTextToSpeechOrNull(nl.marc_apps.tts/TextToSpeechEngine?, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int): nl.marc_apps.tts/TextToSpeechInstance? // nl.marc_apps.tts/rememberTextToSpeechOrNull|rememberTextToSpeechOrNull(nl.marc_apps.tts.TextToSpeechEngine?;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int){}[0]

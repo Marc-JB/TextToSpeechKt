@@ -1,0 +1,4 @@
+public final class nl/marc_apps/tts/TextToSpeechKt {
+	public static final fun rememberTextToSpeechOrNull (Lnl/marc_apps/tts/TextToSpeechEngine;Landroidx/compose/runtime/Composer;II)Lnl/marc_apps/tts/TextToSpeechInstance;
+}
+
