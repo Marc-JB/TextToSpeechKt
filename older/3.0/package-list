@@ -1,0 +1,24 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:nl.marc_apps.tts.utils/TtsProgressConverter///PointingToDeclaration/tts/nl.marc_apps.tts.utils/[apple]-tts-progress-converter/index.html
+$dokka.location:nl.marc_apps.tts.utils/TtsProgressConverter/TtsProgressConverter/#[Error type: Unresolved type for CallbackHandler<AVSpeechUtterance>][[Error type: Unresolved type for AVSpeechUtterance]]#kotlin.Function1[kotlin.uuid.Uuid,kotlin.Unit]#kotlin.Function2[kotlin.uuid.Uuid,kotlin.Result[kotlin.Unit],kotlin.Unit]/PointingToDeclaration/tts/nl.marc_apps.tts.utils/[apple]-tts-progress-converter/-tts-progress-converter.html
+$dokka.location:nl.marc_apps.tts.utils/TtsProgressConverter/TtsProgressConverter/#kotlin.Function1[kotlin.uuid.Uuid,kotlin.Unit]#kotlin.Function2[kotlin.uuid.Uuid,kotlin.Result[kotlin.Unit],kotlin.Unit]/PointingToDeclaration/tts/nl.marc_apps.tts.utils/[android]-tts-progress-converter/-tts-progress-converter.html
+$dokka.location:nl.marc_apps.tts.utils/TtsProgressConverter/onComplete/#/PointingToDeclaration/tts/nl.marc_apps.tts.utils/[android]-tts-progress-converter/on-complete.html
+$dokka.location:nl.marc_apps.tts.utils/TtsProgressConverter/onDone/#kotlin.String?/PointingToDeclaration/tts/nl.marc_apps.tts.utils/[android]-tts-progress-converter/on-done.html
+$dokka.location:nl.marc_apps.tts.utils/TtsProgressConverter/onError/#kotlin.String?#kotlin.Int/PointingToDeclaration/tts/nl.marc_apps.tts.utils/[android]-tts-progress-converter/on-error.html
+$dokka.location:nl.marc_apps.tts.utils/TtsProgressConverter/onError/#kotlin.String?/PointingToDeclaration/tts/nl.marc_apps.tts.utils/[android]-tts-progress-converter/on-error.html
+$dokka.location:nl.marc_apps.tts.utils/TtsProgressConverter/onStart/#/PointingToDeclaration/tts/nl.marc_apps.tts.utils/[android]-tts-progress-converter/on-start.html
+$dokka.location:nl.marc_apps.tts.utils/TtsProgressConverter/onStart/#kotlin.String?/PointingToDeclaration/tts/nl.marc_apps.tts.utils/[android]-tts-progress-converter/on-start.html
+$dokka.location:nl.marc_apps.tts.utils/TtsProgressConverter/onStop/#kotlin.String?#kotlin.Boolean/PointingToDeclaration/tts/nl.marc_apps.tts.utils/[android]-tts-progress-converter/on-stop.html
+$dokka.location:nl.marc_apps.tts.utils/TtsProgressConverter/speechSynthesizer/#[Error type: Unresolved type for AVSpeechSynthesizer]#[Error type: Unresolved type for AVSpeechUtterance]/PointingToDeclaration/tts/nl.marc_apps.tts.utils/[apple]-tts-progress-converter/speech-synthesizer.html
+$dokka.location:nl.marc_apps.tts/Voice/locale/#/PointingToDeclaration/tts/nl.marc_apps.tts/-voice/[jvm]locale.html
+$dokka.location:org.w3c.speech/SpeechSynthesis/getVoices/#/PointingToDeclaration/tts/org.w3c.speech/-speech-synthesis/[wasm-js]get-voices.html
+module:tts
+js_interop
+nl.marc_apps.tts
+nl.marc_apps.tts.errors
+nl.marc_apps.tts.experimental
+nl.marc_apps.tts.utils
+org.w3c.speech
+module:tts-compose
+nl.marc_apps.tts
