@@ -23,29 +23,26 @@ permissions:
 
 jobs:
   build-and-deploy-lib:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 14
     steps:
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
         with:
-          java-version: 17
+          java-version: 21
           distribution: 'temurin'
-          cache: 'gradle'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Update version
-        run: sed -i '' 's/tts[[:space:]]*=[[:space:]]*"[^"]*"/tts = "${{ github.event.inputs.version }}"/g' ./gradle/libs.versions.toml
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Build & Deploy with Gradle to Maven
-        run: ./gradlew :tts:publishAndReleaseToMavenCentral :tts-compose:publishAndReleaseToMavenCentral
+        run: ./gradlew :tts-browser-definitions:publishAndReleaseToMavenCentral :tts:publishAndReleaseToMavenCentral :tts-compose:publishAndReleaseToMavenCentral
         env:
+          ORG_GRADLE_PROJECT_nl.marc_apps.tts.version: ${{ github.event.inputs.version }}
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_SIGNING_KEY }}
@@ -61,10 +58,11 @@ jobs:
 #          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_SIGNING_PASSWORD }}
 
       - name: Upload library artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: TextToSpeechKt.Libs
           path: |
+            ./tts-browser-definitions/build/libs/tts-browser-definitions-*.klib
             ./tts/build/outputs/aar/tts-*.aar
             ./tts/build/libs/tts-*.klib
             ./tts/build/libs/tts-*.jar
@@ -79,32 +77,30 @@ jobs:
     steps:
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
         with:
-          java-version: 17
+          java-version: 21
           distribution: 'temurin'
-          cache: 'gradle'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Update version
-        run: sed -i 's/tts[[:space:]]*=[[:space:]]*"[^"]*"/tts = "${{ github.event.inputs.version }}"/g' ./gradle/libs.versions.toml
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Copy docs of previous versions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: 'dokka-version-archive'
           path: './build/dokka/html_version_archive/'
 
       - name: Generate docs with Gradle & Dokka
         run: ./gradlew :dokkaGenerate
+        env:
+          ORG_GRADLE_PROJECT_nl.marc_apps.tts.version: ${{ github.event.inputs.version }}
 
       - name: Upload docs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: TextToSpeechKt.Docs
           path: ./out/*
@@ -112,7 +108,7 @@ jobs:
 
       - name: Deploy Dokka archive
         if: success()
-        uses: crazy-max/ghaction-github-pages@v4
+        uses: crazy-max/ghaction-github-pages@v5
         with:
           target_branch: dokka-version-archive
           build_dir: ./build/dokka/html_version_archive/
@@ -121,7 +117,7 @@ jobs:
 
       - name: Deploy to GitHub Pages
         if: success()
-        uses: crazy-max/ghaction-github-pages@v4
+        uses: crazy-max/ghaction-github-pages@v5
         with:
           target_branch: gh-pages
           build_dir: ./out/
@@ -142,13 +138,13 @@ jobs:
           mkdir out/docs
   
       - name: Download library artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: TextToSpeechKt.Libs
           path: ./out/libs/
   
       - name: Download docs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: TextToSpeechKt.Docs
           path: ./out/docs/

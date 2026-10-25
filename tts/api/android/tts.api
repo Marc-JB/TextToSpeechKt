@@ -1,0 +1,263 @@
+public abstract interface class nl/marc_apps/tts/CommonVoice {
+	public abstract fun getLanguage ()Ljava/lang/String;
+	public abstract fun getLanguageTag ()Ljava/lang/String;
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getRegion ()Ljava/lang/String;
+	public abstract fun isDefault ()Z
+	public abstract fun isOnline ()Z
+}
+
+public abstract interface class nl/marc_apps/tts/TextToSpeechEngine {
+	public abstract fun getAndroidPackage ()Ljava/lang/String;
+}
+
+public final class nl/marc_apps/tts/TextToSpeechEngine$Custom : nl/marc_apps/tts/TextToSpeechEngine {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lnl/marc_apps/tts/TextToSpeechEngine$Custom;
+	public static synthetic fun copy$default (Lnl/marc_apps/tts/TextToSpeechEngine$Custom;Ljava/lang/String;ILjava/lang/Object;)Lnl/marc_apps/tts/TextToSpeechEngine$Custom;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getAndroidPackage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class nl/marc_apps/tts/TextToSpeechEngine$Google : nl/marc_apps/tts/TextToSpeechEngine {
+	public static final field INSTANCE Lnl/marc_apps/tts/TextToSpeechEngine$Google;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getAndroidPackage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class nl/marc_apps/tts/TextToSpeechEngine$SystemDefault : nl/marc_apps/tts/TextToSpeechEngine {
+	public static final field INSTANCE Lnl/marc_apps/tts/TextToSpeechEngine$SystemDefault;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getAndroidPackage ()Ljava/lang/String;
+	public fun getAndroidPackage ()Ljava/lang/Void;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class nl/marc_apps/tts/TextToSpeechFactory {
+	public static final field Companion Lnl/marc_apps/tts/TextToSpeechFactory$Companion;
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;)V
+	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Landroid/content/Context;Lnl/marc_apps/tts/TextToSpeechEngine;)V
+	public synthetic fun <init> (Landroid/content/Context;Lnl/marc_apps/tts/TextToSpeechEngine;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun create-IoAF18A (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun createOrNull (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun createOrThrow (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getCanChangeVolume ()Z
+	public final fun isSupported ()Z
+}
+
+public final class nl/marc_apps/tts/TextToSpeechFactory$Companion {
+	public final fun getCanChangeVolume ()Z
+	public final fun getENGINE_SPEECH_SERVICES_BY_GOOGLE ()Ljava/lang/String;
+	public final fun isSupported ()Z
+}
+
+public abstract interface class nl/marc_apps/tts/TextToSpeechInstance : java/lang/AutoCloseable {
+	public static final field Companion Lnl/marc_apps/tts/TextToSpeechInstance$Companion;
+	public static final field VOICE_PITCH_DEFAULT F
+	public static final field VOICE_RATE_DEFAULT F
+	public static final field VOLUME_DEFAULT I
+	public static final field VOLUME_MAX I
+	public static final field VOLUME_MIN I
+	public abstract fun close ()V
+	public abstract fun enqueue (Ljava/lang/String;Z)V
+	public static synthetic fun enqueue$default (Lnl/marc_apps/tts/TextToSpeechInstance;Ljava/lang/String;ZILjava/lang/Object;)V
+	public abstract fun getCurrentVoice ()Lnl/marc_apps/tts/Voice;
+	public abstract fun getLanguage ()Ljava/lang/String;
+	public abstract fun getPitch ()F
+	public abstract fun getRate ()F
+	public abstract fun getVoices ()Lkotlin/sequences/Sequence;
+	public abstract fun getVolume ()I
+	public abstract fun isMuted ()Z
+	public abstract fun isSynthesizing ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun isWarmingUp ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun plusAssign (Ljava/lang/String;)V
+	public abstract fun say (Ljava/lang/String;ZLkotlin/jvm/functions/Function1;)V
+	public abstract fun say (Ljava/lang/String;ZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun say$default (Lnl/marc_apps/tts/TextToSpeechInstance;Ljava/lang/String;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static synthetic fun say$default (Lnl/marc_apps/tts/TextToSpeechInstance;Ljava/lang/String;ZZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun setCurrentVoice (Lnl/marc_apps/tts/Voice;)V
+	public abstract fun setMuted (Z)V
+	public abstract fun setPitch (F)V
+	public abstract fun setRate (F)V
+	public abstract fun setVolume (I)V
+	public abstract fun stop ()V
+}
+
+public final class nl/marc_apps/tts/TextToSpeechInstance$Companion {
+	public static final field VOICE_PITCH_DEFAULT F
+	public static final field VOICE_RATE_DEFAULT F
+	public static final field VOLUME_DEFAULT I
+	public static final field VOLUME_MAX I
+	public static final field VOLUME_MIN I
+}
+
+public final class nl/marc_apps/tts/TextToSpeechInstance$DefaultImpls {
+	public static synthetic fun enqueue$default (Lnl/marc_apps/tts/TextToSpeechInstance;Ljava/lang/String;ZILjava/lang/Object;)V
+	public static synthetic fun say$default (Lnl/marc_apps/tts/TextToSpeechInstance;Ljava/lang/String;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static synthetic fun say$default (Lnl/marc_apps/tts/TextToSpeechInstance;Ljava/lang/String;ZZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class nl/marc_apps/tts/TextToSpeechSystemSettings {
+	public static final field ACTION_TTS_SETTINGS Ljava/lang/String;
+	public static final field INSTANCE Lnl/marc_apps/tts/TextToSpeechSystemSettings;
+	public final fun getIntent ()Landroid/content/Intent;
+}
+
+public final class nl/marc_apps/tts/UtteranceResult {
+	public fun <init> (Lkotlin/uuid/Uuid;)V
+	public final fun awaitCompletion (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getId ()Lkotlin/uuid/Uuid;
+}
+
+public abstract interface class nl/marc_apps/tts/Voice : android/os/Parcelable, java/io/Serializable, nl/marc_apps/tts/CommonVoice {
+	public abstract fun getLocale ()Ljava/util/Locale;
+}
+
+public final class nl/marc_apps/tts/errors/DeviceAudioOutputError : nl/marc_apps/tts/errors/TextToSpeechEngineError {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public abstract class nl/marc_apps/tts/errors/TextToSpeechEngineError : nl/marc_apps/tts/errors/TextToSpeechSynthesisError {
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class nl/marc_apps/tts/errors/TextToSpeechEngineUnavailableError : nl/marc_apps/tts/errors/TextToSpeechEngineError {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public abstract class nl/marc_apps/tts/errors/TextToSpeechInitialisationError : java/lang/Exception {
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class nl/marc_apps/tts/errors/TextToSpeechInputError : nl/marc_apps/tts/errors/TextToSpeechSynthesisError {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class nl/marc_apps/tts/errors/TextToSpeechNetworkError : nl/marc_apps/tts/errors/TextToSpeechEngineError {
+	public fun <init> ()V
+	public fun <init> (ZLjava/lang/Throwable;)V
+	public synthetic fun <init> (ZLjava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getTimeout ()Z
+}
+
+public final class nl/marc_apps/tts/errors/TextToSpeechNotSupportedError : nl/marc_apps/tts/errors/TextToSpeechInitialisationError {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class nl/marc_apps/tts/errors/TextToSpeechServiceFailureError : nl/marc_apps/tts/errors/TextToSpeechEngineError {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public abstract class nl/marc_apps/tts/errors/TextToSpeechSynthesisError : java/lang/Exception {
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class nl/marc_apps/tts/errors/TextToSpeechSynthesisInterruptedError : nl/marc_apps/tts/errors/TextToSpeechSynthesisError {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class nl/marc_apps/tts/errors/UnknownTextToSpeechInitialisationError : nl/marc_apps/tts/errors/TextToSpeechInitialisationError {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class nl/marc_apps/tts/errors/UnknownTextToSpeechSynthesisError : nl/marc_apps/tts/errors/TextToSpeechEngineError {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public abstract interface annotation class nl/marc_apps/tts/experimental/ExperimentalDesktopTarget : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class nl/marc_apps/tts/experimental/ExperimentalIOSTarget : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class nl/marc_apps/tts/experimental/ExperimentalTextToSpeechApi : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class nl/marc_apps/tts/experimental/ExperimentalVoiceApi : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class nl/marc_apps/tts/experimental/ExperimentalWasmTarget : java/lang/annotation/Annotation {
+}
+
+public final class nl/marc_apps/tts/utils/CallbackHandler {
+	public fun <init> ()V
+	public final fun add (Lkotlin/uuid/Uuid;Ljava/lang/Object;Lnl/marc_apps/tts/utils/ResultHandler;)V
+	public final fun clear ()V
+	public final fun getUtteranceId (Ljava/lang/Object;)Lkotlin/uuid/Uuid;
+	public final fun isQueueEmpty ()Z
+	public final fun onResult (Lkotlin/uuid/Uuid;Ljava/lang/Object;)V
+	public final fun onStopped ()V
+}
+
+public final class nl/marc_apps/tts/utils/ErrorCodes {
+	public static final field ERROR_INVALID_REQUEST I
+	public static final field ERROR_NETWORK I
+	public static final field ERROR_NETWORK_TIMEOUT I
+	public static final field ERROR_NOT_INSTALLED_YET I
+	public static final field ERROR_OUTPUT I
+	public static final field ERROR_SERVICE I
+	public static final field ERROR_SYNTHESIS I
+	public static final field INSTANCE Lnl/marc_apps/tts/utils/ErrorCodes;
+	public final fun mapToThrowable (I)Lnl/marc_apps/tts/errors/TextToSpeechSynthesisError;
+}
+
+public final class nl/marc_apps/tts/utils/IdUtilsKt {
+	public static final fun getContinuationId (Ljava/lang/String;)Lkotlin/uuid/Uuid;
+}
+
+public abstract interface class nl/marc_apps/tts/utils/ResultHandler {
+	public abstract fun setResult (Ljava/lang/Object;)V
+}
+
+public final class nl/marc_apps/tts/utils/ResultHandler$CallbackHandler : nl/marc_apps/tts/utils/ResultHandler {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public fun setResult (Ljava/lang/Object;)V
+}
+
+public final class nl/marc_apps/tts/utils/ResultHandler$ContinuationHandler : nl/marc_apps/tts/utils/ResultHandler {
+	public fun <init> (Lkotlin/coroutines/Continuation;)V
+	public fun setResult (Ljava/lang/Object;)V
+}
+
+public final class nl/marc_apps/tts/utils/ResultHandler$Empty : nl/marc_apps/tts/utils/ResultHandler {
+	public static final field INSTANCE Lnl/marc_apps/tts/utils/ResultHandler$Empty;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun setResult (Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class nl/marc_apps/tts/utils/TtsProgressConverter : android/speech/tts/UtteranceProgressListener {
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)V
+	public final fun getOnComplete ()Lkotlin/jvm/functions/Function2;
+	public final fun getOnStart ()Lkotlin/jvm/functions/Function1;
+	public fun onDone (Ljava/lang/String;)V
+	public fun onError (Ljava/lang/String;)V
+	public fun onError (Ljava/lang/String;I)V
+	public fun onStart (Ljava/lang/String;)V
+	public fun onStop (Ljava/lang/String;Z)V
+}
+

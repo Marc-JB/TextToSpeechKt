@@ -1,0 +1,3 @@
+<resources>
+    <style name="Theme.TTSDemo" parent="android:Theme.Material.NoActionBar" />
+</resources>

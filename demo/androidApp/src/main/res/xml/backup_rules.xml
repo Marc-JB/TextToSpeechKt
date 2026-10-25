@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The demo app doesn't store any data locally, so the default backup rules are kept.
+     Note: This file is ignored for devices running Android 12 (API 31) or newer.
+     See https://developer.android.com/guide/topics/data/autobackup
+-->
+<full-backup-content />

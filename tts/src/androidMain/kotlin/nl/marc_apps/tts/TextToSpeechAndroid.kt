@@ -2,7 +2,6 @@
 
 package nl.marc_apps.tts
 
-import android.annotation.TargetApi
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
@@ -21,7 +20,7 @@ import kotlin.uuid.Uuid
 import android.speech.tts.TextToSpeech as AndroidTTS
 
 @OptIn(ExperimentalUuidApi::class)
-@TargetApi(VERSION_CODES.DONUT)
+@RequiresApi(VERSION_CODES.DONUT)
 internal class TextToSpeechAndroid(private var tts: AndroidTTS?) : TextToSpeech<String>() {
     override val canDetectSynthesisStarted = hasModernProgressListeners
 

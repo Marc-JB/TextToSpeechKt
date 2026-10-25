@@ -1,0 +1,258 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, js, macosArm64, wasmJs]
+// Alias: apple => [iosArm64, iosSimulatorArm64, macosArm64]
+// Alias: ios => [iosArm64, iosSimulatorArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <nl.marc-apps:tts>
+open annotation class nl.marc_apps.tts.experimental/ExperimentalDesktopTarget : kotlin/Annotation { // nl.marc_apps.tts.experimental/ExperimentalDesktopTarget|null[0]
+    constructor <init>() // nl.marc_apps.tts.experimental/ExperimentalDesktopTarget.<init>|<init>(){}[0]
+}
+
+open annotation class nl.marc_apps.tts.experimental/ExperimentalIOSTarget : kotlin/Annotation { // nl.marc_apps.tts.experimental/ExperimentalIOSTarget|null[0]
+    constructor <init>() // nl.marc_apps.tts.experimental/ExperimentalIOSTarget.<init>|<init>(){}[0]
+}
+
+open annotation class nl.marc_apps.tts.experimental/ExperimentalTextToSpeechApi : kotlin/Annotation { // nl.marc_apps.tts.experimental/ExperimentalTextToSpeechApi|null[0]
+    constructor <init>() // nl.marc_apps.tts.experimental/ExperimentalTextToSpeechApi.<init>|<init>(){}[0]
+}
+
+open annotation class nl.marc_apps.tts.experimental/ExperimentalVoiceApi : kotlin/Annotation { // nl.marc_apps.tts.experimental/ExperimentalVoiceApi|null[0]
+    constructor <init>() // nl.marc_apps.tts.experimental/ExperimentalVoiceApi.<init>|<init>(){}[0]
+}
+
+open annotation class nl.marc_apps.tts.experimental/ExperimentalWasmTarget : kotlin/Annotation { // nl.marc_apps.tts.experimental/ExperimentalWasmTarget|null[0]
+    constructor <init>() // nl.marc_apps.tts.experimental/ExperimentalWasmTarget.<init>|<init>(){}[0]
+}
+
+abstract interface nl.marc_apps.tts/CommonVoice { // nl.marc_apps.tts/CommonVoice|null[0]
+    abstract val isDefault // nl.marc_apps.tts/CommonVoice.isDefault|{}isDefault[0]
+        abstract fun <get-isDefault>(): kotlin/Boolean // nl.marc_apps.tts/CommonVoice.isDefault.<get-isDefault>|<get-isDefault>(){}[0]
+    abstract val isOnline // nl.marc_apps.tts/CommonVoice.isOnline|{}isOnline[0]
+        abstract fun <get-isOnline>(): kotlin/Boolean // nl.marc_apps.tts/CommonVoice.isOnline.<get-isOnline>|<get-isOnline>(){}[0]
+    abstract val language // nl.marc_apps.tts/CommonVoice.language|{}language[0]
+        abstract fun <get-language>(): kotlin/String // nl.marc_apps.tts/CommonVoice.language.<get-language>|<get-language>(){}[0]
+    abstract val languageTag // nl.marc_apps.tts/CommonVoice.languageTag|{}languageTag[0]
+        abstract fun <get-languageTag>(): kotlin/String // nl.marc_apps.tts/CommonVoice.languageTag.<get-languageTag>|<get-languageTag>(){}[0]
+    abstract val name // nl.marc_apps.tts/CommonVoice.name|{}name[0]
+        abstract fun <get-name>(): kotlin/String // nl.marc_apps.tts/CommonVoice.name.<get-name>|<get-name>(){}[0]
+    abstract val region // nl.marc_apps.tts/CommonVoice.region|{}region[0]
+        abstract fun <get-region>(): kotlin/String? // nl.marc_apps.tts/CommonVoice.region.<get-region>|<get-region>(){}[0]
+}
+
+abstract interface nl.marc_apps.tts/TextToSpeechInstance : kotlin/AutoCloseable { // nl.marc_apps.tts/TextToSpeechInstance|null[0]
+    abstract val isSynthesizing // nl.marc_apps.tts/TextToSpeechInstance.isSynthesizing|{}isSynthesizing[0]
+        abstract fun <get-isSynthesizing>(): kotlinx.coroutines.flow/StateFlow<kotlin/Boolean> // nl.marc_apps.tts/TextToSpeechInstance.isSynthesizing.<get-isSynthesizing>|<get-isSynthesizing>(){}[0]
+    abstract val isWarmingUp // nl.marc_apps.tts/TextToSpeechInstance.isWarmingUp|{}isWarmingUp[0]
+        abstract fun <get-isWarmingUp>(): kotlinx.coroutines.flow/StateFlow<kotlin/Boolean> // nl.marc_apps.tts/TextToSpeechInstance.isWarmingUp.<get-isWarmingUp>|<get-isWarmingUp>(){}[0]
+    abstract val language // nl.marc_apps.tts/TextToSpeechInstance.language|{}language[0]
+        abstract fun <get-language>(): kotlin/String // nl.marc_apps.tts/TextToSpeechInstance.language.<get-language>|<get-language>(){}[0]
+    abstract val voices // nl.marc_apps.tts/TextToSpeechInstance.voices|{}voices[0]
+        abstract fun <get-voices>(): kotlin.sequences/Sequence<nl.marc_apps.tts/Voice> // nl.marc_apps.tts/TextToSpeechInstance.voices.<get-voices>|<get-voices>(){}[0]
+
+    abstract var currentVoice // nl.marc_apps.tts/TextToSpeechInstance.currentVoice|{}currentVoice[0]
+        abstract fun <get-currentVoice>(): nl.marc_apps.tts/Voice? // nl.marc_apps.tts/TextToSpeechInstance.currentVoice.<get-currentVoice>|<get-currentVoice>(){}[0]
+        abstract fun <set-currentVoice>(nl.marc_apps.tts/Voice?) // nl.marc_apps.tts/TextToSpeechInstance.currentVoice.<set-currentVoice>|<set-currentVoice>(nl.marc_apps.tts.Voice?){}[0]
+    abstract var isMuted // nl.marc_apps.tts/TextToSpeechInstance.isMuted|{}isMuted[0]
+        abstract fun <get-isMuted>(): kotlin/Boolean // nl.marc_apps.tts/TextToSpeechInstance.isMuted.<get-isMuted>|<get-isMuted>(){}[0]
+        abstract fun <set-isMuted>(kotlin/Boolean) // nl.marc_apps.tts/TextToSpeechInstance.isMuted.<set-isMuted>|<set-isMuted>(kotlin.Boolean){}[0]
+    abstract var pitch // nl.marc_apps.tts/TextToSpeechInstance.pitch|{}pitch[0]
+        abstract fun <get-pitch>(): kotlin/Float // nl.marc_apps.tts/TextToSpeechInstance.pitch.<get-pitch>|<get-pitch>(){}[0]
+        abstract fun <set-pitch>(kotlin/Float) // nl.marc_apps.tts/TextToSpeechInstance.pitch.<set-pitch>|<set-pitch>(kotlin.Float){}[0]
+    abstract var rate // nl.marc_apps.tts/TextToSpeechInstance.rate|{}rate[0]
+        abstract fun <get-rate>(): kotlin/Float // nl.marc_apps.tts/TextToSpeechInstance.rate.<get-rate>|<get-rate>(){}[0]
+        abstract fun <set-rate>(kotlin/Float) // nl.marc_apps.tts/TextToSpeechInstance.rate.<set-rate>|<set-rate>(kotlin.Float){}[0]
+    abstract var volume // nl.marc_apps.tts/TextToSpeechInstance.volume|{}volume[0]
+        abstract fun <get-volume>(): kotlin/Int // nl.marc_apps.tts/TextToSpeechInstance.volume.<get-volume>|<get-volume>(){}[0]
+        abstract fun <set-volume>(kotlin/Int) // nl.marc_apps.tts/TextToSpeechInstance.volume.<set-volume>|<set-volume>(kotlin.Int){}[0]
+
+    abstract fun close() // nl.marc_apps.tts/TextToSpeechInstance.close|close(){}[0]
+    abstract fun enqueue(kotlin/String, kotlin/Boolean = ...) // nl.marc_apps.tts/TextToSpeechInstance.enqueue|enqueue(kotlin.String;kotlin.Boolean){}[0]
+    abstract fun plusAssign(kotlin/String) // nl.marc_apps.tts/TextToSpeechInstance.plusAssign|plusAssign(kotlin.String){}[0]
+    abstract fun say(kotlin/String, kotlin/Boolean = ..., kotlin/Function1<kotlin/Result<kotlin/Unit>, kotlin/Unit>) // nl.marc_apps.tts/TextToSpeechInstance.say|say(kotlin.String;kotlin.Boolean;kotlin.Function1<kotlin.Result<kotlin.Unit>,kotlin.Unit>){}[0]
+    abstract fun stop() // nl.marc_apps.tts/TextToSpeechInstance.stop|stop(){}[0]
+    abstract suspend fun say(kotlin/String, kotlin/Boolean = ..., kotlin/Boolean = ...) // nl.marc_apps.tts/TextToSpeechInstance.say|say(kotlin.String;kotlin.Boolean;kotlin.Boolean){}[0]
+
+    final object Companion { // nl.marc_apps.tts/TextToSpeechInstance.Companion|null[0]
+        final const val VOICE_PITCH_DEFAULT // nl.marc_apps.tts/TextToSpeechInstance.Companion.VOICE_PITCH_DEFAULT|{}VOICE_PITCH_DEFAULT[0]
+            final fun <get-VOICE_PITCH_DEFAULT>(): kotlin/Float // nl.marc_apps.tts/TextToSpeechInstance.Companion.VOICE_PITCH_DEFAULT.<get-VOICE_PITCH_DEFAULT>|<get-VOICE_PITCH_DEFAULT>(){}[0]
+        final const val VOICE_RATE_DEFAULT // nl.marc_apps.tts/TextToSpeechInstance.Companion.VOICE_RATE_DEFAULT|{}VOICE_RATE_DEFAULT[0]
+            final fun <get-VOICE_RATE_DEFAULT>(): kotlin/Float // nl.marc_apps.tts/TextToSpeechInstance.Companion.VOICE_RATE_DEFAULT.<get-VOICE_RATE_DEFAULT>|<get-VOICE_RATE_DEFAULT>(){}[0]
+        final const val VOLUME_DEFAULT // nl.marc_apps.tts/TextToSpeechInstance.Companion.VOLUME_DEFAULT|{}VOLUME_DEFAULT[0]
+            final fun <get-VOLUME_DEFAULT>(): kotlin/Int // nl.marc_apps.tts/TextToSpeechInstance.Companion.VOLUME_DEFAULT.<get-VOLUME_DEFAULT>|<get-VOLUME_DEFAULT>(){}[0]
+        final const val VOLUME_MAX // nl.marc_apps.tts/TextToSpeechInstance.Companion.VOLUME_MAX|{}VOLUME_MAX[0]
+            final fun <get-VOLUME_MAX>(): kotlin/Int // nl.marc_apps.tts/TextToSpeechInstance.Companion.VOLUME_MAX.<get-VOLUME_MAX>|<get-VOLUME_MAX>(){}[0]
+        final const val VOLUME_MIN // nl.marc_apps.tts/TextToSpeechInstance.Companion.VOLUME_MIN|{}VOLUME_MIN[0]
+            final fun <get-VOLUME_MIN>(): kotlin/Int // nl.marc_apps.tts/TextToSpeechInstance.Companion.VOLUME_MIN.<get-VOLUME_MIN>|<get-VOLUME_MIN>(){}[0]
+    }
+}
+
+abstract interface nl.marc_apps.tts/Voice : nl.marc_apps.tts/CommonVoice // nl.marc_apps.tts/Voice|null[0]
+
+sealed interface nl.marc_apps.tts.utils/ResultHandler { // nl.marc_apps.tts.utils/ResultHandler|null[0]
+    abstract fun setResult(kotlin/Result<kotlin/Unit>) // nl.marc_apps.tts.utils/ResultHandler.setResult|setResult(kotlin.Result<kotlin.Unit>){}[0]
+
+    final class CallbackHandler : nl.marc_apps.tts.utils/ResultHandler { // nl.marc_apps.tts.utils/ResultHandler.CallbackHandler|null[0]
+        constructor <init>(kotlin/Function1<kotlin/Result<kotlin/Unit>, kotlin/Unit>) // nl.marc_apps.tts.utils/ResultHandler.CallbackHandler.<init>|<init>(kotlin.Function1<kotlin.Result<kotlin.Unit>,kotlin.Unit>){}[0]
+
+        final fun setResult(kotlin/Result<kotlin/Unit>) // nl.marc_apps.tts.utils/ResultHandler.CallbackHandler.setResult|setResult(kotlin.Result<kotlin.Unit>){}[0]
+    }
+
+    final class ContinuationHandler : nl.marc_apps.tts.utils/ResultHandler { // nl.marc_apps.tts.utils/ResultHandler.ContinuationHandler|null[0]
+        constructor <init>(kotlin.coroutines/Continuation<kotlin/Unit>) // nl.marc_apps.tts.utils/ResultHandler.ContinuationHandler.<init>|<init>(kotlin.coroutines.Continuation<kotlin.Unit>){}[0]
+
+        final fun setResult(kotlin/Result<kotlin/Unit>) // nl.marc_apps.tts.utils/ResultHandler.ContinuationHandler.setResult|setResult(kotlin.Result<kotlin.Unit>){}[0]
+    }
+
+    final object Empty : nl.marc_apps.tts.utils/ResultHandler { // nl.marc_apps.tts.utils/ResultHandler.Empty|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // nl.marc_apps.tts.utils/ResultHandler.Empty.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // nl.marc_apps.tts.utils/ResultHandler.Empty.hashCode|hashCode(){}[0]
+        final fun setResult(kotlin/Result<kotlin/Unit>) // nl.marc_apps.tts.utils/ResultHandler.Empty.setResult|setResult(kotlin.Result<kotlin.Unit>){}[0]
+        final fun toString(): kotlin/String // nl.marc_apps.tts.utils/ResultHandler.Empty.toString|toString(){}[0]
+    }
+}
+
+sealed interface nl.marc_apps.tts/TextToSpeechEngine { // nl.marc_apps.tts/TextToSpeechEngine|null[0]
+    abstract val androidPackage // nl.marc_apps.tts/TextToSpeechEngine.androidPackage|{}androidPackage[0]
+        abstract fun <get-androidPackage>(): kotlin/String? // nl.marc_apps.tts/TextToSpeechEngine.androidPackage.<get-androidPackage>|<get-androidPackage>(){}[0]
+
+    final class Custom : nl.marc_apps.tts/TextToSpeechEngine { // nl.marc_apps.tts/TextToSpeechEngine.Custom|null[0]
+        constructor <init>(kotlin/String) // nl.marc_apps.tts/TextToSpeechEngine.Custom.<init>|<init>(kotlin.String){}[0]
+
+        final val androidPackage // nl.marc_apps.tts/TextToSpeechEngine.Custom.androidPackage|{}androidPackage[0]
+            final fun <get-androidPackage>(): kotlin/String // nl.marc_apps.tts/TextToSpeechEngine.Custom.androidPackage.<get-androidPackage>|<get-androidPackage>(){}[0]
+
+        final fun component1(): kotlin/String // nl.marc_apps.tts/TextToSpeechEngine.Custom.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): nl.marc_apps.tts/TextToSpeechEngine.Custom // nl.marc_apps.tts/TextToSpeechEngine.Custom.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // nl.marc_apps.tts/TextToSpeechEngine.Custom.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // nl.marc_apps.tts/TextToSpeechEngine.Custom.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // nl.marc_apps.tts/TextToSpeechEngine.Custom.toString|toString(){}[0]
+    }
+
+    final object Google : nl.marc_apps.tts/TextToSpeechEngine { // nl.marc_apps.tts/TextToSpeechEngine.Google|null[0]
+        final val androidPackage // nl.marc_apps.tts/TextToSpeechEngine.Google.androidPackage|{}androidPackage[0]
+            final fun <get-androidPackage>(): kotlin/String // nl.marc_apps.tts/TextToSpeechEngine.Google.androidPackage.<get-androidPackage>|<get-androidPackage>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // nl.marc_apps.tts/TextToSpeechEngine.Google.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // nl.marc_apps.tts/TextToSpeechEngine.Google.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // nl.marc_apps.tts/TextToSpeechEngine.Google.toString|toString(){}[0]
+    }
+
+    final object SystemDefault : nl.marc_apps.tts/TextToSpeechEngine { // nl.marc_apps.tts/TextToSpeechEngine.SystemDefault|null[0]
+        final val androidPackage // nl.marc_apps.tts/TextToSpeechEngine.SystemDefault.androidPackage|{}androidPackage[0]
+            final fun <get-androidPackage>(): kotlin/Nothing? // nl.marc_apps.tts/TextToSpeechEngine.SystemDefault.androidPackage.<get-androidPackage>|<get-androidPackage>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // nl.marc_apps.tts/TextToSpeechEngine.SystemDefault.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // nl.marc_apps.tts/TextToSpeechEngine.SystemDefault.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // nl.marc_apps.tts/TextToSpeechEngine.SystemDefault.toString|toString(){}[0]
+    }
+}
+
+final class <#A: kotlin/Any?> nl.marc_apps.tts.utils/CallbackHandler { // nl.marc_apps.tts.utils/CallbackHandler|null[0]
+    constructor <init>() // nl.marc_apps.tts.utils/CallbackHandler.<init>|<init>(){}[0]
+
+    final val isQueueEmpty // nl.marc_apps.tts.utils/CallbackHandler.isQueueEmpty|{}isQueueEmpty[0]
+        final fun <get-isQueueEmpty>(): kotlin/Boolean // nl.marc_apps.tts.utils/CallbackHandler.isQueueEmpty.<get-isQueueEmpty>|<get-isQueueEmpty>(){}[0]
+
+    final fun add(kotlin.uuid/Uuid, #A, nl.marc_apps.tts.utils/ResultHandler) // nl.marc_apps.tts.utils/CallbackHandler.add|add(kotlin.uuid.Uuid;1:0;nl.marc_apps.tts.utils.ResultHandler){}[0]
+    final fun clear() // nl.marc_apps.tts.utils/CallbackHandler.clear|clear(){}[0]
+    final fun getUtteranceId(#A): kotlin.uuid/Uuid? // nl.marc_apps.tts.utils/CallbackHandler.getUtteranceId|getUtteranceId(1:0){}[0]
+    final fun onResult(kotlin.uuid/Uuid, kotlin/Result<kotlin/Unit>) // nl.marc_apps.tts.utils/CallbackHandler.onResult|onResult(kotlin.uuid.Uuid;kotlin.Result<kotlin.Unit>){}[0]
+    final fun onStopped() // nl.marc_apps.tts.utils/CallbackHandler.onStopped|onStopped(){}[0]
+}
+
+final class nl.marc_apps.tts.errors/DeviceAudioOutputError : nl.marc_apps.tts.errors/TextToSpeechEngineError { // nl.marc_apps.tts.errors/DeviceAudioOutputError|null[0]
+    constructor <init>(kotlin/Throwable? = ...) // nl.marc_apps.tts.errors/DeviceAudioOutputError.<init>|<init>(kotlin.Throwable?){}[0]
+}
+
+final class nl.marc_apps.tts.errors/TextToSpeechEngineUnavailableError : nl.marc_apps.tts.errors/TextToSpeechEngineError { // nl.marc_apps.tts.errors/TextToSpeechEngineUnavailableError|null[0]
+    constructor <init>(kotlin/Throwable? = ...) // nl.marc_apps.tts.errors/TextToSpeechEngineUnavailableError.<init>|<init>(kotlin.Throwable?){}[0]
+}
+
+final class nl.marc_apps.tts.errors/TextToSpeechInputError : nl.marc_apps.tts.errors/TextToSpeechSynthesisError { // nl.marc_apps.tts.errors/TextToSpeechInputError|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/Throwable? = ...) // nl.marc_apps.tts.errors/TextToSpeechInputError.<init>|<init>(kotlin.String?;kotlin.Throwable?){}[0]
+}
+
+final class nl.marc_apps.tts.errors/TextToSpeechNetworkError : nl.marc_apps.tts.errors/TextToSpeechEngineError { // nl.marc_apps.tts.errors/TextToSpeechNetworkError|null[0]
+    constructor <init>(kotlin/Boolean = ..., kotlin/Throwable? = ...) // nl.marc_apps.tts.errors/TextToSpeechNetworkError.<init>|<init>(kotlin.Boolean;kotlin.Throwable?){}[0]
+
+    final val timeout // nl.marc_apps.tts.errors/TextToSpeechNetworkError.timeout|{}timeout[0]
+        final fun <get-timeout>(): kotlin/Boolean // nl.marc_apps.tts.errors/TextToSpeechNetworkError.timeout.<get-timeout>|<get-timeout>(){}[0]
+}
+
+final class nl.marc_apps.tts.errors/TextToSpeechNotSupportedError : nl.marc_apps.tts.errors/TextToSpeechInitialisationError { // nl.marc_apps.tts.errors/TextToSpeechNotSupportedError|null[0]
+    constructor <init>(kotlin/Throwable? = ...) // nl.marc_apps.tts.errors/TextToSpeechNotSupportedError.<init>|<init>(kotlin.Throwable?){}[0]
+}
+
+final class nl.marc_apps.tts.errors/TextToSpeechServiceFailureError : nl.marc_apps.tts.errors/TextToSpeechEngineError { // nl.marc_apps.tts.errors/TextToSpeechServiceFailureError|null[0]
+    constructor <init>(kotlin/Throwable? = ...) // nl.marc_apps.tts.errors/TextToSpeechServiceFailureError.<init>|<init>(kotlin.Throwable?){}[0]
+}
+
+final class nl.marc_apps.tts.errors/TextToSpeechSynthesisInterruptedError : nl.marc_apps.tts.errors/TextToSpeechSynthesisError { // nl.marc_apps.tts.errors/TextToSpeechSynthesisInterruptedError|null[0]
+    constructor <init>(kotlin/Throwable? = ...) // nl.marc_apps.tts.errors/TextToSpeechSynthesisInterruptedError.<init>|<init>(kotlin.Throwable?){}[0]
+}
+
+final class nl.marc_apps.tts.errors/UnknownTextToSpeechInitialisationError : nl.marc_apps.tts.errors/TextToSpeechInitialisationError { // nl.marc_apps.tts.errors/UnknownTextToSpeechInitialisationError|null[0]
+    constructor <init>(kotlin/Throwable? = ...) // nl.marc_apps.tts.errors/UnknownTextToSpeechInitialisationError.<init>|<init>(kotlin.Throwable?){}[0]
+}
+
+final class nl.marc_apps.tts.errors/UnknownTextToSpeechSynthesisError : nl.marc_apps.tts.errors/TextToSpeechEngineError { // nl.marc_apps.tts.errors/UnknownTextToSpeechSynthesisError|null[0]
+    constructor <init>(kotlin/Throwable? = ...) // nl.marc_apps.tts.errors/UnknownTextToSpeechSynthesisError.<init>|<init>(kotlin.Throwable?){}[0]
+}
+
+final class nl.marc_apps.tts/TextToSpeechFactory { // nl.marc_apps.tts/TextToSpeechFactory|null[0]
+    final val canChangeVolume // nl.marc_apps.tts/TextToSpeechFactory.canChangeVolume|{}canChangeVolume[0]
+        final fun <get-canChangeVolume>(): kotlin/Boolean // nl.marc_apps.tts/TextToSpeechFactory.canChangeVolume.<get-canChangeVolume>|<get-canChangeVolume>(){}[0]
+    final val isSupported // nl.marc_apps.tts/TextToSpeechFactory.isSupported|{}isSupported[0]
+        final fun <get-isSupported>(): kotlin/Boolean // nl.marc_apps.tts/TextToSpeechFactory.isSupported.<get-isSupported>|<get-isSupported>(){}[0]
+
+    final suspend fun create(): kotlin/Result<nl.marc_apps.tts/TextToSpeechInstance> // nl.marc_apps.tts/TextToSpeechFactory.create|create(){}[0]
+    final suspend fun createOrNull(): nl.marc_apps.tts/TextToSpeechInstance? // nl.marc_apps.tts/TextToSpeechFactory.createOrNull|createOrNull(){}[0]
+    final suspend fun createOrThrow(): nl.marc_apps.tts/TextToSpeechInstance // nl.marc_apps.tts/TextToSpeechFactory.createOrThrow|createOrThrow(){}[0]
+
+    // Targets: [apple]
+    constructor <init>() // nl.marc_apps.tts/TextToSpeechFactory.<init>|<init>(){}[0]
+
+    // Targets: [js, wasmJs]
+    constructor <init>(org.w3c.dom/Window = ...) // nl.marc_apps.tts/TextToSpeechFactory.<init>|<init>(org.w3c.dom.Window){}[0]
+}
+
+final class nl.marc_apps.tts/UtteranceResult { // nl.marc_apps.tts/UtteranceResult|null[0]
+    constructor <init>(kotlin.uuid/Uuid) // nl.marc_apps.tts/UtteranceResult.<init>|<init>(kotlin.uuid.Uuid){}[0]
+
+    final val id // nl.marc_apps.tts/UtteranceResult.id|{}id[0]
+        final fun <get-id>(): kotlin.uuid/Uuid // nl.marc_apps.tts/UtteranceResult.id.<get-id>|<get-id>(){}[0]
+
+    final suspend fun awaitCompletion() // nl.marc_apps.tts/UtteranceResult.awaitCompletion|awaitCompletion(){}[0]
+}
+
+sealed class nl.marc_apps.tts.errors/TextToSpeechEngineError : nl.marc_apps.tts.errors/TextToSpeechSynthesisError // nl.marc_apps.tts.errors/TextToSpeechEngineError|null[0]
+
+sealed class nl.marc_apps.tts.errors/TextToSpeechInitialisationError : kotlin/Exception // nl.marc_apps.tts.errors/TextToSpeechInitialisationError|null[0]
+
+sealed class nl.marc_apps.tts.errors/TextToSpeechSynthesisError : kotlin/Exception // nl.marc_apps.tts.errors/TextToSpeechSynthesisError|null[0]
+
+// Targets: [apple]
+final class nl.marc_apps.tts.utils/TtsProgressConverter : platform.AVFAudio/AVSpeechSynthesizerDelegateProtocol, platform.darwin/NSObject { // nl.marc_apps.tts.utils/TtsProgressConverter|null[0]
+    constructor <init>(nl.marc_apps.tts.utils/CallbackHandler<platform.AVFAudio/AVSpeechUtterance>, kotlin/Function1<kotlin.uuid/Uuid, kotlin/Unit>, kotlin/Function2<kotlin.uuid/Uuid, kotlin/Result<kotlin/Unit>, kotlin/Unit>) // nl.marc_apps.tts.utils/TtsProgressConverter.<init>|<init>(callbackHandler:nl.marc_apps.tts.utils.CallbackHandler<platform.AVFAudio.AVSpeechUtterance>;onStart:kotlin.Function1<kotlin.uuid.Uuid,kotlin.Unit>;onComplete:kotlin.Function2<kotlin.uuid.Uuid,kotlin.Result<kotlin.Unit>,kotlin.Unit>){}[0]
+
+    final fun speechSynthesizer(platform.AVFAudio/AVSpeechSynthesizer, platform.AVFAudio/AVSpeechUtterance) // nl.marc_apps.tts.utils/TtsProgressConverter.speechSynthesizer|objc:speechSynthesizer:didCancelSpeechUtterance:[0]
+    final fun speechSynthesizer(platform.AVFAudio/AVSpeechSynthesizer, platform.AVFAudio/AVSpeechUtterance) // nl.marc_apps.tts.utils/TtsProgressConverter.speechSynthesizer|objc:speechSynthesizer:didFinishSpeechUtterance:[0]
+    final fun speechSynthesizer(platform.AVFAudio/AVSpeechSynthesizer, platform.AVFAudio/AVSpeechUtterance) // nl.marc_apps.tts.utils/TtsProgressConverter.speechSynthesizer|objc:speechSynthesizer:didStartSpeechUtterance:[0]
+}
+
+// Targets: [apple]
+final object nl.marc_apps.tts.utils/ErrorPointerUtils { // nl.marc_apps.tts.utils/ErrorPointerUtils|null[0]
+    final fun <#A1: kotlin/Any?> createErrorPointer(kotlin/Function1<kotlinx.cinterop/ObjCObjectVar<platform.Foundation/NSError?>, #A1>): #A1 // nl.marc_apps.tts.utils/ErrorPointerUtils.createErrorPointer|createErrorPointer(kotlin.Function1<kotlinx.cinterop.ObjCObjectVar<platform.Foundation.NSError?>,0:0>){0§<kotlin.Any?>}[0]
+}
+
+// Targets: [apple]
+final fun (kotlinx.cinterop/ObjCObjectVar<platform.Foundation/NSError?>).nl.marc_apps.tts.utils/throwOnError() // nl.marc_apps.tts.utils/throwOnError|throwOnError@kotlinx.cinterop.ObjCObjectVar<platform.Foundation.NSError?>(){}[0]
+
+// Targets: [ios]
+final object nl.marc_apps.tts/AudioSession { // nl.marc_apps.tts/AudioSession|null[0]
+    final fun initialiseForTextToSpeech() // nl.marc_apps.tts/AudioSession.initialiseForTextToSpeech|initialiseForTextToSpeech(){}[0]
+}
