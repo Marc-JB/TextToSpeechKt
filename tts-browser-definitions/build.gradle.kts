@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.mavenPublishing)
 }
 
-val libraryVersion = rootProject.findProperty("nl.marc_apps.tts.version")?.toString() ?: "0.0.1"
+val libraryVersion = rootProject.findProperty("publicationVersion")?.toString() ?: "0.0.1"
 
 group = "nl.marc-apps"
 version = libraryVersion
